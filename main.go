@@ -58,7 +58,7 @@ func main() {
 	if scriptBatpro || scriptFnlock {
 		systray.Run(onReady, onExit)
 	} else {
-		logError.Println("The required script is not properly installed\nsee README.md#installation-and-setup for instructions")
+		logError.Println("The required script is not properly installed, see README.md#installation-and-setup for instructions")
 	}
 }
 
