@@ -2,7 +2,7 @@
 //
 // This Source Code Form is subject to the terms of the General Public License v. 3.0
 
-//go:generate go-bindata -pkg $GOPACKAGE -o assets.go assets/
+//go:generate go run assets_generate.go
 
 package main
 
@@ -60,7 +60,7 @@ func main() {
 
 func onReady() {
 	logTrace.Println("Setting up menu...")
-	systray.SetIcon(getIcon("assets/Iconsmind-Outline-Battery-Charge.ico"))
+	systray.SetIcon(getIcon("/Iconsmind-Outline-Battery-Charge.ico"))
 	mStatus := systray.AddMenuItem(getStatus(), "")
 	systray.AddSeparator()
 	mOff := systray.AddMenuItem("OFF", "Switch off battery protection")
@@ -198,7 +198,12 @@ func onExit() {
 }
 
 func getIcon(s string) []byte {
-	b, err := Asset(s)
+	file, err := assets.Open(s)
+	if err != nil {
+		logError.Print(err)
+	}
+	defer file.Close()
+	b, err := ioutil.ReadAll(file)
 	if err != nil {
 		logError.Print(err)
 	}

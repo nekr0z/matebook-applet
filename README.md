@@ -32,5 +32,6 @@ PRs are most welcome!
 ## Credits
 This software includes the following sowtware or parts thereof:
 * [getlantern/systray](https://github.com/getlantern/systray)
+* [slurcooL/vfsgen](https://github.com/shurcooL/vfsgen)
 * [The Go Programming Language](https://golang.org) Copyright © 2009 The Go Authors
 * [Icons Mind icons](https://iconsmind.com)

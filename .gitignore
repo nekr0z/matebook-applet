@@ -1,3 +1,5 @@
 matebook-applet
 *.sig
+.*.swp
 *.tar.gz
+assets.go
