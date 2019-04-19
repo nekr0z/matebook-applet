@@ -8,22 +8,56 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/getlantern/systray"
+	"io"
 	"io/ioutil"
+	"log"
+	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
+var (
+	logTrace   *log.Logger
+	logInfo    *log.Logger
+	logWarning *log.Logger
+	logError   *log.Logger
+)
+
+func logInit(
+	traceHandle io.Writer,
+	infoHandle io.Writer,
+	warningHandle io.Writer,
+	errorHandle io.Writer) {
+	logTrace = log.New(traceHandle,
+		"TRACE: ",
+		log.Ldate|log.Ltime|log.Lshortfile)
+
+	logInfo = log.New(infoHandle,
+		"INFO: ",
+		log.Ldate|log.Ltime|log.Lshortfile)
+
+	logWarning = log.New(warningHandle,
+		"WARNING: ",
+		log.Ldate|log.Ltime|log.Lshortfile)
+
+	logError = log.New(errorHandle,
+		"ERROR: ",
+		log.Ldate|log.Ltime|log.Lshortfile)
+}
+
 func main() {
+	logInit(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
 	if checkBatpro() {
 		systray.Run(onReady, onExit)
 	} else {
-		fmt.Println("The required script is not properly installed\nsee https://github.com/nekr0z/matebook-applet#installation-and-setup for instructions")
+		logError.Println("The required script is not properly installed\nsee https://github.com/nekr0z/matebook-applet#installation-and-setup for instructions")
 	}
 }
 
 func onReady() {
+	logTrace.Println("Setting up menu...")
 	systray.SetIcon(getIcon("assets/Iconsmind-Outline-Battery-Charge.ico"))
 	mStatus := systray.AddMenuItem(getStatus(), "")
 	systray.AddSeparator()
@@ -33,24 +67,31 @@ func onReady() {
 	mHome := systray.AddMenuItem("HOME (40%-70%)", "Set battery protection to HOME")
 	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the applet")
+	logTrace.Println("Menu is now ready")
 	go func() {
 		for {
 			select {
 			case <-mStatus.ClickedCh:
+				logTrace.Println("Got a click on BP status")
 				mStatus.SetTitle(getStatus())
 			case <-mOff.ClickedCh:
+				logTrace.Println("Got a click on BP OFF")
 				setBatproOff()
 				mStatus.SetTitle(getStatus())
 			case <-mTravel.ClickedCh:
+				logTrace.Println("Got a click on BP TRAVEL")
 				setThresholds(95, 100)
 				mStatus.SetTitle(getStatus())
 			case <-mOffice.ClickedCh:
+				logTrace.Println("Got a click on BP OFFICE")
 				setThresholds(70, 90)
 				mStatus.SetTitle(getStatus())
 			case <-mHome.ClickedCh:
+				logTrace.Println("Got a click on BP HOME")
 				setThresholds(40, 70)
 				mStatus.SetTitle(getStatus())
 			case <-mQuit.ClickedCh:
+				logTrace.Println("Got a click on Quit")
 				systray.Quit()
 				return
 			}
@@ -70,14 +111,14 @@ func checkBatpro() bool {
 func setThresholds(min int, max int) {
 	cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "custom", strconv.Itoa(min), strconv.Itoa(max))
 	if err := cmd.Run(); err != nil {
-		fmt.Println("Failed to set thresholds")
+		logError.Println("Failed to set thresholds")
 	}
 }
 
 func setBatproOff() {
 	cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "off")
 	if err := cmd.Run(); err != nil {
-		fmt.Println("Failed to turn off battery protection")
+		logError.Println("Failed to turn off battery protection")
 	}
 }
 
@@ -87,7 +128,8 @@ func getStatus() string {
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
-		return "ERROR running script"
+		logError.Println("Failed to get battery protection status from script")
+		return "BP status unavailable"
 	}
 	r := "ERROR"
 	state, min, max := parseStatus(out.String())
@@ -108,6 +150,7 @@ func getStatus() string {
 				r = r + fmt.Sprintf("custom: %d%%-%d%%", min, max)
 			}
 		} else {
+			logWarning.Println("BP thresholds don't make sense: min %d%%, max %d%%", min, max)
 			r = "ON, but thresholds make no sense."
 		}
 	default:
