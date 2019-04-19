@@ -19,7 +19,12 @@ The applet requires no installation as such (although you may want to add it to 
 
         $ sudo batpro status
 
-4. Now you may run the matebook-applet.
+4. Now you may run the matebook-applet. Either download precompiled amd64 binary from [releases page](https://github.com/nekr0z/matebook-applet/releases) or compile it yourself:
+
+        $ git clone https://github.com/nekr0z/matebook-applet.git
+        $ cd matebook-applet
+        $ go generate
+        $ go build
 
 ## Usage
 The user interface is intentionally as simple as they get. You get an icon in system tray that you can click and get a menu. The menu consists of current status, options to change it, and an option to quit the applet. Please be aware that the applet does not probe for current status on its own (this is intentional), so if you change your battery protection settings by other means it will not reflect the change. Clicking on the status line (top of the menu) updates it.
