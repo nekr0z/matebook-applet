@@ -1,3 +1,7 @@
+// Copyright (C) 2019 Evgeny Kuznetsov (evgeny@kuznetsov.md)
+//
+// This Source Code Form is subject to the terms of the General Public License v. 3.0
+
 package main
 
 import (
