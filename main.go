@@ -16,7 +16,11 @@ import (
 )
 
 func main() {
-	systray.Run(onReady, onExit)
+	if checkBatpro() {
+		systray.Run(onReady, onExit)
+	} else {
+		fmt.Println("The required script is not properly installed\nsee https://github.com/nekr0z/matebook-applet#installation-and-setup for instructions")
+	}
 }
 
 func onReady() {
@@ -54,22 +58,31 @@ func onReady() {
 	}()
 }
 
+func checkBatpro() bool {
+	// TODO check sudo
+	cmd := exec.Command("/usr/bin/sudo", "-n", "batpro")
+	if err := cmd.Run(); err != nil {
+		return false
+	}
+	return true
+}
+
 func setThresholds(min int, max int) {
-	cmd := exec.Command("/usr/bin/sudo", "batpro", "custom", strconv.Itoa(min), strconv.Itoa(max))
+	cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "custom", strconv.Itoa(min), strconv.Itoa(max))
 	if err := cmd.Run(); err != nil {
 		fmt.Println("Failed to set thresholds")
 	}
 }
 
 func setBatproOff() {
-	cmd := exec.Command("/usr/bin/sudo", "batpro", "off")
+	cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "off")
 	if err := cmd.Run(); err != nil {
 		fmt.Println("Failed to turn off battery protection")
 	}
 }
 
 func getStatus() string {
-	cmd := exec.Command("/usr/bin/sudo", "batpro", "status")
+	cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "status")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
