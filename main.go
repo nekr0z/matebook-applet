@@ -21,10 +21,12 @@ import (
 )
 
 var (
-	logTrace   *log.Logger
-	logInfo    *log.Logger
-	logWarning *log.Logger
-	logError   *log.Logger
+	logTrace     *log.Logger
+	logInfo      *log.Logger
+	logWarning   *log.Logger
+	logError     *log.Logger
+	scriptBatpro bool
+	scriptFnlock bool
 )
 
 func logInit(
@@ -51,24 +53,42 @@ func logInit(
 
 func main() {
 	logInit(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
-	if checkBatpro() {
+	scriptBatpro = checkBatpro()
+	scriptFnlock = checkFnlock()
+	if scriptBatpro || scriptFnlock {
 		systray.Run(onReady, onExit)
 	} else {
-		logError.Println("The required script is not properly installed\nsee https://github.com/nekr0z/matebook-applet#installation-and-setup for instructions")
+		logError.Println("The required script is not properly installed\nsee README.md#installation-and-setup for instructions")
 	}
 }
 
 func onReady() {
 	logTrace.Println("Setting up menu...")
 	systray.SetIcon(getIcon("/Iconsmind-Outline-Battery-Charge.ico"))
-	mStatus := systray.AddMenuItem(getStatus(), "")
+	mStatus := systray.AddMenuItem("", "")
 	systray.AddSeparator()
 	mOff := systray.AddMenuItem("OFF", "Switch off battery protection")
 	mTravel := systray.AddMenuItem("TRAVEL (95%-100%)", "Set battery protection to TRAVEL")
 	mOffice := systray.AddMenuItem("OFFICE (70%-90%)", "Set battery protection to OFFICE")
 	mHome := systray.AddMenuItem("HOME (40%-70%)", "Set battery protection to HOME")
 	systray.AddSeparator()
+	mFnlock := systray.AddMenuItem("", "")
+	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the applet")
+	if scriptBatpro == false {
+		mStatus.Hide()
+		mOff.Hide()
+		mTravel.Hide()
+		mOffice.Hide()
+		mHome.Hide()
+	} else {
+		mStatus.SetTitle(getStatus())
+	}
+	if scriptFnlock == false {
+		mFnlock.Hide()
+	} else {
+		mFnlock.SetTitle(getFnlockStatus())
+	}
 	logTrace.Println("Menu is now ready")
 	go func() {
 		for {
@@ -92,6 +112,10 @@ func onReady() {
 				logTrace.Println("Got a click on BP HOME")
 				setThresholds(40, 70)
 				mStatus.SetTitle(getStatus())
+			case <-mFnlock.ClickedCh:
+				toggleFnlock()
+				logTrace.Println("Got a click on fnlock")
+				mFnlock.SetTitle(getFnlockStatus())
 			case <-mQuit.ClickedCh:
 				logTrace.Println("Got a click on Quit")
 				systray.Quit()
@@ -103,10 +127,25 @@ func onReady() {
 
 func checkBatpro() bool {
 	// TODO check sudo
+	logTrace.Println("Checking to see if batpro script is available")
 	cmd := exec.Command("/usr/bin/sudo", "-n", "batpro")
 	if err := cmd.Run(); err != nil {
+		logTrace.Println("batpro script not accessible")
 		return false
 	}
+	logInfo.Println("Found batpro script")
+	return true
+}
+
+func checkFnlock() bool {
+	// TODO check sudo
+	logTrace.Println("Checking to see if fnlock script is available")
+	cmd := exec.Command("/usr/bin/sudo", "-n", "fnlock")
+	if err := cmd.Run(); err != nil {
+		logTrace.Println("fnlock script not accessible")
+		return false
+	}
+	logInfo.Println("Found fnlock script")
 	return true
 }
 
@@ -121,6 +160,13 @@ func setBatproOff() {
 	cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "off")
 	if err := cmd.Run(); err != nil {
 		logError.Println("Failed to turn off battery protection")
+	}
+}
+
+func toggleFnlock() {
+	cmd := exec.Command("/usr/bin/sudo", "-n", "fnlock", "toggle")
+	if err := cmd.Run(); err != nil {
+		logError.Println("Failed to toggle Fn-Lock")
 	}
 }
 
@@ -159,6 +205,38 @@ func getStatus() string {
 		r = "ERROR: can not get BP status!"
 	}
 	return r
+}
+
+func getFnlockStatus() string {
+	cmd := exec.Command("/usr/bin/sudo", "-n", "fnlock", "status")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		logError.Println("Failed to get fnlock status from script")
+		return "Fn-Lock status unavailable"
+	}
+	r := "ERROR"
+	state := parseOnOffStatus(out.String())
+	switch state {
+	case "off":
+		r = "Fn-Lock OFF"
+	case "on":
+		r = "Fn-Lock ON"
+	}
+	return r
+}
+
+func parseOnOffStatus(s string) string {
+	stateRe := regexp.MustCompile(`^o(n|ff)$`)
+	lines := strings.Split(s, "\n")
+	state := ""
+	for _, line := range lines {
+		if stateRe.MatchString(line) {
+			state = line
+		}
+	}
+	return state
 }
 
 func parseStatus(s string) (string, int, int) {
@@ -200,12 +278,12 @@ func onExit() {
 func getIcon(s string) []byte {
 	file, err := assets.Open(s)
 	if err != nil {
-		logError.Print(err)
+		logError.Println(err)
 	}
 	defer file.Close()
 	b, err := ioutil.ReadAll(file)
 	if err != nil {
-		logError.Print(err)
+		logError.Println(err)
 	}
 	return b
 }
