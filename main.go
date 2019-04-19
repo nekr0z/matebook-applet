@@ -2,6 +2,8 @@
 //
 // This Source Code Form is subject to the terms of the General Public License v. 3.0
 
+//go:generate go-bindata -pkg $GOPACKAGE -o assets.go assets/
+
 package main
 
 import (
@@ -196,9 +198,9 @@ func onExit() {
 }
 
 func getIcon(s string) []byte {
-	b, err := ioutil.ReadFile(s)
+	b, err := Asset(s)
 	if err != nil {
-		fmt.Print(err)
+		logError.Print(err)
 	}
 	return b
 }

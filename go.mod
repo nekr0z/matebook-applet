@@ -9,5 +9,6 @@ require (
 	github.com/getlantern/ops v0.0.0-20190325191751-d70cb0d6f85f // indirect
 	github.com/getlantern/systray v0.0.0-20190131073753-26d5b920200d
 	github.com/go-stack/stack v1.8.0 // indirect
+	github.com/jteeuwen/go-bindata v3.0.7+incompatible // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190227141107-8c4636f812cc // indirect
 )
