@@ -29,7 +29,7 @@ The applet requires no installation as such (although you may want to add it to 
         ```
     2. Allow your user to execute the script without providing sudo credentials. One way to do this would be to explicitly add sudoers permission (please be aware of possible security implications):
 
-            # echo "your_username ALL = NOPASSWD: /usr/sbin/batpro" >> /etc/sudoers.d/fnlock
+            # echo "your_username ALL = NOPASSWD: /usr/sbin/fnlock" >> /etc/sudoers.d/fnlock
             # chmod 0440 /etc/sudoers.d/fnlock
 
     3. Double check that you can successfully run the script without providing additional authentication (i.e. password):
