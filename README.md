@@ -46,6 +46,8 @@ Now you may run the matebook-applet. Either download precompiled amd64 binary fr
 ## Usage
 The user interface is intentionally as simple as they get. You get an icon in system tray that you can click and get a menu. The menu consists of current status, options to change it, and an option to quit the applet. Please be aware that the applet does not probe for current status on its own (this is intentional), so if you change your battery protection settings by other means it will not reflect the change. Clicking on the status line (top of the menu) updates it.
 
+The entry that shows current Fn-Lock status is clickable, too, that toggles Fn-Lock (from ON to OFF or vice versa). Again, no probing here, so if you change Fn-Lock status by other means (via script or changing 0x08 EC register directly) it will not reflect the change.
+
 ## Further development
 I have plans to make it possible to utilize [a more general script](https://github.com/aymanbagabas/huawei_ec) to support MateBooks other than MateBook 13.
 
