@@ -1,4 +1,5 @@
 matebook-applet
+*.asc
 *.sig
 .*.swp
 *.tar.gz
