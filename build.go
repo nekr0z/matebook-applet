@@ -42,6 +42,7 @@ var (
 	packFiles = []packFile{
 		{src: "LICENSE", dst: "LICENSE", mod: 0644},
 		{src: "README.md", dst: "README.md", mod: 0644},
+		{src: "SOURCE.txt", dst: "SOURCE.txt", mod: 0644},
 		{src: "huawei-wmi.rules", dst: "huawei-wmi.rules", mod: 0644},
 	}
 )
