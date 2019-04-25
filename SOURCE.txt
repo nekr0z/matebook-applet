@@ -1,0 +1,2 @@
+The source code for this software is available at
+https://github.com/nekr0z/matebook-applet
