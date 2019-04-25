@@ -302,7 +302,7 @@ func getStatus() string {
 			}
 			logTrace.Printf("interpreted values: min %d%%, max %d%%\n", min, max)
 			switch {
-			case min == 0 && max == 100:
+			case min == 0 && max <= 100:
 				state = "off"
 			case 0 < min && min < 100 && 0 < max && max <= 100:
 				state = "on"
