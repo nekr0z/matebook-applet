@@ -19,6 +19,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"github.com/getlantern/systray"
 	"io"
@@ -65,8 +66,19 @@ func logInit(
 }
 
 func main() {
-	//logInit(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
-	logInit(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
+	verbose := flag.Bool("v", false, "be verbose")
+	verboseMore := flag.Bool("vv", false, "be very verbose")
+	flag.Parse()
+
+	switch {
+	case *verbose:
+		logInit(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
+	case *verboseMore:
+		logInit(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
+	default:
+		logInit(ioutil.Discard, ioutil.Discard, os.Stdout, os.Stderr)
+	}
+
 	scriptBatpro = checkBatpro()
 	scriptFnlock = checkFnlock()
 	driverGet, driverSet = checkWmi()
