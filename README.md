@@ -1,10 +1,31 @@
 # matebook-applet
 System tray applet for Huawei Matebook
 
-This simple applet is designed to make some of the proptietary Huawei PC Manager's functionality available via GUI on Linux. It currently only works for Huawei MateBook 13 and depends on [batpro script](https://github.com/nekr0z/linux-on-huawei-matebook-13-2019/blob/master/batpro) and [fnlock script](https://github.com/nekr0z/linux-on-huawei-matebook-13-2019/blob/master/fnlock).
+This simple applet is designed to make some of the proptietary Huawei PC Manager's functionality available via GUI on Linux.
 
 ## Installation and setup
-The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it relies on at least one of the scripts to be properly installed:
+The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it relies on underlying pieces of software to be installed so that it is user-accessible:
+
+### Huawei-WMI driver
+Starting with version 1.2 the best way to get the matebook-applet working is to install [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI) by [Ayman Bagabas](https://github.com/aymanbagabas). His work is still in progress, and the applet will not work with released versions up until and including version 2.0; you'll need at least Git commit d439912 (2019-04-24). Be advised that this driver is only compatible with Linux kernel 5.0 or later.
+
+After installing the driver you may start using the matebook-applet right away. However, it will only be able to display the current settings, not change them. In order to do that you either need to run the applet as root (absolutely not recommended) or make the hooks in `/sys/devices/platform/huawei-wmi` user-writable. A good way to do that is to create a special group `huawei-wmi` that would have access:
+```
+$ sudo addgroup --system huawei-wmi
+```
+and add your user to that group:
+```
+$ sudo adduser YOUR_USERNAME huawei-wmi
+```
+(naturally, you need to put your actual username instead of `YOUR_USERNAME`). After that, you need to add `udev` rules to make the hookr writable to users in `huawei-wmi` group. This can be done by adding a file containing the necessary rules to `/etc/udev/rules.d/` directory. A sample file is included with matebook-applet and can be simply copied (if the name you chose for the special group on previous steps is indeed `huawei-wmi`):
+```
+$ sudo cp huawei-wmi.rules /etc/udev/rules.d/
+```
+After these preparations you'll need to re-login for adding your user to group to take effect, and you'll need to reload Huawei-WMI driver for `udev` rules to take effect. Naturally, one reboot should be enough to achieve both.
+
+### Embedded controller scripts
+
+On Linux kernels earlier than 5.0 you can make this matebook-applet work using the two scripts as explained below. Any one of them is enough, but you need both for full functionality. You may download them both in one archive [here](https://github.com/nekr0z/linux-on-huawei-matebook-13-2019/releases). Please note that these scripts are for MateBook 13 and will not work on other MateBooks (you can still get them to work by changing them to address EC registers proper for your particular model, but make sure you know exactly what you're doing, you've been warned).
 
 * To get battery protection functionality:
 
@@ -36,7 +57,8 @@ The applet requires no installation as such (although you may want to add it to 
 
             $ sudo fnlock status
 
-Now you may run the matebook-applet. Either download precompiled amd64 binary from [releases page](https://github.com/nekr0z/matebook-applet/releases) or compile it yourself:
+### Compiling matebook-applet
+You can always download precompiled amd64 binary from [releases page](https://github.com/nekr0z/matebook-applet/releases), but it's also perfectly OK to compile matebook-applet yourself:
 
         $ git clone https://github.com/nekr0z/matebook-applet.git
         $ cd matebook-applet
@@ -46,11 +68,11 @@ Now you may run the matebook-applet. Either download precompiled amd64 binary fr
 ## Usage
 The user interface is intentionally as simple as they get. You get an icon in system tray that you can click and get a menu. The menu consists of current status, options to change it, and an option to quit the applet. Please be aware that the applet does not probe for current status on its own (this is intentional), so if you change your battery protection settings by other means it will not reflect the change. Clicking on the status line (top of the menu) updates it.
 
-The entry that shows current Fn-Lock status is clickable, too, that toggles Fn-Lock (from ON to OFF or vice versa). Again, no probing here, so if you change Fn-Lock status by other means (via script or changing 0x08 EC register directly) it will not reflect the change.
+The entry that shows current Fn-Lock status is clickable, too, that toggles Fn-Lock (from ON to OFF or vice versa). Again, no probing here, so if you change Fn-Lock status by other means it will not reflect the change until clicked, but then it will toggle Fn-Lock again.
 
-## Further development
-A new version of [Huawei WMI driver](https://github.com/aymanbagabas/Huawei-WMI) is nearing release; that version provides a much more straightforward interface to interact with these settings, so no additional scripts and packages will be needed. Also, this will have unified interface to support MateBooks other than MateBook 13. Work is already in progress to allow applet to work via that driver.
+Command line options include `-v` that gives more information in `stdout` while running the applet. `-vv` gives even more information, and is useful for debugging if you are having an issue and need to ask for help.
 
+## Development
 PRs are most welcome!
 
 ## Credits
@@ -59,3 +81,5 @@ This software includes the following sowtware or parts thereof:
 * [slurcooL/vfsgen](https://github.com/shurcooL/vfsgen)
 * [The Go Programming Language](https://golang.org) Copyright © 2009 The Go Authors
 * [Icons Mind icons](https://iconsmind.com)
+
+Big **THANK YOU** to [Ayman Bagabas](https://github.com/aymanbagabas) for all his work and support. Without him, there would be no matebook-applet.
