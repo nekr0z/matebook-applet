@@ -49,7 +49,7 @@ The user interface is intentionally as simple as they get. You get an icon in sy
 The entry that shows current Fn-Lock status is clickable, too, that toggles Fn-Lock (from ON to OFF or vice versa). Again, no probing here, so if you change Fn-Lock status by other means (via script or changing 0x08 EC register directly) it will not reflect the change.
 
 ## Further development
-I have plans to make it possible to utilize [a more general script](https://github.com/aymanbagabas/huawei_ec) to support MateBooks other than MateBook 13.
+A new version of [Huawei WMI driver](https://github.com/aymanbagabas/Huawei-WMI) is nearing release; that version provides a much more straightforward interface to interact with these settings, so no additional scripts and packages will be needed. Also, this will have unified interface to support MateBooks other than MateBook 13. Work is already in progress to allow applet to work via that driver.
 
 PRs are most welcome!
 
