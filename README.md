@@ -88,6 +88,6 @@ This software includes the following sowtware or parts thereof:
 * [getlantern/systray](https://github.com/getlantern/systray)
 * [slurcooL/vfsgen](https://github.com/shurcooL/vfsgen)
 * [The Go Programming Language](https://golang.org) Copyright © 2009 The Go Authors
-* [Icons Mind icons](https://iconsmind.com)
+* [Enkel Icons](https://www.deviantart.com/froyoshark/art/WIP-Enkel-Icon-Pack-for-Mac-498003378) by [FroyoShark](https://www.deviantart.com/froyoshark)
 
 Big **THANK YOU** to [Ayman Bagabas](https://github.com/aymanbagabas) for all his work and support. Without him, there would be no matebook-applet.

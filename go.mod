@@ -14,4 +14,5 @@ require (
 	github.com/shurcooL/vfsgen v0.0.0-20181202132449-6a9ea43bcacd // indirect
 	github.com/stretchr/testify v1.3.0 // indirect
 	golang.org/x/sys v0.0.0-20190418153312-f0ce4c0180be // indirect
+	golang.org/x/tools v0.0.0-20190425222832-ad9eeb80039a // indirect
 )

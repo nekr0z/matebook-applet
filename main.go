@@ -100,7 +100,7 @@ func main() {
 
 func onReady() {
 	logTrace.Println("Setting up menu...")
-	systray.SetIcon(getIcon("/Iconsmind-Outline-Battery-Charge.ico"))
+	systray.SetIcon(getIcon("/Settings-icon.png"))
 	mStatus := systray.AddMenuItem("", "")
 	systray.AddSeparator()
 	mOff := systray.AddMenuItem("OFF", "Switch off battery protection")
