@@ -79,13 +79,15 @@ func main() {
 		logInit(ioutil.Discard, ioutil.Discard, os.Stdout, os.Stderr)
 	}
 
-	scriptBatpro = checkBatpro()
-	scriptFnlock = checkFnlock()
 	driverGet, driverSet = checkWmi()
 	if driverSet {
 		logInfo.Println("will use driver interface")
 		scriptBatpro = false
 		scriptFnlock = false
+	} else {
+		logInfo.Println("no full functionality with driver interface, will check scripts")
+		scriptBatpro = checkBatpro()
+		scriptFnlock = checkFnlock()
 	}
 	if scriptBatpro || scriptFnlock || driverGet {
 		systray.Run(onReady, onExit)
