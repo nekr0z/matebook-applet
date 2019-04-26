@@ -41,6 +41,7 @@ var (
 	scriptFnlock bool
 	driverGet    bool
 	driverSet    bool
+	version      string = "custom-build"
 )
 
 func logInit(
@@ -79,6 +80,7 @@ func main() {
 		logInit(ioutil.Discard, ioutil.Discard, os.Stdout, os.Stderr)
 	}
 
+	logInfo.Printf("matebook-applet version %s\n", version)
 	driverGet, driverSet = checkWmi()
 	if driverSet {
 		logInfo.Println("will use driver interface")

@@ -53,15 +53,16 @@ func main() {
 	fmt.Printf("Building version %s\n", version)
 	fmt.Println("Building as of", time.Unix(btime, 0))
 	buildAssets(btime)
-	buildBinary(btime)
+	buildBinary(version, btime)
 	filename = "matebook-applet-amd64" + "-" + version
 	signFile("matebook-applet", "466F4F38E60211B0")
 	buildTar()
 	fmt.Println("archive", filename, "created")
 }
 
-func buildBinary(t int64) {
-	cmd := exec.Command("go", "build")
+func buildBinary(version string, t int64) {
+	cmdline := fmt.Sprintf("go build -ldflags \"-X main.version=%s\"", version)
+	cmd := exec.Command("bash", "-c", cmdline)
 	if err := cmd.Run(); err != nil {
 		log.Fatalln("failed to build binary")
 	}
