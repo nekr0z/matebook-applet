@@ -85,7 +85,7 @@ func main() {
 		scriptBatpro = false
 		scriptFnlock = false
 	} else {
-		logInfo.Println("no full functionality with driver interface, will check scripts")
+		logInfo.Println("no full functionality with driver interface, will try scripts")
 		scriptBatpro = checkBatpro()
 		scriptFnlock = checkFnlock()
 	}
@@ -111,6 +111,7 @@ func onReady() {
 	mQuit := systray.AddMenuItem("Quit", "Quit the applet")
 	if scriptBatpro == false && driverGet == false {
 		mStatus.Hide()
+		logTrace.Println("no access to BP information, not showing it")
 	} else {
 		mStatus.SetTitle(getStatus())
 	}
@@ -119,9 +120,11 @@ func onReady() {
 		mTravel.Hide()
 		mOffice.Hide()
 		mHome.Hide()
+		logTrace.Println("no way to change BP settings, not showing the corresponding GUI")
 	}
 	if scriptFnlock == false && driverGet == false {
 		mFnlock.Hide()
+		logTrace.Println("no access to Fn-Lock setting, not showing its GUI")
 	} else {
 		mFnlock.SetTitle(getFnlockStatus())
 	}
