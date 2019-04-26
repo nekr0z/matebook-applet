@@ -3,6 +3,15 @@ System tray applet for Huawei Matebook
 
 This simple applet is designed to make some of the proptietary Huawei PC Manager's functionality available via GUI on Linux.
 
+##### Table of Contents
+* [Installation and setup](#installationandsetup)
+  * [Huawei-WMI driver](#huawei-wmidriver) - for those running Linux kernel 5.0 or later
+  * [EC scripts](#embeddedcontrollerscripts) - for those with older kernel
+  * [Compiling](#compilingmatebook-applet)
+* [Usage](#usage)
+* [Development](#development)
+* [Credits](#credits)
+
 ## Installation and setup
 The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it relies on underlying pieces of software to be installed so that it is user-accessible:
 
