@@ -20,11 +20,11 @@ Starting with version 1.2 the best way to get the matebook-applet working is to 
 
 After installing the driver you may start using the matebook-applet right away. However, it will only be able to display the current settings, not change them. In order to do that you either need to run the applet as root (absolutely not recommended) or make the hooks in `/sys/devices/platform/huawei-wmi` user-writable. A good way to do that is to create a special group `huawei-wmi` that would have access:
 ```
-$ sudo addgroup --system huawei-wmi
+$ sudo groupadd --system huawei-wmi
 ```
 and add your user to that group:
 ```
-$ sudo adduser YOUR_USERNAME huawei-wmi
+$ sudo usermod -a -G huawei-wmi YOUR_USERNAME
 ```
 (naturally, you need to put your actual username instead of `YOUR_USERNAME`). After that, you need to add `udev` rules to make the hookr writable to users in `huawei-wmi` group. This can be done by adding a file containing the necessary rules to `/etc/udev/rules.d/` directory. A sample file is included with matebook-applet and can be simply copied (if the name you chose for the special group on previous steps is indeed `huawei-wmi`):
 ```
