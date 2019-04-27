@@ -30,6 +30,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -230,6 +231,19 @@ func setBatproOff() {
 	switch {
 	case driverSet:
 		setThresholds(0, 100)
+		logTrace.Println("thresholds pushed to driver, will wait for them to be set")
+		// driver takes some time to set these particular values due to ACPI bug
+		for i := 1; i < 5; i++ {
+			time.Sleep(900 * time.Millisecond)
+			logTrace.Println("checking thresholds, attempt", i)
+			min, max := getDriverThresholds()
+			if min == 0 && max == 100 {
+				logTrace.Println("thresholds set as expected")
+				break
+			}
+			logTrace.Println("not set yet")
+		}
+		logTrace.Println("alright, going on")
 	case scriptBatpro:
 		cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "off")
 		if err := cmd.Run(); err != nil {
@@ -283,39 +297,18 @@ func getStatus() string {
 	var (
 		state    string
 		min, max int
-		err      error
 	)
 	r := "ERROR"
 	switch {
 	case driverGet:
-		var val []byte
-		val, err = ioutil.ReadFile("/sys/devices/platform/huawei-wmi/charge_thresholds")
-		if err != nil {
-			logError.Println("Could not read charge thresholds from driver interface")
-			logTrace.Println(err)
-		}
-		values := strings.Split(strings.TrimSpace(string(val)), " ")
-		logTrace.Println("got values from interface:", values)
-		if len(values) == 2 {
-			min, err = strconv.Atoi(values[0])
-			if err != nil {
-				logTrace.Println(err)
-				min = 0
-			}
-			max, err = strconv.Atoi(values[1])
-			if err != nil {
-				logTrace.Println(err)
-				max = 0
-			}
-			logTrace.Printf("interpreted values: min %d%%, max %d%%\n", min, max)
-			switch {
-			case min == 0 && max <= 100:
-				state = "off"
-			case 0 < min && min < 100 && 0 < max && max <= 100:
-				state = "on"
-			}
-		} else {
-			logError.Println("Can not make sence of driver interface value", val)
+		min, max = getDriverThresholds()
+		switch {
+		case min == 0 && max <= 100:
+			state = "off"
+		case 0 < min && min < 100 && 0 < max && max <= 100:
+			state = "on"
+		default:
+			logError.Printf("Can't make sence of driver BP values %d-%d", min, max)
 		}
 	case scriptBatpro:
 		cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "status")
@@ -407,6 +400,34 @@ func parseOnOffStatus(s string) string {
 		}
 	}
 	return state
+}
+
+func getDriverThresholds() (min, max int) {
+	logTrace.Println("getting thresholds from the driver")
+	val, err := ioutil.ReadFile("/sys/devices/platform/huawei-wmi/charge_thresholds")
+	if err != nil {
+		logError.Println("Failed to get thresholds from driver interface")
+		logTrace.Println(err)
+	}
+
+	values := strings.Split(strings.TrimSpace(string(val)), " ")
+	logTrace.Println("got values from interface:", values)
+	if len(values) != 2 {
+		logError.Println("Can not make sence of driver interface value", val)
+		return
+	}
+
+	min, err = strconv.Atoi(values[0])
+	if err != nil {
+		logTrace.Println(err)
+	}
+	max, err = strconv.Atoi(values[1])
+	if err != nil {
+		logTrace.Println(err)
+	}
+	logTrace.Printf("interpreted values: min %d%%, max %d%%\n", min, max)
+
+	return
 }
 
 func parseStatus(s string) (string, int, int) {
