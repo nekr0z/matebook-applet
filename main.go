@@ -86,6 +86,7 @@ func main() {
 	}
 
 	logInfo.Printf("matebook-applet version %s\n", version)
+
 	driverGet, driverSet = checkWmi()
 	if driverSet {
 		logInfo.Println("will use driver interface")
@@ -172,7 +173,10 @@ func onReady() {
 }
 
 func checkBatpro() bool {
-	// TODO check sudo
+	ok := checkSudo()
+	if !ok {
+		return false
+	}
 	logTrace.Println("Checking to see if batpro script is available")
 	cmd := exec.Command("/usr/bin/sudo", "-n", "batpro")
 	if err := cmd.Run(); err != nil {
@@ -184,7 +188,10 @@ func checkBatpro() bool {
 }
 
 func checkFnlock() bool {
-	// TODO check sudo
+	ok := checkSudo()
+	if !ok {
+		return false
+	}
 	logTrace.Println("Checking to see if fnlock script is available")
 	cmd := exec.Command("/usr/bin/sudo", "-n", "fnlock")
 	if err := cmd.Run(); err != nil {
@@ -472,7 +479,6 @@ func parseStatus(s string) (string, int, int) {
 }
 
 func onExit() {
-	// cleanup (maybe TODO)
 }
 
 func getIcon(pth, dflt string) []byte {
@@ -492,4 +498,15 @@ func getIcon(pth, dflt string) []byte {
 		logInfo.Println("Successfully loaded custon icon from", pth)
 	}
 	return b
+}
+
+func checkSudo() bool {
+	logTrace.Println("checking if sudo is available")
+	cmd := exec.Command("/bin/sh", "-c", "command -v sudo")
+	if err := cmd.Run(); err != nil {
+		logInfo.Println(err)
+		logWarning.Println("sudo not available")
+		return false
+	}
+	return true
 }
