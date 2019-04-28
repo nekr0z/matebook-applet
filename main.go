@@ -214,9 +214,7 @@ func setThresholds(min int, max int) {
 	switch {
 	case driverSet:
 		logTrace.Println("setting thresholds using driver interface...")
-		if err := ioutil.WriteFile("/sys/devices/platform/huawei-wmi/charge_thresholds", []byte(strconv.Itoa(min)+" "+strconv.Itoa(max)), 0644); err != nil {
-			logError.Println("Failed to set thresholds")
-		}
+		setDriverThresholds(min, max)
 	case scriptBatpro:
 		cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "custom", strconv.Itoa(min), strconv.Itoa(max))
 		if err := cmd.Run(); err != nil {
@@ -227,23 +225,30 @@ func setThresholds(min int, max int) {
 	}
 }
 
+func setDriverThresholds(min, max int) {
+	if err := ioutil.WriteFile("/sys/devices/platform/huawei-wmi/charge_thresholds", []byte(strconv.Itoa(min)+" "+strconv.Itoa(max)), 0644); err != nil {
+		logError.Println("Failed to set thresholds")
+		return
+	}
+	logTrace.Println("thresholds pushed to driver, will wait for them to be set")
+	// driver takes some time to set values due to ACPI bug
+	for i := 1; i < 5; i++ {
+		time.Sleep(900 * time.Millisecond)
+		logTrace.Println("checking thresholds, attempt", i)
+		newMin, newMax := getDriverThresholds()
+		if min == newMin && max == newMax {
+			logTrace.Println("thresholds set as expected")
+			break
+		}
+		logTrace.Println("not set yet")
+	}
+	logTrace.Println("alright, going on")
+}
+
 func setBatproOff() {
 	switch {
 	case driverSet:
-		setThresholds(0, 100)
-		logTrace.Println("thresholds pushed to driver, will wait for them to be set")
-		// driver takes some time to set these particular values due to ACPI bug
-		for i := 1; i < 5; i++ {
-			time.Sleep(900 * time.Millisecond)
-			logTrace.Println("checking thresholds, attempt", i)
-			min, max := getDriverThresholds()
-			if min == 0 && max == 100 {
-				logTrace.Println("thresholds set as expected")
-				break
-			}
-			logTrace.Println("not set yet")
-		}
-		logTrace.Println("alright, going on")
+		setDriverThresholds(0, 100)
 	case scriptBatpro:
 		cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "off")
 		if err := cmd.Run(); err != nil {
