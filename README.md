@@ -26,7 +26,7 @@ and add your user to that group:
 ```
 $ sudo usermod -a -G huawei-wmi YOUR_USERNAME
 ```
-(naturally, you need to put your actual username instead of `YOUR_USERNAME`). After that, you need to add `udev` rules to make the hookr writable to users in `huawei-wmi` group. This can be done by adding a file containing the necessary rules to `/etc/udev/rules.d/` directory. A sample file is included with matebook-applet and can be simply copied (if the name you chose for the special group on previous steps is indeed `huawei-wmi`):
+(naturally, you need to put your actual username instead of `YOUR_USERNAME`). After that, you need to add `udev` rules to make the hooks writable to users in `huawei-wmi` group. This can be done by adding a file containing the necessary rules to `/etc/udev/rules.d/` directory. A sample file is included with matebook-applet and can be simply copied (if the name you chose for the special group on previous steps is indeed `huawei-wmi`):
 ```
 $ sudo cp huawei-wmi.rules /etc/udev/rules.d/
 ```
