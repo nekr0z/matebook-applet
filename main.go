@@ -33,6 +33,8 @@ import (
 	"time"
 )
 
+const defaultIcon = "/Settings-icon.png"
+
 var (
 	logTrace     *log.Logger
 	logInfo      *log.Logger
@@ -43,6 +45,7 @@ var (
 	driverGet    bool
 	driverSet    bool
 	version      string = "custom-build"
+	iconPath     string
 )
 
 func logInit(
@@ -70,6 +73,7 @@ func logInit(
 func main() {
 	verbose := flag.Bool("v", false, "be verbose")
 	verboseMore := flag.Bool("vv", false, "be very verbose")
+	flag.StringVar(&iconPath, "icon", "", "path of a custom icon to use")
 	flag.Parse()
 
 	switch {
@@ -101,7 +105,7 @@ func main() {
 
 func onReady() {
 	logTrace.Println("Setting up menu...")
-	systray.SetIcon(getIcon("/Settings-icon.png"))
+	systray.SetIcon(getIcon(iconPath, defaultIcon))
 	mStatus := systray.AddMenuItem("", "")
 	systray.AddSeparator()
 	mOff := systray.AddMenuItem("OFF", "Switch off battery protection")
@@ -471,15 +475,21 @@ func onExit() {
 	// cleanup (maybe TODO)
 }
 
-func getIcon(s string) []byte {
-	file, err := assets.Open(s)
+func getIcon(pth, dflt string) []byte {
+	b, err := ioutil.ReadFile(pth)
 	if err != nil {
-		logError.Println(err)
-	}
-	defer file.Close()
-	b, err := ioutil.ReadAll(file)
-	if err != nil {
-		logError.Println(err)
+		logInfo.Println("Couldn't get custom icon, falling back to default")
+		file, err := assets.Open(dflt)
+		if err != nil {
+			logError.Println(err)
+		}
+		defer file.Close()
+		b, err = ioutil.ReadAll(file)
+		if err != nil {
+			logError.Println(err)
+		}
+	} else {
+		logInfo.Println("Successfully loaded custon icon from", pth)
 	}
 	return b
 }
