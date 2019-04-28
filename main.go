@@ -349,9 +349,9 @@ func getStatus() string {
 			case min == 40 && max == 70:
 				r = r + "HOME"
 			case min == 70 && max == 90:
-				r = r + "OFFICE (70%-90%)"
+				r = r + "OFFICE"
 			case min == 95 && max == 100:
-				r = r + "TRAVEL (95%-100%)"
+				r = r + "TRAVEL"
 			default:
 				r = r + fmt.Sprintf("custom: %d%%-%d%%", min, max)
 			}
