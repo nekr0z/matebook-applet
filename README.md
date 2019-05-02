@@ -16,7 +16,7 @@ This simple applet is designed to make some of the proptietary Huawei PC Manager
 The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it relies on underlying pieces of software to be installed so that it is user-accessible:
 
 ### Huawei-WMI driver
-Starting with version 1.2 the best way to get the matebook-applet working is to install [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI) by [Ayman Bagabas](https://github.com/aymanbagabas). His work is still in progress, and the applet will not work with released versions up until and including version 2.0; you'll need at least Git commit d439912 (2019-04-24). Be advised that this driver is only compatible with Linux kernel 5.0 or later.
+Starting with version 1.2 the best way to get the matebook-applet working is to install [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI) by [Ayman Bagabas](https://github.com/aymanbagabas). You'll need at least version 3.0 of his driver. Be advised that the driver is only compatible with Linux kernel 5.0 or later.
 
 After installing the driver you may start using the matebook-applet right away. However, it will only be able to display the current settings, not change them. In order to do that you either need to run the applet as root (absolutely not recommended) or make the hooks in `/sys/devices/platform/huawei-wmi` user-writable. A good way to do that is to create a special group `huawei-wmi` that would have access:
 ```
