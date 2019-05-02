@@ -36,16 +36,17 @@ import (
 const defaultIcon = "/Settings-icon.png"
 
 var (
-	logTrace     *log.Logger
-	logInfo      *log.Logger
-	logWarning   *log.Logger
-	logError     *log.Logger
-	scriptBatpro bool
-	scriptFnlock bool
-	driverGet    bool
-	driverSet    bool
-	version      string = "custom-build"
-	iconPath     string
+	logTrace      *log.Logger
+	logInfo       *log.Logger
+	logWarning    *log.Logger
+	logError      *log.Logger
+	scriptBatpro  bool
+	scriptFnlock  bool
+	driverGet     bool
+	driverSet     bool
+	waitForDriver bool
+	version       string = "custom-build"
+	iconPath      string
 )
 
 func logInit(
@@ -74,6 +75,7 @@ func main() {
 	verbose := flag.Bool("v", false, "be verbose")
 	verboseMore := flag.Bool("vv", false, "be very verbose")
 	flag.StringVar(&iconPath, "icon", "", "path of a custom icon to use")
+	flag.BoolVar(&waitForDriver, "wait", false, "wait for driver to set battery thresholds (for MateBook X)")
 	flag.Parse()
 
 	switch {
@@ -241,19 +243,21 @@ func setDriverThresholds(min, max int) {
 		logError.Println("Failed to set thresholds")
 		return
 	}
-	logTrace.Println("thresholds pushed to driver, will wait for them to be set")
-	// driver takes some time to set values due to ACPI bug
-	for i := 1; i < 5; i++ {
-		time.Sleep(900 * time.Millisecond)
-		logTrace.Println("checking thresholds, attempt", i)
-		newMin, newMax := getDriverThresholds()
-		if min == newMin && max == newMax {
-			logTrace.Println("thresholds set as expected")
-			break
+	if waitForDriver {
+		logTrace.Println("thresholds pushed to driver, will wait for them to be set")
+		// driver takes some time to set values due to ACPI bug
+		for i := 1; i < 5; i++ {
+			time.Sleep(900 * time.Millisecond)
+			logTrace.Println("checking thresholds, attempt", i)
+			newMin, newMax := getDriverThresholds()
+			if min == newMin && max == newMax {
+				logTrace.Println("thresholds set as expected")
+				break
+			}
+			logTrace.Println("not set yet")
 		}
-		logTrace.Println("not set yet")
+		logTrace.Println("alright, going on")
 	}
-	logTrace.Println("alright, going on")
 }
 
 func setBatproOff() {
