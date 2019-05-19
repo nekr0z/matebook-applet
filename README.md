@@ -36,6 +36,8 @@ After these preparations you'll need to re-login for adding your user to group t
 
 On Linux kernels earlier than 5.0 you can make this matebook-applet work using the two scripts as explained below. Any one of them is enough, but you need both for full functionality. You may download them both in one archive [here](https://github.com/nekr0z/linux-on-huawei-matebook-13-2019/releases). Please note that these scripts are for MateBook 13 and will not work on other MateBooks (you can still get them to work by changing them to address EC registers proper for your particular model, but make sure you know exactly what you're doing, you've been warned).
 
+Both scripts depend on [ioport](https://people.redhat.com/~rjones/ioport/) to work, so make sure to install it first. Debian packages are available in main repository, and there is [a way](https://github.com/nekr0z/matebook-applet/issues/5) to get it on Arch, too.
+
 * To get battery protection functionality:
 
     1. Download the [batpro script](https://github.com/nekr0z/linux-on-huawei-matebook-13-2019/blob/master/batpro), make it executable and copy to root executables path, i.e.:
