@@ -86,9 +86,9 @@ Command line options include `-v` that gives more information in `stdout` while 
 PRs are most welcome!
 
 ## Credits
-This software includes the following sowtware or parts thereof:
+This software includes the following software or parts thereof:
 * [getlantern/systray](https://github.com/getlantern/systray)
-* [slurcooL/vfsgen](https://github.com/shurcooL/vfsgen)
+* [slurcooL/vfsgen](https://github.com/shurcooL/vfsgen) Copyright (c) 2015 Dmitri Shuralyov
 * [The Go Programming Language](https://golang.org) Copyright © 2009 The Go Authors
 * [Enkel Icons](https://www.deviantart.com/froyoshark/art/WIP-Enkel-Icon-Pack-for-Mac-498003378) by [FroyoShark](https://www.deviantart.com/froyoshark)
 
