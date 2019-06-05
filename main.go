@@ -543,6 +543,7 @@ func saveValue(file string, value []byte) {
 	if _, err = f.Write(value); err != nil {
 		logError.Println(err)
 		logWarning.Printf("Failed to write to file %s.\n", filePath)
+		return
 	}
 	logTrace.Printf("Wrote %s to %s.\n", value, filePath)
 
