@@ -36,17 +36,19 @@ import (
 const defaultIcon = "/Settings-icon.png"
 
 var (
-	logTrace      *log.Logger
-	logInfo       *log.Logger
-	logWarning    *log.Logger
-	logError      *log.Logger
-	scriptBatpro  bool
-	scriptFnlock  bool
-	driverGet     bool
-	driverSet     bool
-	waitForDriver bool
-	version       string = "custom-build"
-	iconPath      string
+	logTrace       *log.Logger
+	logInfo        *log.Logger
+	logWarning     *log.Logger
+	logError       *log.Logger
+	scriptBatpro   bool
+	scriptFnlock   bool
+	driverGet      bool
+	driverSet      bool
+	waitForDriver  bool
+	version        string = "custom-build"
+	iconPath       string
+	saveValues     bool
+	saveValuesPath string = "/etc/default/huawei-wmi/"
 )
 
 func logInit(
@@ -76,6 +78,7 @@ func main() {
 	verboseMore := flag.Bool("vv", false, "be very verbose")
 	flag.StringVar(&iconPath, "icon", "", "path of a custom icon to use")
 	flag.BoolVar(&waitForDriver, "wait", false, "wait for driver to set battery thresholds (for MateBook X)")
+	flag.BoolVar(&saveValues, "s", false, "save values for persistence")
 	flag.Parse()
 
 	switch {
@@ -239,7 +242,8 @@ func setThresholds(min int, max int) {
 }
 
 func setDriverThresholds(min, max int) {
-	if err := ioutil.WriteFile("/sys/devices/platform/huawei-wmi/charge_thresholds", []byte(strconv.Itoa(min)+" "+strconv.Itoa(max)), 0644); err != nil {
+	values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max))
+	if err := ioutil.WriteFile("/sys/devices/platform/huawei-wmi/charge_thresholds", values, 0644); err != nil {
 		logError.Println("Failed to set thresholds")
 		return
 	}
@@ -257,6 +261,14 @@ func setDriverThresholds(min, max int) {
 			logTrace.Println("not set yet")
 		}
 		logTrace.Println("alright, going on")
+	}
+	if saveValues {
+		logTrace.Println("saving values for persistence")
+		filePath := saveValuesPath + "charge_thresholds"
+		if err := ioutil.WriteFile(filePath, values, 0664); err != nil {
+			logError.Println(err)
+			logWarning.Printf("Write to persistent values storage file %s failed, please check permissions!", filePath)
+		}
 	}
 }
 
