@@ -263,12 +263,8 @@ func setDriverThresholds(min, max int) {
 		logTrace.Println("alright, going on")
 	}
 	if saveValues {
-		logTrace.Println("saving values for persistence")
-		filePath := saveValuesPath + "charge_thresholds"
-		if err := ioutil.WriteFile(filePath, values, 0664); err != nil {
-			logError.Println(err)
-			logWarning.Printf("Write to persistent values storage file %s failed, please check permissions!", filePath)
-		}
+		logTrace.Println("Saving values for persistence...")
+		saveValue("charge_thresholds", values)
 	}
 }
 
@@ -525,4 +521,31 @@ func checkSudo() bool {
 		return false
 	}
 	return true
+}
+
+func saveValue(file string, value []byte) {
+	filePath := saveValuesPath + file
+	f, err := os.Create(filePath)
+	if err != nil {
+		logError.Println(err)
+		logWarning.Printf("Could not open file %s for writing.\n", filePath)
+		return
+	}
+	logTrace.Printf("Opened file %s.\n", filePath)
+	defer f.Close()
+
+	if err = f.Chmod(0664); err != nil {
+		logError.Println(err)
+		logWarning.Printf("Could not set permissions on file %s.\n", filePath)
+	}
+	logTrace.Printf("Successful chmod on %s.\n", filePath)
+
+	if _, err = f.Write(value); err != nil {
+		logError.Println(err)
+		logWarning.Printf("Failed to write to file %s.\n", filePath)
+	}
+	logTrace.Printf("Wrote %s to %s.\n", value, filePath)
+
+	f.Sync()
+	return
 }
