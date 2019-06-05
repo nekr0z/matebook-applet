@@ -21,6 +21,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -48,16 +49,29 @@ var (
 )
 
 func main() {
+	sign := flag.Bool("s", false, "sign binary")
+	tar := flag.Bool("t", false, "generate tar.gz")
+	flag.Parse()
 	version := getVersion()
 	btime := buildTime()
+	if *tar {
+		*sign = true
+	}
+
 	fmt.Printf("Building version %s\n", version)
 	fmt.Println("Building as of", time.Unix(btime, 0))
 	buildAssets(btime)
 	buildBinary(version, btime)
-	filename = "matebook-applet-amd64" + "-" + version
-	signFile("matebook-applet", "466F4F38E60211B0")
-	buildTar()
-	fmt.Println("archive", filename, "created")
+
+	if *sign {
+		signFile("matebook-applet", "466F4F38E60211B0")
+	}
+
+	if *tar {
+		filename = "matebook-applet-amd64" + "-" + version
+		buildTar()
+		fmt.Println("archive", filename, "created")
+	}
 }
 
 func buildBinary(version string, t int64) {
