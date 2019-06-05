@@ -507,7 +507,7 @@ func getIcon(pth, dflt string) []byte {
 			logError.Println(err)
 		}
 	} else {
-		logInfo.Println("Successfully loaded custon icon from", pth)
+		logInfo.Println("Successfully loaded custom icon from", pth)
 	}
 	return b
 }
