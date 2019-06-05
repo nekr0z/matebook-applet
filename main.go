@@ -242,7 +242,7 @@ func setThresholds(min int, max int) {
 }
 
 func setDriverThresholds(min, max int) {
-	values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max))
+	values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
 	if err := ioutil.WriteFile("/sys/devices/platform/huawei-wmi/charge_thresholds", values, 0644); err != nil {
 		logError.Println("Failed to set thresholds")
 		return
@@ -545,7 +545,7 @@ func saveValue(file string, value []byte) {
 		logWarning.Printf("Failed to write to file %s.\n", filePath)
 		return
 	}
-	logTrace.Printf("Wrote %s to %s.\n", value, filePath)
+	logTrace.Printf("Successfully wrote to %s.", filePath)
 
 	f.Sync()
 	return
