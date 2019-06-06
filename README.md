@@ -82,6 +82,8 @@ The entry that shows current Fn-Lock status is clickable, too, that toggles Fn-L
 
 Command line options include `-v` that gives more information in `stdout` while running the applet. `-vv` gives even more information, and is useful for debugging if you are having an issue and need to ask for help. You can also specify a custom icon to show in system tray using `-icon /path/to/your/icon` (SVG, PNG or ICO should work).
 
+`-s` command line switch allows for saving battery threshold settings to `/etc/default/huawei-wmi/` so that they can later be restored by systemd unit after reboots and prolonged powerdowns. This option only works with Huawei-WMI driver.
+
 ## Development
 PRs are most welcome!
 
