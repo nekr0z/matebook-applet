@@ -18,19 +18,19 @@ The applet requires no installation as such (although you may want to add it to 
 ### Huawei-WMI driver
 Starting with version 1.2 the best way to get the matebook-applet working is to install [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI) by [Ayman Bagabas](https://github.com/aymanbagabas). You'll need at least version 3.0 of his driver. Be advised that the driver is only compatible with Linux kernel 5.0 or later.
 
-After installing the driver you may start using the matebook-applet right away. However, it will only be able to display the current settings, not change them. In order to do that you either need to run the applet as root (absolutely not recommended) or make the hooks in `/sys/devices/platform/huawei-wmi` user-writable. A good way to do that is to create a special group `huawei-wmi` that would have access:
+After installing the driver you may start using the matebook-applet right away. However, it will only be able to display the current settings, not change them. In order to do that you either need to run the applet as root (absolutely not recommended), or make sure all the necessary files (the hooks in `/sys/devices/platform/huawei-wmi` as well as `/etc/default/huawei-wmi/` directory) are user-writable. A good way to set everything up is to make use of [Rouven Spreckels](https://github.com/n3vu0r)' awesome [project](https://github.com/qu1x/huawei-wmi):
 ```
-$ sudo groupadd --system huawei-wmi
+$ git clone https://github.com/qu1x/huawei-wmi.git
+$ cd huawei-wmi
+$ sudo make install
 ```
-and add your user to that group:
+and add your user to the `huawei-wmi` group:
 ```
 $ sudo usermod -a -G huawei-wmi YOUR_USERNAME
 ```
-(naturally, you need to put your actual username instead of `YOUR_USERNAME`). After that, you need to add `udev` rules to make the hooks writable to users in `huawei-wmi` group. This can be done by adding a file containing the necessary rules to `/etc/udev/rules.d/` directory. A sample file is included with matebook-applet and can be simply copied (if the name you chose for the special group on previous steps is indeed `huawei-wmi`):
-```
-$ sudo cp huawei-wmi.rules /etc/udev/rules.d/
-```
-After these preparations you'll need to re-login for adding your user to group to take effect, and you'll need to reload Huawei-WMI driver for `udev` rules to take effect. Naturally, one reboot should be enough to achieve both.
+(naturally, you need to put your actual username instead of `YOUR_USERNAME`).
+
+After these preparations you'll need to re-login for adding your user to group to take effect.
 
 ### Embedded controller scripts
 
@@ -93,3 +93,5 @@ This software includes the following software or parts thereof:
 * [Enkel Icons](https://www.deviantart.com/froyoshark/art/WIP-Enkel-Icon-Pack-for-Mac-498003378) by [FroyoShark](https://www.deviantart.com/froyoshark)
 
 Big **THANK YOU** to [Ayman Bagabas](https://github.com/aymanbagabas) for all his work and support. Without him, there would be no matebook-applet.
+
+Kudos to [Rouven Spreckels](https://github.com/n3vu0r) for sorting out `udev` and `systemd`.

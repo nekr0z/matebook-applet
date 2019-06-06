@@ -1,1 +1,0 @@
-SUBSYSTEM=="platform", DRIVER=="huawei-wmi", ACTION=="add", RUN+="/bin/chgrp huawei-wmi %S/%p/charge_thresholds", RUN+="/bin/chmod g=u %S/%p/charge_thresholds", RUN+="/bin/chgrp huawei-wmi %S/%p/fn_lock_state", RUN+="/bin/chmod g=u %S/%p/fn_lock_state"
