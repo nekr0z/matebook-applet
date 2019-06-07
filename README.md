@@ -22,6 +22,11 @@ After installing the driver you may start using the matebook-applet right away. 
 ```
 $ git clone https://github.com/qu1x/huawei-wmi.git
 $ cd huawei-wmi
+
+Development still in progress there, and currently concentrated on Debian.
+If you're not running Debian, current master may not work for you, in this case:
+$ git checkout 7f66556
+
 $ sudo make install
 ```
 and add your user to the `huawei-wmi` group:
