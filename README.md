@@ -21,21 +21,14 @@ Starting with version 1.2 the best way to get the matebook-applet working is to 
 After installing the driver you may start using the matebook-applet right away. However, it will only be able to display the current settings, not change them. In order to do that you either need to run the applet as root (absolutely not recommended), or make sure all the necessary files (the hooks in `/sys/devices/platform/huawei-wmi` as well as `/etc/default/huawei-wmi/` directory) are user-writable. A good way to set everything up is to make use of [Rouven Spreckels](https://github.com/n3vu0r)' awesome [project](https://github.com/qu1x/huawei-wmi):
 ```
 $ git clone https://github.com/qu1x/huawei-wmi.git
-$ cd huawei-wmi
 
-Development still in progress there, and currently concentrated on Debian.
-If you're not running Debian, current master may not work for you, in this case:
-$ git checkout 7f66556
+$ cd huawei-wmi/generic
+ or
+$ cd huawei-wmi/debian
 
 $ sudo make install
 ```
-and add your user to the `huawei-wmi` group:
-```
-$ sudo usermod -a -G huawei-wmi YOUR_USERNAME
-```
-(naturally, you need to put your actual username instead of `YOUR_USERNAME`).
-
-After these preparations you'll need to re-login for adding your user to group to take effect.
+You may need to re-login for adding your user to group to take effect.
 
 ### Embedded controller scripts
 
