@@ -30,6 +30,8 @@ $ sudo make install
 ```
 You may need to re-login for adding your user to group to take effect.
 
+Debian users may download `.deb` package from [releases page](https://github.com/nekr0z/matebook-applet/releases).
+
 ### Embedded controller scripts
 
 On Linux kernels earlier than 5.0 you can make this matebook-applet work using the two scripts as explained below. Any one of them is enough, but you need both for full functionality. You may download them both in one archive [here](https://github.com/nekr0z/linux-on-huawei-matebook-13-2019/releases). Please note that these scripts are for MateBook 13 and will not work on other MateBooks (you can still get them to work by changing them to address EC registers proper for your particular model, but make sure you know exactly what you're doing, you've been warned).
