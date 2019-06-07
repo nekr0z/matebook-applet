@@ -29,6 +29,7 @@ import (
 	"os/exec"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -38,6 +39,11 @@ type packFile struct {
 	mod os.FileMode
 }
 
+type distFile struct {
+	src string
+	dst string
+}
+
 var (
 	filename  string
 	packFiles = []packFile{
@@ -45,11 +51,21 @@ var (
 		{src: "README.md", dst: "README.md", mod: 0644},
 		{src: "SOURCE.txt", dst: "SOURCE.txt", mod: 0644},
 	}
+	distFiles = []distFile{
+		{src: "LICENSE", dst: "/usr/share/doc/matebook-applet/"},
+		{src: "README.md", dst: "/usr/share/doc/matebook-applet/"},
+		{src: "SOURCE.txt", dst: "/usr/share/doc/matebook-applet/"},
+	}
+	debDeps = []string{
+		"libappindicator3-1",
+		"huawei-wmi",
+	}
 )
 
 func main() {
 	sign := flag.Bool("s", false, "sign binary")
 	tar := flag.Bool("t", false, "generate tar.gz")
+	deb := flag.Bool("d", false, "build .deb")
 	flag.Parse()
 	version := getVersion()
 	btime := buildTime()
@@ -71,6 +87,10 @@ func main() {
 		buildTar()
 		fmt.Println("archive", filename, "created")
 	}
+
+	if *deb {
+		buildDeb(version)
+	}
 }
 
 func buildBinary(version string, t int64) {
@@ -81,6 +101,7 @@ func buildBinary(version string, t int64) {
 	}
 	setFileTime("matebook-applet", t)
 	packFiles = append(packFiles, packFile{"matebook-applet", "matebook-applet", 0755})
+	distFiles = append(distFiles, distFile{"matebook-applet", "/usr/bin/"})
 }
 
 func buildAssets(t int64) {
@@ -89,6 +110,38 @@ func buildAssets(t int64) {
 		log.Fatalln("failed to rebuild assets")
 	}
 	setFileTime("assets.go", t)
+}
+
+func buildDeb(ver string) {
+	maintainer := "Evgeny Kuznetsov <evgeny@kuznetsov.md>"
+	if strings.HasPrefix(ver, "v") {
+		ver = ver[1:]
+	}
+	args := []string{
+		"--verbose", "-f",
+		"-t", "deb",
+		"-s", "dir",
+		"-n", "matebook-applet",
+		"-v", ver,
+		"-m", maintainer,
+		"--vendor", maintainer,
+		"--category", "misc",
+		"--description", "System tray applet for Huawei MateBook",
+		"--url", "https://github.com/nekr0z/matebook-applet",
+		"--license", "GPL-3",
+	}
+	for _, dep := range debDeps {
+		args = append(args, "-d", dep)
+	}
+	for _, file := range distFiles {
+		arg := file.src + "=" + file.dst
+		args = append(args, arg)
+	}
+	cmd := exec.Command("fpm", args...)
+	if err := cmd.Run(); err != nil {
+		fmt.Println(err)
+		log.Fatalln("failed to build .deb")
+	}
 }
 
 func buildTar() {

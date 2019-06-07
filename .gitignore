@@ -3,4 +3,5 @@ matebook-applet
 *.sig
 .*.swp
 *.tar.gz
+*.deb
 assets.go
