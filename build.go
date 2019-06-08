@@ -59,6 +59,7 @@ var (
 	debDeps = []string{
 		"libappindicator3-1",
 		"huawei-wmi",
+		"libc6",
 	}
 )
 
