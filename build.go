@@ -121,7 +121,7 @@ func buildDeb(ver string) {
 		ver = ver[1:]
 	}
 	args := []string{
-		"--verbose", "-f",
+		"-f",
 		"-t", "deb",
 		"-s", "dir",
 		"-n", "matebook-applet",
@@ -145,6 +145,7 @@ func buildDeb(ver string) {
 		fmt.Println(err)
 		log.Fatalln("failed to build .deb")
 	}
+	fmt.Println(".deb package created")
 }
 
 func buildTar() {
