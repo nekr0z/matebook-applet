@@ -40,13 +40,20 @@ func main() {
 		log.Fatalln("github user not set, can't work")
 	}
 
+	var version string
 	if flag.NArg() == 0 {
-		// TODO release latest version
-		fmt.Println("latest version releasing not implemented yet")
+		// release latest version
+		res, err := getString("git", "describe")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		r := strings.Split(res, "-")
+		version = r[0]
 	} else {
-		version := flag.Arg(0)
-		process(version)
+		version = flag.Arg(0)
 	}
+	log.Println("Trying to release version", version)
+	process(version)
 }
 
 func process(version string) {
