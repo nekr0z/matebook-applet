@@ -50,11 +50,13 @@ var (
 		{src: "LICENSE", dst: "LICENSE", mod: 0644},
 		{src: "README.md", dst: "README.md", mod: 0644},
 		{src: "SOURCE.txt", dst: "SOURCE.txt", mod: 0644},
+		{src: "matebook-applet.1", dst: "matebook-applet.1", mod: 0644},
 	}
 	distFiles = []distFile{
 		{src: "LICENSE", dst: "/usr/share/doc/matebook-applet/"},
 		{src: "README.md", dst: "/usr/share/doc/matebook-applet/"},
 		{src: "SOURCE.txt", dst: "/usr/share/doc/matebook-applet/"},
+		{src: "matebook-applet.1", dst: "/usr/share/man/man1/"},
 	}
 	debDeps = []string{
 		"libappindicator3-1",

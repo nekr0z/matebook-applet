@@ -1,0 +1,30 @@
+.TH MATEBOOK-APPLET 1
+.SH NAME
+matebook-applet \- system tray applet for Huawei MateBook
+.SH SYNOPSIS
+.B matebook-applet
+[\fB\-v\fR|\fB\-vv\fR]
+[\fB\-s\fR]
+[\fB\-wait\fR]
+[\fB\-icon\fR \fIpath\fR]
+.SH DESCRIPTION
+.B matebook-applet 
+provides a simple GUI to control some of the functionality available on Huawei MateBooks and exposed by Huawei-WMI kernel driver. It allows to enable battery protection and set thresholds for battery charging as well as enable or disable Fn-Lock functionality.
+.SH OPTIONS
+.IP \fB-v
+Show additional information in \fIstdout\fR while running (verbose mode).
+.IP \fB-vv
+Show even more information in \fIstdout\fR, useful to debug if you need to ask for help.
+.IP \fB-s
+Every time new battery thresholds are set, save them to \fI/etc/default/huawei-wmi/\fR so that they can be used to automatically reinstate desired thresholds after hibernate or reboot.
+.IP \fB-wait
+(obsolete) Additional delays and checks between setting and reading threshold values to mitigate issues on MateBook X. Not required with newest versions of Huawei-WMI driver.
+.IP "\fB-icon\fR \fIpath"
+Use custom icon instead of the default one. Can use absolute or relative \fIpath\fR to a graphics file (SVG, PNG or ICO).
+.SH BUGS
+Source code and known issues are available on GitHub: <https://github.com/nekr0z/matebook-applet>
+.SH COPYRIGHT
+Copyright © 2019 Evgeny Kuznetsov. License GPLv3+: GNU GPL version 3.0 <https://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.  There is NO WARRANTY, to the extent permitted by law.
+.SH AUTHOR
+Evgeny Kuznetsov <evgeny@kuznetsov.md>

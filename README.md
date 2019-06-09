@@ -80,9 +80,12 @@ The user interface is intentionally as simple as they get. You get an icon in sy
 
 The entry that shows current Fn-Lock status is clickable, too, that toggles Fn-Lock (from ON to OFF or vice versa). Again, no probing here, so if you change Fn-Lock status by other means it will not reflect the change until clicked, but then it will toggle Fn-Lock again.
 
-Command line options include `-v` that gives more information in `stdout` while running the applet. `-vv` gives even more information, and is useful for debugging if you are having an issue and need to ask for help. You can also specify a custom icon to show in system tray using `-icon /path/to/your/icon` (SVG, PNG or ICO should work).
-
-`-s` command line switch allows for saving battery threshold settings to `/etc/default/huawei-wmi/` so that they can later be restored by systemd unit after reboots and prolonged powerdowns. This option only works with Huawei-WMI driver.
+Command line options can be found on the included manpage:
+```
+$ man -l matebook-applet.1
+  or, if you installed applet from .deb package,
+$ man matebook-applet
+```
 
 ## Development
 PRs are most welcome!
