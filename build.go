@@ -46,7 +46,8 @@ type distFile struct {
 
 var (
 	filename  string
-	packFiles = []packFile{
+	keyID     string = "466F4F38E60211B0"
+	packFiles        = []packFile{
 		{src: "LICENSE", dst: "LICENSE", mod: 0644},
 		{src: "README.md", dst: "README.md", mod: 0644},
 		{src: "SOURCE.txt", dst: "SOURCE.txt", mod: 0644},
@@ -82,7 +83,7 @@ func main() {
 	buildBinary(version, btime)
 
 	if *sign {
-		signFile("matebook-applet", "466F4F38E60211B0")
+		signFile("matebook-applet", keyID)
 	}
 
 	if *tar {
@@ -146,6 +147,18 @@ func buildDeb(ver string) {
 		log.Fatalln("failed to build .deb")
 	}
 	fmt.Println(".deb package created")
+	args = []string{
+		"--sign=orig",
+		"-k", keyID,
+		"matebook-applet_" + ver + "_amd64.deb",
+	}
+	cmd = exec.Command("debsigs", args...)
+	if err := cmd.Run(); err != nil {
+		fmt.Println(err)
+		fmt.Println("failed to sign .deb package")
+	} else {
+		fmt.Println(".deb signed successfully")
+	}
 }
 
 func buildTar() {
