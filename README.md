@@ -15,6 +15,16 @@ This simple applet is designed to make some of the proptietary Huawei PC Manager
 ## Installation and setup
 The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it depends on `libappindicator` to be installed on your system (`sudo apt install libappindicator3-1` for Debian), and it relies on underlying pieces of software to be installed so that it is user-accessible:
 
+Debian users can add this repo:
+```
+deb http://evgenykuznetsov.org/repo/ buster main
+```
+to their `/etc/apt/sources.list` and add my public key:
+```
+$ sudo apt-key adv --keyserver pool.sks-keyservers.net --recv 79B2B092A63F5E6F
+```
+From there, the applet is just a `sudo apt install matebook-applet` away.
+
 ### Huawei-WMI driver
 Starting with version 1.2 the best way to get the matebook-applet working is to install [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI) by [Ayman Bagabas](https://github.com/aymanbagabas). You'll need at least version 3.0 of his driver. Be advised that the driver is only compatible with Linux kernel 5.0 or later.
 
