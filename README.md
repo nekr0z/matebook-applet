@@ -13,7 +13,7 @@ This simple applet is designed to make some of the proptietary Huawei PC Manager
 * [Credits](#credits)
 
 ## Installation and setup
-The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it depends on `libappindicator` to be installed on your system (`sudo apt install libappindicator3-1` for Debian), and it relies on underlying pieces of software to be installed so that it is user-accessible:
+The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it depends on `libappindicator` to be installed on your system, and it relies on underlying pieces of software to be installed so that it is user-accessible (more on that below).
 
 Debian users can add this repo:
 ```
@@ -28,19 +28,13 @@ From there, the applet is just a `sudo apt install matebook-applet` away.
 ### Huawei-WMI driver
 Starting with version 1.2 the best way to get the matebook-applet working is to install [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI) by [Ayman Bagabas](https://github.com/aymanbagabas). You'll need at least version 3.0 of his driver. Be advised that the driver is only compatible with Linux kernel 5.0 or later.
 
-After installing the driver you may start using the matebook-applet right away. However, it will only be able to display the current settings, not change them. In order to do that you either need to run the applet as root (absolutely not recommended), or make sure all the necessary files (the hooks in `/sys/devices/platform/huawei-wmi` as well as `/etc/default/huawei-wmi/` directory) are user-writable. A good way to set everything up is to make use of [Rouven Spreckels](https://github.com/n3vu0r)' awesome [project](https://github.com/qu1x/huawei-wmi):
+After installing the driver you may start using the matebook-applet right away. However, it will only be able to display the current settings, not change them. In order to do that you either need to run the applet as root (absolutely not recommended), or make sure all the necessary files (the hooks in `/sys/devices/platform/huawei-wmi` as well as `/etc/default/huawei-wmi/` directory) are user-writable. A good way to set everything up is to make use of [Rouven Spreckels](https://github.com/n3vu0r)' awesome [project](https://github.com/qu1x/huawei-wmi). Debian users will have if installed from the abovementioned repository, the rest can:
 ```
 $ git clone https://github.com/qu1x/huawei-wmi.git
-
 $ cd huawei-wmi/generic
- or
-$ cd huawei-wmi/debian
-
 $ sudo make install
 ```
 You may need to re-login for adding your user to group to take effect.
-
-Debian users may download `.deb` package from [releases page](https://github.com/nekr0z/matebook-applet/releases).
 
 ### Embedded controller scripts
 
@@ -93,7 +87,7 @@ The entry that shows current Fn-Lock status is clickable, too, that toggles Fn-L
 Command line options can be found on the included manpage:
 ```
 $ man -l matebook-applet.1
-  or, if you installed applet from .deb package,
+  or, if you installed applet from repository or .deb package,
 $ man matebook-applet
 ```
 
