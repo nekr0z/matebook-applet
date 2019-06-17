@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=matebook-applet
+GenericName=System tray applet for Huawei MateBook
+Comment=Allows to control battery protection settings and Fn-Lock mode from system tray.
+Exec=/usr/bin/matebook-applet
+Icon=matebook-applet
+Terminal=false
+Type=Application
+Keywords=interface;hardware;
+Categories=Settings;HardwareSettings;

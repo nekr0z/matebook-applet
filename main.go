@@ -33,7 +33,7 @@ import (
 	"time"
 )
 
-const defaultIcon = "/Settings-icon.png"
+const defaultIcon = "/matebook-applet.png"
 
 var (
 	logTrace       *log.Logger
