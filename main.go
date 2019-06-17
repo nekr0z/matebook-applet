@@ -540,12 +540,6 @@ func saveValue(file string, value []byte) {
 	logTrace.Printf("Opened file %s.\n", filePath)
 	defer f.Close()
 
-	if err = f.Chmod(0664); err != nil {
-		logError.Println(err)
-		logWarning.Printf("Could not set permissions on file %s.\n", filePath)
-	}
-	logTrace.Printf("Successful chmod on %s.\n", filePath)
-
 	if _, err = f.Write(value); err != nil {
 		logError.Println(err)
 		logWarning.Printf("Failed to write to file %s.\n", filePath)
