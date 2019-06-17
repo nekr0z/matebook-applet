@@ -16,7 +16,9 @@ Show additional information in \fIstdout\fR while running (verbose mode).
 .IP \fB-vv
 Show even more information in \fIstdout\fR, useful to debug if you need to ask for help.
 .IP \fB-s
-Every time new battery thresholds are set, save them to \fI/etc/default/huawei-wmi/\fR so that they can be used to automatically reinstate desired thresholds after hibernate or reboot.
+\fBDEPRECATED\fR Every time new battery thresholds are set, save them to \fI/etc/default/huawei-wmi/\fR so that they can be used to automatically reinstate desired thresholds after hibernate or reboot (since version 2.0 this is the default behaviour).
+.IP \fB-n
+Do not save battery thresholds to \fI/etc/default/huawei-wmi/\fR.
 .IP \fB-wait
 (obsolete) Additional delays and checks between setting and reading threshold values to mitigate issues on MateBook X. Not required with newest versions of Huawei-WMI driver.
 .IP "\fB-icon\fR \fIpath"

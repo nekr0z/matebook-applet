@@ -48,6 +48,7 @@ var (
 	version        string = "custom-build"
 	iconPath       string
 	saveValues     bool
+	noSaveValues   bool
 	saveValuesPath string = "/etc/default/huawei-wmi/"
 )
 
@@ -77,9 +78,14 @@ func main() {
 	verbose := flag.Bool("v", false, "be verbose")
 	verboseMore := flag.Bool("vv", false, "be very verbose")
 	flag.StringVar(&iconPath, "icon", "", "path of a custom icon to use")
-	flag.BoolVar(&waitForDriver, "wait", false, "wait for driver to set battery thresholds (for MateBook X)")
-	flag.BoolVar(&saveValues, "s", false, "save values for persistence")
+	flag.BoolVar(&waitForDriver, "wait", false, "wait for driver to set battery thresholds (obsolete)")
+	flag.BoolVar(&saveValues, "s", true, "save values for persistence (deprecated)")
+	flag.BoolVar(&noSaveValues, "n", false, "do not save values")
 	flag.Parse()
+
+	if noSaveValues {
+		saveValues = false
+	}
 
 	switch {
 	case *verbose:
