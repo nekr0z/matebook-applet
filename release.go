@@ -87,6 +87,8 @@ func process(version string) {
 		log.Fatalln(err)
 	}
 
+	debFilename := "matebook-applet_" + version + "_amd64.deb"
+
 	// get release description from tag
 	desc, err := getString("git", "tag", "-ln", "--format=%(contents)", gitVersion)
 	if err != nil {
@@ -117,7 +119,7 @@ func process(version string) {
 	// release packages
 	fileNames := []string{
 		"matebook-applet-amd64-" + gitVersion + ".tar.gz",
-		"matebook-applet_" + version + "_amd64.deb",
+		debFilename,
 	}
 	for _, fileName := range fileNames {
 		args := []string{
@@ -133,6 +135,9 @@ func process(version string) {
 		}
 		fmt.Println(fileName, "uploaded successfully")
 	}
+
+	// update debian repo
+	updateRepo(debFilename)
 
 	// git checkout back to master
 	checkout("master")
@@ -150,4 +155,35 @@ func getString(c string, a ...string) (string, error) {
 	cmd := exec.Command(c, a...)
 	b, err := cmd.CombinedOutput()
 	return string(bytes.TrimSpace(b)), err
+}
+
+// use aptly and rsync to update debian repo
+func updateRepo(filename string) {
+	if updateLocalRepo(filename) {
+		cmd := exec.Command("rsync", "-v", "-r", "-h", "--del", "~/.aptly/public/", "evgenykuznetsov.org:~/repository/")
+		if err := cmd.Run(); err != nil {
+			fmt.Println("failed to rsync to evgenykuznetsov.org")
+		}
+	}
+}
+
+// update aptly local repo
+func updateLocalRepo(filename string) bool {
+	cmd := exec.Command("aptly", "repo", "add", "matebook-applet", filename)
+	if err := cmd.Run(); err != nil {
+		fmt.Println("failed to add", filename, "to local aptly repo")
+		return false
+	}
+	cmd = exec.Command("aptly", "publish", "drop", "buster")
+	if err := cmd.Run(); err != nil {
+		fmt.Println("failed to drop old local release")
+		return false
+	}
+	cmd = exec.Command("aptly", "publish", "repo", "matebook-applet")
+	if err := cmd.Run(); err != nil {
+		fmt.Println("failed to locally publish repo")
+		return false
+	}
+	fmt.Println("local repo update successful")
+	return true
 }
