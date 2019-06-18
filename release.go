@@ -24,6 +24,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 )
 
@@ -52,18 +53,20 @@ func main() {
 	} else {
 		version = flag.Arg(0)
 	}
+
+	// check version format
+	re := regexp.MustCompile(`^v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$`)
+	if !re.MatchString(version) {
+		log.Fatalln("version", version, "doesn't make sense, giving up!")
+	}
+
 	log.Println("Trying to release version", version)
 	process(version)
 }
 
 func process(version string) {
-	// TODO check version sanity and format
-
-	var gitVersion string
-	if strings.HasPrefix(version, "v") {
-		gitVersion = version
-		version = version[1:]
-	}
+	gitVersion := version
+	version = version[1:]
 
 	// check if corresponding tag even exists
 	res, err := getString("git", "ls-remote", "origin", gitVersion)
