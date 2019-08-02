@@ -13,9 +13,9 @@ env:
 
 before_script:
   - go install github.com/golangci/golangci-lint/cmd/golangci-lint
+  - go generate
 
 script:
-  - go generate
   - golangci-lint run
   - go test -v -race ./...
   - go run build.go
