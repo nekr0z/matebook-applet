@@ -1,3 +1,6 @@
 language: go
 
+before_install:
+        - sudo apt-get install -y libappindicator3-dev
+
 script: go run build.go
