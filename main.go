@@ -128,20 +128,20 @@ func onReady() {
 	mFnlock := systray.AddMenuItem("", "")
 	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the applet")
-	if scriptBatpro == false && driverGet == false {
+	if !scriptBatpro && !driverGet {
 		mStatus.Hide()
 		logTrace.Println("no access to BP information, not showing it")
 	} else {
 		mStatus.SetTitle(getStatus())
 	}
-	if scriptBatpro == false && driverSet == false {
+	if !scriptBatpro && !driverSet {
 		mOff.Hide()
 		mTravel.Hide()
 		mOffice.Hide()
 		mHome.Hide()
 		logTrace.Println("no way to change BP settings, not showing the corresponding GUI")
 	}
-	if scriptFnlock == false && driverGet == false {
+	if !scriptFnlock && !driverGet {
 		mFnlock.Hide()
 		logTrace.Println("no access to Fn-Lock setting, not showing its GUI")
 	} else {
@@ -329,10 +329,9 @@ func toggleFnlock() {
 
 func getStatus() string {
 	var (
-		state    string
+		state, r string
 		min, max int
 	)
-	r := "ERROR"
 	switch {
 	case driverGet:
 		min, max = getDriverThresholds()
@@ -547,6 +546,8 @@ func saveValue(file string, value []byte) {
 	}
 	logTrace.Printf("Successfully wrote to %s.", filePath)
 
-	f.Sync()
-	return
+	if err := f.Sync(); err != nil {
+		logError.Println(err)
+		logWarning.Printf("Failed to sync file %s\n", filePath)
+	}
 }
