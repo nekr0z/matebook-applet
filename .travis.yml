@@ -7,7 +7,14 @@ addons:
       - libgtk-3-dev
 
 install: true
+
 env:
   - GO111MODULE=on
 
-script: go run build.go
+before_script:
+  - go install github.com/golangci/golangci-lint/cmd/golangci-lint
+
+script:
+  - golangci-lint run
+  - go test -v -race ./...
+  - go run build.go
