@@ -19,3 +19,8 @@ script:
   - golangci-lint run
   - go test -v -race ./...
   - go run build.go
+
+cache:
+  directories:
+    - $HOME/.cache/go-build
+    - $HOME/gopath/pkg/mod
