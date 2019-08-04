@@ -120,9 +120,7 @@ func buildAssets(t int64) {
 
 func buildDeb(ver string) {
 	maintainer := "Evgeny Kuznetsov <evgeny@kuznetsov.md>"
-	if strings.HasPrefix(ver, "v") {
-		ver = ver[1:]
-	}
+	ver = strings.TrimPrefix(ver, "v")
 	args := []string{
 		"-f",
 		"-t", "deb",
