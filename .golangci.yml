@@ -1,5 +1,5 @@
 service:
   prepare:
     - apt-get update && apt-get install -y libgtk-3-dev libappindicator3-dev
-    - dep ensure
+    - go mod download
     - go generate
