@@ -230,7 +230,7 @@ func checkWmi() (bool, bool) {
 	} else {
 		logInfo.Println("no battery thresholds in /sys/devices/platform, will use kernel interface BAT0")
 	}
-	err = ioutil.WriteFile("/sys/devices/platform/huawei-wmi/fn_lock_state", val, 0644)
+	err = ioutil.WriteFile("/sys/devices/platform/huawei-wmi/fn_lock_state", val, 0664)
 	if err != nil {
 		logTrace.Println(err)
 		logWarning.Println("Driver interface is readable but not writeable.")
@@ -270,11 +270,11 @@ func setDriverThresholds(min, max int) {
 		}
 	} else {
 		if err := ioutil.WriteFile("/sys/class/power_supply/BAT0/charge_control_start_threshold", []byte(strconv.Itoa(min)), 0664); err != nil {
-			logError.Println("Failes to set min threshold")
+			logError.Println("Failed to set min threshold")
 			return
 		}
 		if err := ioutil.WriteFile("/sys/class/power_supply/BAT0/charge_control_end_threshold", []byte(strconv.Itoa(max)), 0664); err != nil {
-			logError.Println("Failes to set max threshold")
+			logError.Println("Failed to set max threshold")
 			return
 		}
 	}
