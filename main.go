@@ -36,20 +36,21 @@ import (
 const defaultIcon = "/matebook-applet.png"
 
 var (
-	logTrace       *log.Logger
-	logInfo        *log.Logger
-	logWarning     *log.Logger
-	logError       *log.Logger
-	scriptBatpro   bool
-	scriptFnlock   bool
-	driverGet      bool
-	driverSet      bool
-	waitForDriver  bool
-	version        string = "custom-build"
-	iconPath       string
-	saveValues     bool
-	noSaveValues   bool
-	saveValuesPath string = "/etc/default/huawei-wmi/"
+	logTrace                 *log.Logger
+	logInfo                  *log.Logger
+	logWarning               *log.Logger
+	logError                 *log.Logger
+	scriptBatpro             bool
+	scriptFnlock             bool
+	driverGet                bool
+	driverSet                bool
+	driverThresholdsPlatform bool // pre-3.3 driver uses /sys/devices/platform/huawei-wmi/ to store thresholds
+	waitForDriver            bool
+	version                  string = "custom-build"
+	iconPath                 string
+	saveValues               bool
+	noSaveValues             bool
+	saveValuesPath           string = "/etc/default/huawei-wmi/"
 )
 
 func logInit(
@@ -222,6 +223,13 @@ func checkWmi() (bool, bool) {
 		return false, false
 	}
 	logInfo.Println("driver interface is readable")
+	_, err = ioutil.ReadFile("/sys/devices/platform/huawei-wmi/charge_thresholds")
+	if err == nil {
+		logInfo.Println("battery thresholds accessible in /sys/devices/platform")
+		driverThresholdsPlatform = true
+	} else {
+		logInfo.Println("no battery thresholds in /sys/devices/platform, will use kernel interface BAT0")
+	}
 	err = ioutil.WriteFile("/sys/devices/platform/huawei-wmi/fn_lock_state", val, 0644)
 	if err != nil {
 		logTrace.Println(err)
@@ -442,30 +450,55 @@ func parseOnOffStatus(s string) string {
 
 func getDriverThresholds() (min, max int, ok bool) {
 	logTrace.Println("getting thresholds from the driver")
-	val, err := ioutil.ReadFile("/sys/devices/platform/huawei-wmi/charge_thresholds")
-	if err != nil {
-		logError.Println("Failed to get thresholds from driver interface")
-		logTrace.Println(err)
+	var values [2]string
+	ok = true
+	if driverThresholdsPlatform {
+		val, err := ioutil.ReadFile("/sys/devices/platform/huawei-wmi/charge_thresholds")
+		if err != nil {
+			logError.Println("Failed to get thresholds from driver interface")
+			logTrace.Println(err)
+		}
+
+		valuesReceived := strings.Split(strings.TrimSpace(string(val)), " ")
+		logTrace.Println("got values from interface:", valuesReceived)
+		if len(valuesReceived) != 2 {
+			logError.Println("Can not make sence of driver interface value", val)
+			ok = false
+			return
+		} else {
+			for i := 0; i < 2; i++ {
+				values[i] = valuesReceived[i]
+			}
+		}
+	} else {
+		val, err := ioutil.ReadFile("/sys/class/power_supply/BAT0/charge_control_start_threshold")
+		if err != nil {
+			logError.Println("Failed to get min threshold from driver interface")
+			logTrace.Println(err)
+		}
+		values[0] = string(val)
+		val, err = ioutil.ReadFile("/sys/class/power_supply/BAT0/charge_control_end_threshold")
+		if err != nil {
+			logError.Println("Failed to get max threshold from driver interface")
+			logTrace.Println(err)
+		}
+		values[1] = string(val)
+		for i := 0; i < 2; i++ {
+			values[i] = strings.TrimSuffix(values[i], "\n")
+		}
 	}
 
-	values := strings.Split(strings.TrimSpace(string(val)), " ")
-	logTrace.Println("got values from interface:", values)
-	if len(values) != 2 {
-		logError.Println("Can not make sence of driver interface value", val)
+	min, err := strconv.Atoi(values[0])
+	if err != nil {
+		logTrace.Println(err)
 		ok = false
-		return
-	}
-
-	min, err = strconv.Atoi(values[0])
-	if err != nil {
-		logTrace.Println(err)
 	}
 	max, err = strconv.Atoi(values[1])
 	if err != nil {
 		logTrace.Println(err)
+		ok = false
 	}
 	logTrace.Printf("interpreted values: min %d%%, max %d%%\n", min, max)
-	ok = true
 
 	return
 }
