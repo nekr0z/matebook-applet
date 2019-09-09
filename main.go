@@ -244,6 +244,7 @@ func setThresholds(min int, max int) {
 	switch {
 	case driverSet:
 		logTrace.Println("setting thresholds using driver interface...")
+		setDriverThresholds(0, 100)
 		setDriverThresholds(min, max)
 	case scriptBatpro:
 		cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "custom", strconv.Itoa(min), strconv.Itoa(max))
@@ -253,13 +254,29 @@ func setThresholds(min int, max int) {
 	default:
 		logWarning.Println("Something unexpected happened, there's a bug somewhere")
 	}
+	if saveValues {
+		values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
+		logTrace.Println("Saving values for persistence...")
+		saveValue("charge_thresholds", values)
+	}
 }
 
 func setDriverThresholds(min, max int) {
-	values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
-	if err := ioutil.WriteFile("/sys/devices/platform/huawei-wmi/charge_thresholds", values, 0644); err != nil {
-		logError.Println("Failed to set thresholds")
-		return
+	if driverThresholdsPlatform {
+		values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
+		if err := ioutil.WriteFile("/sys/devices/platform/huawei-wmi/charge_thresholds", values, 0664); err != nil {
+			logError.Println("Failed to set thresholds")
+			return
+		}
+	} else {
+		if err := ioutil.WriteFile("/sys/class/power_supply/BAT0/charge_control_start_threshold", []byte(strconv.Itoa(min)), 0664); err != nil {
+			logError.Println("Failes to set min threshold")
+			return
+		}
+		if err := ioutil.WriteFile("/sys/class/power_supply/BAT0/charge_control_end_threshold", []byte(strconv.Itoa(max)), 0664); err != nil {
+			logError.Println("Failes to set max threshold")
+			return
+		}
 	}
 	if waitForDriver {
 		logTrace.Println("thresholds pushed to driver, will wait for them to be set")
@@ -275,10 +292,6 @@ func setDriverThresholds(min, max int) {
 			logTrace.Println("not set yet")
 		}
 		logTrace.Println("alright, going on")
-	}
-	if saveValues {
-		logTrace.Println("Saving values for persistence...")
-		saveValue("charge_thresholds", values)
 	}
 }
 
