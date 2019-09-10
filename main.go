@@ -45,7 +45,6 @@ var (
 	logWarning               *log.Logger
 	logError                 *log.Logger
 	scriptBatpro             bool
-	scriptFnlock             bool
 	driverGet                bool
 	driverSet                bool
 	driverThresholdsPlatform bool // pre-3.3 driver uses /sys/devices/platform/huawei-wmi/ to store thresholds
