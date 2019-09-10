@@ -19,6 +19,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	"github.com/getlantern/systray"
@@ -33,7 +34,10 @@ import (
 	"time"
 )
 
-const defaultIcon = "/matebook-applet.png"
+const (
+	defaultIcon          = "/matebook-applet.png"
+	fnlockDriverEndpoint = "/sys/devices/platform/huawei-wmi/fn_lock_state"
+)
 
 var (
 	logTrace                 *log.Logger
@@ -51,7 +55,34 @@ var (
 	saveValues               bool
 	noSaveValues             bool
 	saveValuesPath           string = "/etc/default/huawei-wmi/"
+	fnlockEndpoints                 = []fnlockEndpoint{}
+	cfg                      config
 )
+
+type config struct {
+	fnlock fnlockEndpoint
+}
+
+type fnlockEndpoint interface {
+	toggle()
+	get() (bool, error)
+}
+
+type fnlockScript struct {
+	getCmd    *exec.Cmd
+	toggleCmd *exec.Cmd
+}
+
+type fnlockDriver struct {
+	path string
+}
+
+func init() {
+	fndrv := fnlockDriver{path: fnlockDriverEndpoint}
+	fnlockEndpoints = append(fnlockEndpoints, fndrv)
+	fnscr := fnlockScript{toggleCmd: exec.Command("/usr/bin/sudo", "-n", "fnlock", "toggle"), getCmd: exec.Command("/usr/bin/sudo", "-n", "fnlock", "status")}
+	fnlockEndpoints = append(fnlockEndpoints, fnscr)
+}
 
 func logInit(
 	traceHandle io.Writer,
@@ -99,17 +130,34 @@ func main() {
 
 	logInfo.Printf("matebook-applet version %s\n", version)
 
+	// need to find working fnlock interface (if any)
+	for _, fnlck := range fnlockEndpoints {
+		_, err := fnlck.get()
+		if err != nil {
+			continue
+		}
+		cfg.fnlock = fnlck
+		_, ok := fnlck.(fnlockScript)
+		if ok {
+			logInfo.Println("Found fnlock script, will use it")
+			break
+		}
+		fl, ok := fnlck.(fnlockDriver)
+		if fl.checkWritable() {
+			logInfo.Println("Found writable fnlock driver interface, will use it")
+			break
+		}
+	}
+
 	driverGet, driverSet = checkWmi()
 	if driverSet {
 		logInfo.Println("will use driver interface")
 		scriptBatpro = false
-		scriptFnlock = false
 	} else {
 		logInfo.Println("no full functionality with driver interface, will try scripts")
 		scriptBatpro = checkBatpro()
-		scriptFnlock = checkFnlock()
 	}
-	if scriptBatpro || scriptFnlock || driverGet {
+	if scriptBatpro || driverGet || cfg.fnlock != nil {
 		systray.Run(onReady, onExit)
 	} else {
 		logError.Println("Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions")
@@ -142,7 +190,7 @@ func onReady() {
 		mHome.Hide()
 		logTrace.Println("no way to change BP settings, not showing the corresponding GUI")
 	}
-	if !scriptFnlock && !driverGet {
+	if cfg.fnlock == nil {
 		mFnlock.Hide()
 		logTrace.Println("no access to Fn-Lock setting, not showing its GUI")
 	} else {
@@ -172,8 +220,8 @@ func onReady() {
 				setThresholds(40, 70)
 				mStatus.SetTitle(getStatus())
 			case <-mFnlock.ClickedCh:
-				toggleFnlock()
 				logTrace.Println("Got a click on fnlock")
+				cfg.fnlock.toggle()
 				mFnlock.SetTitle(getFnlockStatus())
 			case <-mQuit.ClickedCh:
 				logTrace.Println("Got a click on Quit")
@@ -182,6 +230,102 @@ func onReady() {
 			}
 		}
 	}()
+}
+
+func (drv fnlockDriver) get() (bool, error) {
+	val, err := ioutil.ReadFile(drv.path)
+	if err != nil {
+		logError.Println("Could not read Fn-Lock state from driver interface")
+		logTrace.Println(err)
+	}
+	value := strings.TrimSpace(string(val))
+	switch value {
+	case "0":
+		return false, err
+	case "1":
+		return true, err
+	default:
+		logWarning.Println("Fn-lock state reported by driver doesn't make sense")
+		return false, errors.New("state is reported as " + value)
+	}
+}
+
+func btobb(b bool) []byte {
+	var s string
+	if b {
+		s = "1"
+	} else {
+		s = "0"
+	}
+	return []byte(s)
+}
+
+func (drv fnlockDriver) checkWritable() bool {
+	val, err := drv.get()
+	if err == nil {
+		err = ioutil.WriteFile(drv.path, btobb(val), 0664)
+		if err == nil {
+			logInfo.Println("successful write to driver interface")
+			return true
+		}
+	}
+	logTrace.Println(err)
+	logWarning.Println("Driver interface is readable but not writeable.")
+	return false
+}
+
+func (drv fnlockDriver) toggle() {
+	val, err := drv.get()
+	if err != nil {
+		logError.Println("Could not read fn_lock_state from driver interface")
+		logTrace.Println(err)
+		return
+	}
+	value := btobb(!val)
+	err = ioutil.WriteFile(drv.path, value, 0644)
+	if err != nil {
+		logTrace.Println(err)
+		logWarning.Println("Could not set Fn-Lock status through driver interface")
+		return
+	}
+	logTrace.Println("successful write to driver interface")
+	return
+}
+
+func (scr fnlockScript) get() (bool, error) {
+	cmd := scr.getCmd
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		logError.Println("Failed to get fnlock status from script")
+	}
+	state := parseOnOffStatus(out.String())
+	if state == "on" {
+		return true, err
+	}
+	return false, err
+}
+
+func (scr fnlockScript) toggle() {
+	cmd := scr.toggleCmd
+	if err := cmd.Run(); err != nil {
+		logError.Println("Failed to toggle Fn-Lock")
+	}
+}
+
+func (scr fnlockScript) check() bool {
+	ok := checkSudo()
+	if !ok {
+		return false
+	}
+	logTrace.Println("Checking to see if fnlock script is available")
+	if _, err := scr.get(); err != nil {
+		logTrace.Println("fnlock script not accessible")
+		return false
+	}
+	logInfo.Println("Found fnlock script")
+	return true
 }
 
 func checkBatpro() bool {
@@ -196,21 +340,6 @@ func checkBatpro() bool {
 		return false
 	}
 	logInfo.Println("Found batpro script")
-	return true
-}
-
-func checkFnlock() bool {
-	ok := checkSudo()
-	if !ok {
-		return false
-	}
-	logTrace.Println("Checking to see if fnlock script is available")
-	cmd := exec.Command("/usr/bin/sudo", "-n", "fnlock")
-	if err := cmd.Run(); err != nil {
-		logTrace.Println("fnlock script not accessible")
-		return false
-	}
-	logInfo.Println("Found fnlock script")
 	return true
 }
 
@@ -309,45 +438,6 @@ func setBatproOff() {
 	}
 }
 
-func toggleFnlock() {
-	switch {
-	case driverSet:
-		val, err := ioutil.ReadFile("/sys/devices/platform/huawei-wmi/fn_lock_state")
-		if err != nil {
-			logError.Println("Could not read fn_lock_state from driver interface")
-			logTrace.Println(err)
-		}
-		value := strings.TrimSpace(string(val))
-		switch value {
-		case "0":
-			logTrace.Println("got fn-lock 0 from driver, setting to 1")
-			value = "1"
-		case "1":
-			logTrace.Println("got fn-lock 1 from driver, setting to 0")
-			value = "0"
-		default:
-			logWarning.Println("Something unexpected happened, there's a bug somewhere")
-		}
-		err = ioutil.WriteFile("/sys/devices/platform/huawei-wmi/fn_lock_state", []byte(value), 0644)
-		if err != nil {
-			logTrace.Println(err)
-			logWarning.Println("Could not set Fn-Lock status through driver interface")
-		}
-		logTrace.Println("successful write to driver interface")
-	case scriptBatpro:
-		cmd := exec.Command("/usr/bin/sudo", "-n", "fnlock", "toggle")
-		if err := cmd.Run(); err != nil {
-			logError.Println("Failed to toggle Fn-Lock")
-		}
-	case driverGet:
-		// there can be legitimate cases for this function to be called when no script is installed and driver
-		// interface is readable but not writeable
-		logTrace.Println("driver interface not writable, ignoring request to toggle Fn-Lock")
-	default:
-		logWarning.Println("Something unexpected happened, there's a bug somewhere")
-	}
-}
-
 func getStatus() string {
 	var (
 		state, r string
@@ -410,41 +500,14 @@ func getStatus() string {
 
 func getFnlockStatus() string {
 	r := "ERROR"
-	var state string
-	switch {
-	case driverGet:
-		val, err := ioutil.ReadFile("/sys/devices/platform/huawei-wmi/fn_lock_state")
-		if err != nil {
-			logError.Println("Could not read Fn-Lock state from driver interface")
-			logTrace.Println(err)
-		}
-		value := strings.TrimSpace(string(val))
-		switch value {
-		case "0":
-			state = "off"
-		case "1":
-			state = "on"
-		default:
-			logWarning.Println("Fn-lock state reported by driver doesn't make sense")
-		}
-	case scriptFnlock:
-		cmd := exec.Command("/usr/bin/sudo", "-n", "fnlock", "status")
-		var out bytes.Buffer
-		cmd.Stdout = &out
-		err := cmd.Run()
-		if err != nil {
-			logError.Println("Failed to get fnlock status from script")
-			return "Fn-Lock status unavailable"
-		}
-		state = parseOnOffStatus(out.String())
-	default:
-		logWarning.Println("Something unexpected happened, there's a bug somewhere")
-	}
-	switch state {
-	case "off":
-		r = "Fn-Lock OFF"
-	case "on":
+	state, err := cfg.fnlock.get()
+	if state {
 		r = "Fn-Lock ON"
+	} else {
+		r = "Fn-Lock OFF"
+	}
+	if err != nil {
+		r = "ERROR: Fn-Lock state unknown"
 	}
 	return r
 }
