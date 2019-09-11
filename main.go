@@ -168,7 +168,7 @@ func main() {
 	if noSaveValues {
 		saveValues = false
 	} else {
-		cfg.threshPers = threshDriver{threshDriverSingle{path: saveValuesPath}}
+		cfg.threshPers = threshDriver{threshDriverSingle{path: saveValuesPath + "charge_thresholds"}}
 	}
 
 	cfg.wait = waitForDriver
