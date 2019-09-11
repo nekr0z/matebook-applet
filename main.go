@@ -55,16 +55,29 @@ var (
 	noSaveValues             bool
 	saveValuesPath           string = "/etc/default/huawei-wmi/"
 	fnlockEndpoints                 = []fnlockEndpoint{}
+	threshEndpoints                 = []threshEndpoint{}
+	threshDriver2                   = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
+	threshDriver3                   = threshDriver{threshDriverMinMax{pathMin: "/sys/class/power_supply/BAT0/charge_control_start_threshold", pathMax: "/sys/class/power_supply/BAT0/charge_control_end_threshold"}}
 	cfg                      config
 )
 
 type config struct {
-	fnlock fnlockEndpoint
+	fnlock     fnlockEndpoint
+	thresh     threshEndpoint
+	threshPers threshEndpoint
+	wait       bool
 }
 
 type fnlockEndpoint interface {
 	toggle()
 	get() (bool, error)
+	isWritable() bool
+}
+
+type threshEndpoint interface {
+	set(min, max int)
+	get() (min, max int, err error)
+	isWritable() bool
 }
 
 type fnlockScript struct {
@@ -76,11 +89,49 @@ type fnlockDriver struct {
 	path string
 }
 
+type driver interface {
+	checkWritable() bool
+}
+
+type wmiDriver interface {
+	write(min, max int) error
+	get() (min, max int, err error)
+}
+
+type threshDriver struct {
+	wmiDriver
+}
+
+type threshDriverSingle struct {
+	path string
+}
+
+type threshDriverMinMax struct {
+	pathMin string
+	pathMax string
+}
+
+type threshScript struct {
+	getCmd *exec.Cmd
+	setCmd *exec.Cmd
+	offCmd *exec.Cmd
+}
+
 func init() {
+	sudo := "/usr/bin/sudo"
 	fndrv := fnlockDriver{path: fnlockDriverEndpoint}
 	fnlockEndpoints = append(fnlockEndpoints, fndrv)
-	fnscr := fnlockScript{toggleCmd: exec.Command("/usr/bin/sudo", "-n", "fnlock", "toggle"), getCmd: exec.Command("/usr/bin/sudo", "-n", "fnlock", "status")}
+	fnscr := fnlockScript{toggleCmd: exec.Command(sudo, "-n", "fnlock", "toggle"), getCmd: exec.Command(sudo, "-n", "fnlock", "status")}
 	fnlockEndpoints = append(fnlockEndpoints, fnscr)
+
+	cmdLine := []string{sudo, "-n", "fnlock"}
+	batpro := threshScript{
+		getCmd: exec.Command(sudo, append(cmdLine, "status")...),
+		setCmd: exec.Command(sudo, append(cmdLine, "custom")...),
+		offCmd: exec.Command(sudo, append(cmdLine, "off")...),
+	}
+
+	threshEndpoints = append(threshEndpoints, threshDriver3, threshDriver2, batpro)
 }
 
 func logInit(
@@ -116,7 +167,11 @@ func main() {
 
 	if noSaveValues {
 		saveValues = false
+	} else {
+		cfg.threshPers = threshDriver{threshDriverSingle{path: saveValuesPath}}
 	}
+
+	cfg.wait = waitForDriver
 
 	switch {
 	case *verbose:
@@ -136,27 +191,26 @@ func main() {
 			continue
 		}
 		cfg.fnlock = fnlck
-		_, ok := fnlck.(fnlockScript)
-		if ok {
-			logInfo.Println("Found fnlock script, will use it")
-			break
-		}
-		fl, ok := fnlck.(fnlockDriver)
-		if fl.checkWritable() {
-			logInfo.Println("Found writable fnlock driver interface, will use it")
+		if fnlck.isWritable() {
+			logInfo.Println("Found writable fnlock endpoint, will use it")
 			break
 		}
 	}
 
-	driverGet, driverSet = checkWmi()
-	if driverSet {
-		logInfo.Println("will use driver interface")
-		scriptBatpro = false
-	} else {
-		logInfo.Println("no full functionality with driver interface, will try scripts")
-		scriptBatpro = checkBatpro()
+	// need to find working threshold interface (if any)
+	for _, thresh := range threshEndpoints {
+		_, _, err := thresh.get()
+		if err != nil {
+			continue
+		}
+		cfg.thresh = thresh
+		if thresh.isWritable() {
+			logInfo.Println("Found writable battery thresholds endpoint, will use it")
+			break
+		}
 	}
-	if scriptBatpro || driverGet || cfg.fnlock != nil {
+
+	if cfg.thresh != nil || cfg.fnlock != nil {
 		systray.Run(onReady, onExit)
 	} else {
 		logError.Println("Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions")
@@ -176,13 +230,13 @@ func onReady() {
 	mFnlock := systray.AddMenuItem("", "")
 	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the applet")
-	if !scriptBatpro && !driverGet {
+	if cfg.thresh == nil {
 		mStatus.Hide()
 		logTrace.Println("no access to BP information, not showing it")
 	} else {
 		mStatus.SetTitle(getStatus())
 	}
-	if !scriptBatpro && !driverSet {
+	if !cfg.thresh.isWritable() {
 		mOff.Hide()
 		mTravel.Hide()
 		mOffice.Hide()
@@ -204,7 +258,7 @@ func onReady() {
 				mStatus.SetTitle(getStatus())
 			case <-mOff.ClickedCh:
 				logTrace.Println("Got a click on BP OFF")
-				setBatproOff()
+				setThresholds(0, 100)
 				mStatus.SetTitle(getStatus())
 			case <-mTravel.ClickedCh:
 				logTrace.Println("Got a click on BP TRAVEL")
@@ -291,6 +345,22 @@ func (drv fnlockDriver) toggle() {
 	return
 }
 
+func (s threshScript) isWritable() bool {
+	return true
+}
+
+func (d threshDriver) isWritable() bool {
+	return d.checkWritable()
+}
+
+func (d fnlockDriver) isWritable() bool {
+	return d.checkWritable()
+}
+
+func (s fnlockScript) isWritable() bool {
+	return true
+}
+
 func (scr fnlockScript) get() (bool, error) {
 	cmd := scr.getCmd
 	var out bytes.Buffer
@@ -313,107 +383,114 @@ func (scr fnlockScript) toggle() {
 	}
 }
 
-func (scr fnlockScript) check() bool {
-	ok := checkSudo()
-	if !ok {
-		return false
-	}
-	logTrace.Println("Checking to see if fnlock script is available")
-	if _, err := scr.get(); err != nil {
-		logTrace.Println("fnlock script not accessible")
-		return false
-	}
-	logInfo.Println("Found fnlock script")
-	return true
-}
-
-func checkBatpro() bool {
-	ok := checkSudo()
-	if !ok {
-		return false
-	}
-	logTrace.Println("Checking to see if batpro script is available")
-	cmd := exec.Command("/usr/bin/sudo", "-n", "batpro")
-	if err := cmd.Run(); err != nil {
-		logTrace.Println("batpro script not accessible")
-		return false
-	}
-	logInfo.Println("Found batpro script")
-	return true
-}
-
-func checkWmi() (bool, bool) {
-	logTrace.Println("Checking to see if Huawei-WMI driver interface is accessible")
-	val, err := ioutil.ReadFile("/sys/devices/platform/huawei-wmi/fn_lock_state")
+func (drv threshDriverSingle) get() (min, max int, err error) {
+	var values [2]string
+	val, err := ioutil.ReadFile(drv.path)
 	if err != nil {
-		logInfo.Println("could not read fn_lock_state, driver interface doesn't seem to be accessible")
+		logError.Println("Failed to get thresholds from driver interface")
 		logTrace.Println(err)
-		return false, false
 	}
-	logInfo.Println("driver interface is readable")
-	_, err = ioutil.ReadFile("/sys/devices/platform/huawei-wmi/charge_thresholds")
+
+	valuesReceived := strings.Split(strings.TrimSpace(string(val)), " ")
+	logTrace.Println("got values from interface:", valuesReceived)
+	if len(valuesReceived) != 2 {
+		logError.Println("Can not make sence of driver interface value", val)
+		return
+	} else {
+		for i := 0; i < 2; i++ {
+			values[i] = valuesReceived[i]
+		}
+		min, max, err = valuesAtoi(values[0], values[1])
+		return
+	}
+}
+
+func valuesAtoi(mins, maxs string) (min, max int, err error) {
+	min, err = strconv.Atoi(mins)
+	if err != nil {
+		logTrace.Println(err)
+	}
+	max, err = strconv.Atoi(maxs)
+	if err != nil {
+		logTrace.Println(err)
+	}
+	logTrace.Printf("interpreted values: min %d%%, max %d%%\n", min, max)
+	return
+}
+
+func (drv threshDriverMinMax) writeDo(min, max int) error {
+	if err := ioutil.WriteFile(drv.pathMin, []byte(strconv.Itoa(min)), 0664); err != nil {
+		logError.Println("Failed to set min threshold")
+		return err
+	}
+	if err := ioutil.WriteFile(drv.pathMax, []byte(strconv.Itoa(max)), 0664); err != nil {
+		logError.Println("Failed to set max threshold")
+		return err
+	}
+	return nil
+}
+
+func (drv threshDriverMinMax) write(min, max int) error {
+	err := drv.writeDo(0, 100)
+	err = drv.writeDo(min, max)
+	return err
+}
+
+func (drv threshDriverMinMax) get() (min, max int, err error) {
+	var values [2]string
+	val, err := ioutil.ReadFile(drv.pathMin)
+	if err != nil {
+		logError.Println("Failed to get min threshold from driver interface")
+		logTrace.Println(err)
+		return
+	}
+	values[0] = string(val)
+	val, err = ioutil.ReadFile(drv.pathMax)
+	if err != nil {
+		logError.Println("Failed to get max threshold from driver interface")
+		logTrace.Println(err)
+		return
+	}
+	values[1] = string(val)
+	for i := 0; i < 2; i++ {
+		values[i] = strings.TrimSuffix(values[i], "\n")
+	}
+
+	min, max, err = valuesAtoi(values[0], values[1])
+	return
+
+}
+
+func (drv threshDriverSingle) write(min, max int) error {
+	values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
+	err := ioutil.WriteFile(drv.path, values, 0664)
+	if err != nil {
+		logError.Println("Failed to set thresholds")
+	}
+	return err
+}
+
+func (drv threshDriver) checkWritable() bool {
+	min, max, err := drv.get()
+	err = drv.write(min, max)
 	if err == nil {
-		logInfo.Println("battery thresholds accessible in /sys/devices/platform")
-		driverThresholdsPlatform = true
-	} else {
-		logInfo.Println("no battery thresholds in /sys/devices/platform, will use kernel interface BAT0")
+		return true
 	}
-	err = ioutil.WriteFile("/sys/devices/platform/huawei-wmi/fn_lock_state", val, 0664)
-	if err != nil {
-		logTrace.Println(err)
-		logWarning.Println("Driver interface is readable but not writeable.")
-		return true, false
-	}
-	logInfo.Println("successful write to driver interface")
-	return true, true
+	return false
 }
 
-func setThresholds(min int, max int) {
-	switch {
-	case driverSet:
-		logTrace.Println("setting thresholds using driver interface...")
-		setDriverThresholds(0, 100)
-		setDriverThresholds(min, max)
-	case scriptBatpro:
-		cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "custom", strconv.Itoa(min), strconv.Itoa(max))
-		if err := cmd.Run(); err != nil {
-			logError.Println("Failed to set thresholds")
-		}
-	default:
-		logWarning.Println("Something unexpected happened, there's a bug somewhere")
+func (drv threshDriver) set(min, max int) {
+	if err := drv.write(min, max); err != nil {
+		return
 	}
-	if saveValues {
-		values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
-		logTrace.Println("Saving values for persistence...")
-		saveValue("charge_thresholds", values)
-	}
-}
-
-func setDriverThresholds(min, max int) {
-	if driverThresholdsPlatform {
-		values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
-		if err := ioutil.WriteFile("/sys/devices/platform/huawei-wmi/charge_thresholds", values, 0664); err != nil {
-			logError.Println("Failed to set thresholds")
-			return
-		}
-	} else {
-		if err := ioutil.WriteFile("/sys/class/power_supply/BAT0/charge_control_start_threshold", []byte(strconv.Itoa(min)), 0664); err != nil {
-			logError.Println("Failed to set min threshold")
-			return
-		}
-		if err := ioutil.WriteFile("/sys/class/power_supply/BAT0/charge_control_end_threshold", []byte(strconv.Itoa(max)), 0664); err != nil {
-			logError.Println("Failed to set max threshold")
-			return
-		}
-	}
-	if waitForDriver {
+	if cfg.wait {
 		logTrace.Println("thresholds pushed to driver, will wait for them to be set")
 		// driver takes some time to set values due to ACPI bug
 		for i := 1; i < 5; i++ {
 			time.Sleep(900 * time.Millisecond)
 			logTrace.Println("checking thresholds, attempt", i)
-			newMin, newMax, ok := getDriverThresholds()
-			if min == newMin && max == newMax && ok {
+			newMin, newMax, err := drv.get()
+			if min == newMin && max == newMax && err == nil {
 				logTrace.Println("thresholds set as expected")
 				break
 			}
@@ -423,61 +500,55 @@ func setDriverThresholds(min, max int) {
 	}
 }
 
-func setBatproOff() {
-	switch {
-	case driverSet:
-		setDriverThresholds(0, 100)
-	case scriptBatpro:
-		cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "off")
-		if err := cmd.Run(); err != nil {
-			logError.Println("Failed to turn off battery protection")
-		}
-	default:
-		logWarning.Println("Something unexpected happened, there's a bug somewhere")
+func (scr threshScript) get() (min, max int, err error) {
+	cmd := scr.getCmd
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err = cmd.Run()
+	if err != nil {
+		logError.Println("Failed to get battery protection status from script")
+		return
+	}
+	state, min, max := parseStatus(out.String())
+	if state == "on" {
+		min = 0
+		max = 100
+	}
+	return
+}
+
+func (scr threshScript) set(min, max int) {
+	var cmd *exec.Cmd
+	if min == 0 && max == 100 {
+		cmd = scr.offCmd
+	} else {
+		cmd = scr.setCmd
+		cmd.Args = append(cmd.Args, strconv.Itoa(min), strconv.Itoa(max))
+	}
+	if err := cmd.Run(); err != nil {
+		logError.Println("Failed to set thresholds")
+	}
+}
+
+func setThresholds(min int, max int) {
+	cfg.thresh.set(min, max)
+	if cfg.threshPers != nil {
+		logTrace.Println("Saving values for persistence...")
+		cfg.threshPers.set(min, max)
 	}
 }
 
 func getStatus() string {
-	var (
-		state, r string
-		min, max int
-	)
-	switch {
-	case driverGet:
-		var ok bool
-		min, max, ok = getDriverThresholds()
-		if !ok {
-			state = "unknown"
-		} else {
-			switch {
-			case min == 0 && max <= 100:
-				state = "off"
-			case 0 < min && min < 100 && 0 < max && max <= 100:
-				state = "on"
-			default:
-				logError.Printf("Can't make sence of driver BP values %d-%d", min, max)
-			}
-		}
-	case scriptBatpro:
-		cmd := exec.Command("/usr/bin/sudo", "-n", "batpro", "status")
-		var out bytes.Buffer
-		cmd.Stdout = &out
-		err := cmd.Run()
-		if err != nil {
-			logError.Println("Failed to get battery protection status from script")
-			return "BP status unavailable"
-		}
-		state, min, max = parseStatus(out.String())
-	default:
-		logWarning.Println("Something unexpected happened, there's a bug somewhere")
-	}
-	switch state {
-	case "off":
-		r = "Battery protection OFF"
-	case "on":
-		if min != 0 && min <= 100 && max != 0 && max <= 100 {
+	var r string
+	min, max, err := cfg.thresh.get()
+	if err != nil {
+		r = "ERROR: can not get BP status!"
+	} else {
+		if min >= 0 && min <= 100 && max != 0 && max <= 100 && min <= max {
 			r = "Battery protection mode "
 			switch {
+			case min == 0 && max == 100:
+				r = "Battery protection OFF"
 			case min == 40 && max == 70:
 				r = r + "HOME"
 			case min == 70 && max == 90:
@@ -491,8 +562,6 @@ func getStatus() string {
 			logWarning.Printf("BP thresholds don't make sense: min %d%%, max %d%%\n", min, max)
 			r = "ON, but thresholds make no sense."
 		}
-	default:
-		r = "ERROR: can not get BP status!"
 	}
 	return r
 }
@@ -521,61 +590,6 @@ func parseOnOffStatus(s string) string {
 		}
 	}
 	return state
-}
-
-func getDriverThresholds() (min, max int, ok bool) {
-	logTrace.Println("getting thresholds from the driver")
-	var values [2]string
-	ok = true
-	if driverThresholdsPlatform {
-		val, err := ioutil.ReadFile("/sys/devices/platform/huawei-wmi/charge_thresholds")
-		if err != nil {
-			logError.Println("Failed to get thresholds from driver interface")
-			logTrace.Println(err)
-		}
-
-		valuesReceived := strings.Split(strings.TrimSpace(string(val)), " ")
-		logTrace.Println("got values from interface:", valuesReceived)
-		if len(valuesReceived) != 2 {
-			logError.Println("Can not make sence of driver interface value", val)
-			ok = false
-			return
-		} else {
-			for i := 0; i < 2; i++ {
-				values[i] = valuesReceived[i]
-			}
-		}
-	} else {
-		val, err := ioutil.ReadFile("/sys/class/power_supply/BAT0/charge_control_start_threshold")
-		if err != nil {
-			logError.Println("Failed to get min threshold from driver interface")
-			logTrace.Println(err)
-		}
-		values[0] = string(val)
-		val, err = ioutil.ReadFile("/sys/class/power_supply/BAT0/charge_control_end_threshold")
-		if err != nil {
-			logError.Println("Failed to get max threshold from driver interface")
-			logTrace.Println(err)
-		}
-		values[1] = string(val)
-		for i := 0; i < 2; i++ {
-			values[i] = strings.TrimSuffix(values[i], "\n")
-		}
-	}
-
-	min, err := strconv.Atoi(values[0])
-	if err != nil {
-		logTrace.Println(err)
-		ok = false
-	}
-	max, err = strconv.Atoi(values[1])
-	if err != nil {
-		logTrace.Println(err)
-		ok = false
-	}
-	logTrace.Printf("interpreted values: min %d%%, max %d%%\n", min, max)
-
-	return
 }
 
 func parseStatus(s string) (string, int, int) {
@@ -630,39 +644,4 @@ func getIcon(pth, dflt string) []byte {
 		logInfo.Println("Successfully loaded custom icon from", pth)
 	}
 	return b
-}
-
-func checkSudo() bool {
-	logTrace.Println("checking if sudo is available")
-	cmd := exec.Command("/bin/sh", "-c", "command -v sudo")
-	if err := cmd.Run(); err != nil {
-		logInfo.Println(err)
-		logWarning.Println("sudo not available")
-		return false
-	}
-	return true
-}
-
-func saveValue(file string, value []byte) {
-	filePath := saveValuesPath + file
-	f, err := os.Create(filePath)
-	if err != nil {
-		logError.Println(err)
-		logWarning.Printf("Could not open file %s for writing.\n", filePath)
-		return
-	}
-	logTrace.Printf("Opened file %s.\n", filePath)
-	defer f.Close()
-
-	if _, err = f.Write(value); err != nil {
-		logError.Println(err)
-		logWarning.Printf("Failed to write to file %s.\n", filePath)
-		return
-	}
-	logTrace.Printf("Successfully wrote to %s.", filePath)
-
-	if err := f.Sync(); err != nil {
-		logError.Println(err)
-		logWarning.Printf("Failed to sync file %s\n", filePath)
-	}
 }
