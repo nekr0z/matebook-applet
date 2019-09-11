@@ -40,25 +40,21 @@ const (
 )
 
 var (
-	logTrace                 *log.Logger
-	logInfo                  *log.Logger
-	logWarning               *log.Logger
-	logError                 *log.Logger
-	scriptBatpro             bool
-	driverGet                bool
-	driverSet                bool
-	driverThresholdsPlatform bool // pre-3.3 driver uses /sys/devices/platform/huawei-wmi/ to store thresholds
-	waitForDriver            bool
-	version                  string = "custom-build"
-	iconPath                 string
-	saveValues               bool
-	noSaveValues             bool
-	saveValuesPath           string = "/etc/default/huawei-wmi/"
-	fnlockEndpoints                 = []fnlockEndpoint{}
-	threshEndpoints                 = []threshEndpoint{}
-	threshDriver2                   = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
-	threshDriver3                   = threshDriver{threshDriverMinMax{pathMin: "/sys/class/power_supply/BAT0/charge_control_start_threshold", pathMax: "/sys/class/power_supply/BAT0/charge_control_end_threshold"}}
-	cfg                      config
+	logTrace        *log.Logger
+	logInfo         *log.Logger
+	logWarning      *log.Logger
+	logError        *log.Logger
+	waitForDriver   bool
+	version         string = "custom-build"
+	iconPath        string
+	saveValues      bool
+	noSaveValues    bool
+	saveValuesPath  string = "/etc/default/huawei-wmi/"
+	fnlockEndpoints        = []fnlockEndpoint{}
+	threshEndpoints        = []threshEndpoint{}
+	threshDriver2          = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
+	threshDriver3          = threshDriver{threshDriverMinMax{pathMin: "/sys/class/power_supply/BAT0/charge_control_start_threshold", pathMax: "/sys/class/power_supply/BAT0/charge_control_end_threshold"}}
+	cfg             config
 )
 
 type config struct {
@@ -87,10 +83,6 @@ type fnlockScript struct {
 
 type fnlockDriver struct {
 	path string
-}
-
-type driver interface {
-	checkWritable() bool
 }
 
 type wmiDriver interface {
@@ -342,7 +334,6 @@ func (drv fnlockDriver) toggle() {
 		return
 	}
 	logTrace.Println("successful write to driver interface")
-	return
 }
 
 func (s threshScript) isWritable() bool {
@@ -432,6 +423,9 @@ func (drv threshDriverMinMax) writeDo(min, max int) error {
 
 func (drv threshDriverMinMax) write(min, max int) error {
 	err := drv.writeDo(0, 100)
+	if err != nil {
+		return err
+	}
 	err = drv.writeDo(min, max)
 	return err
 }
@@ -472,11 +466,11 @@ func (drv threshDriverSingle) write(min, max int) error {
 
 func (drv threshDriver) checkWritable() bool {
 	min, max, err := drv.get()
-	err = drv.write(min, max)
-	if err == nil {
-		return true
+	if err != nil {
+		return false
 	}
-	return false
+	err = drv.write(min, max)
+	return (err == nil)
 }
 
 func (drv threshDriver) set(min, max int) {
@@ -567,7 +561,7 @@ func getStatus() string {
 }
 
 func getFnlockStatus() string {
-	r := "ERROR"
+	var r string
 	state, err := cfg.fnlock.get()
 	if state {
 		r = "Fn-Lock ON"
