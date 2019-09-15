@@ -419,11 +419,11 @@ func valuesAtoi(mins, maxs string) (min, max int, err error) {
 
 func (drv threshDriverMinMax) writeDo(min, max int) error {
 	if err := ioutil.WriteFile(drv.pathMin, []byte(strconv.Itoa(min)), 0664); err != nil {
-		logWarn.Println("Failed to set min threshold")
+		logWarning.Println("Failed to set min threshold")
 		return err
 	}
 	if err := ioutil.WriteFile(drv.pathMax, []byte(strconv.Itoa(max)), 0664); err != nil {
-		logWarn.Println("Failed to set max threshold")
+		logWarning.Println("Failed to set max threshold")
 		return err
 	}
 	return nil
@@ -467,7 +467,7 @@ func (drv threshDriverSingle) write(min, max int) error {
 	values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
 	err := ioutil.WriteFile(drv.path, values, 0664)
 	if err != nil {
-		logWarn.Println("Failed to set thresholds")
+		logWarning.Println("Failed to set thresholds")
 	}
 	return err
 }
