@@ -366,7 +366,7 @@ func (scr fnlockScript) get() (bool, error) {
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
-		logError.Println("Failed to get fnlock status from script")
+		logInfo.Println("Failed to get fnlock status from script")
 	}
 	state := parseOnOffStatus(out.String())
 	if state == "on" {
@@ -386,7 +386,7 @@ func (drv threshDriverSingle) get() (min, max int, err error) {
 	var values [2]string
 	val, err := ioutil.ReadFile(drv.path)
 	if err != nil {
-		logError.Println("Failed to get thresholds from driver interface")
+		logInfo.Println("Failed to get thresholds from driver interface")
 		logTrace.Println(err)
 	}
 
@@ -419,11 +419,11 @@ func valuesAtoi(mins, maxs string) (min, max int, err error) {
 
 func (drv threshDriverMinMax) writeDo(min, max int) error {
 	if err := ioutil.WriteFile(drv.pathMin, []byte(strconv.Itoa(min)), 0664); err != nil {
-		logError.Println("Failed to set min threshold")
+		logWarn.Println("Failed to set min threshold")
 		return err
 	}
 	if err := ioutil.WriteFile(drv.pathMax, []byte(strconv.Itoa(max)), 0664); err != nil {
-		logError.Println("Failed to set max threshold")
+		logWarn.Println("Failed to set max threshold")
 		return err
 	}
 	return nil
@@ -442,14 +442,14 @@ func (drv threshDriverMinMax) get() (min, max int, err error) {
 	var values [2]string
 	val, err := ioutil.ReadFile(drv.pathMin)
 	if err != nil {
-		logError.Println("Failed to get min threshold from driver interface")
+		logInfo.Println("Failed to get min threshold from driver interface")
 		logTrace.Println(err)
 		return
 	}
 	values[0] = string(val)
 	val, err = ioutil.ReadFile(drv.pathMax)
 	if err != nil {
-		logError.Println("Failed to get max threshold from driver interface")
+		logInfo.Println("Failed to get max threshold from driver interface")
 		logTrace.Println(err)
 		return
 	}
@@ -467,7 +467,7 @@ func (drv threshDriverSingle) write(min, max int) error {
 	values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
 	err := ioutil.WriteFile(drv.path, values, 0664)
 	if err != nil {
-		logError.Println("Failed to set thresholds")
+		logWarn.Println("Failed to set thresholds")
 	}
 	return err
 }
@@ -508,7 +508,7 @@ func (scr threshScript) get() (min, max int, err error) {
 	cmd.Stdout = &out
 	err = cmd.Run()
 	if err != nil {
-		logError.Println("Failed to get battery protection status from script")
+		logInfo.Println("Failed to get battery protection status from script")
 		return
 	}
 	state, min, max := parseStatus(out.String())
@@ -528,7 +528,7 @@ func (scr threshScript) set(min, max int) {
 		cmd.Args = append(cmd.Args, strconv.Itoa(min), strconv.Itoa(max))
 	}
 	if err := cmd.Run(); err != nil {
-		logError.Println("Failed to set thresholds")
+		logError.Println("Failed to set thresholds through script")
 	}
 }
 
