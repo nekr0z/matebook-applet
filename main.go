@@ -393,7 +393,7 @@ func (drv threshDriverSingle) get() (min, max int, err error) {
 	valuesReceived := strings.Split(strings.TrimSpace(string(val)), " ")
 	logTrace.Println("got values from interface:", valuesReceived)
 	if len(valuesReceived) != 2 {
-		logError.Println("Can not make sence of driver interface value", val)
+		logInfo.Println("Can not make sence of driver interface value", val)
 		return
 	} else {
 		for i := 0; i < 2; i++ {
