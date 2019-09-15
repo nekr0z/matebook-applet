@@ -37,6 +37,9 @@ import (
 const (
 	defaultIcon          = "/matebook-applet.png"
 	fnlockDriverEndpoint = "/sys/devices/platform/huawei-wmi/fn_lock_state"
+	threshKernelPath     = "/sys/class/power_supply/BAT"
+	threshKernelMin      = "/charge_control_start_threshold"
+	threshKernelMax      = "/charge_control_end_threshold"
 )
 
 var (
@@ -52,8 +55,8 @@ var (
 	saveValuesPath  string = "/etc/default/huawei-wmi/"
 	fnlockEndpoints        = []fnlockEndpoint{}
 	threshEndpoints        = []threshEndpoint{}
-	threshDriver2          = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
-	threshDriver3          = threshDriver{threshDriverMinMax{pathMin: "/sys/class/power_supply/BAT0/charge_control_start_threshold", pathMax: "/sys/class/power_supply/BAT0/charge_control_end_threshold"}}
+	threshDriver1          = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
+	threshDriver2          = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
 	cfg             config
 )
 
@@ -123,7 +126,12 @@ func init() {
 		offCmd: exec.Command(sudo, append(cmdLine, "off")...),
 	}
 
-	threshEndpoints = append(threshEndpoints, threshDriver3, threshDriver2, batpro)
+	for i := 0; i < 10; i++ {
+		min := threshKernelPath + strconv.Itoa(i) + threshKernelMin
+		max := threshKernelPath + strconv.Itoa(i) + threshKernelMax
+		threshEndpoints = append(threshEndpoints, threshDriver{threshDriverMinMax{pathMin: min, pathMax: max}})
+	}
+	threshEndpoints = append(threshEndpoints, threshDriver2, threshDriver1, batpro)
 }
 
 func logInit(
