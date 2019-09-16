@@ -286,6 +286,11 @@ func onReady() {
 }
 
 func (drv fnlockDriver) get() (bool, error) {
+	if _, err := os.Stat(drv.path); err != nil {
+		logTrace.Printf("Couldn't access %q.", drv.path)
+		return false, err
+	}
+
 	val, err := ioutil.ReadFile(drv.path)
 	if err != nil {
 		logError.Println("Could not read Fn-Lock state from driver interface")
@@ -294,8 +299,10 @@ func (drv fnlockDriver) get() (bool, error) {
 	value := strings.TrimSpace(string(val))
 	switch value {
 	case "0":
+		logTrace.Println("Fn-lock is OFF")
 		return false, err
 	case "1":
+		logTrace.Println("Fn-lock is ON")
 		return true, err
 	default:
 		logWarning.Println("Fn-lock state reported by driver doesn't make sense")
@@ -318,7 +325,7 @@ func (drv fnlockDriver) checkWritable() bool {
 	if err == nil {
 		err = ioutil.WriteFile(drv.path, btobb(val), 0664)
 		if err == nil {
-			logInfo.Println("successful write to driver interface")
+			logTrace.Println("successful write to driver interface")
 			return true
 		}
 	}
@@ -349,10 +356,12 @@ func (s threshScript) isWritable() bool {
 }
 
 func (d threshDriver) isWritable() bool {
+	logTrace.Println("Checking if the threshold endpoint is writable...")
 	return d.checkWritable()
 }
 
 func (d fnlockDriver) isWritable() bool {
+	logTrace.Println("Checking if the fnlock endpoint is writable...")
 	return d.checkWritable()
 }
 
@@ -383,6 +392,11 @@ func (scr fnlockScript) toggle() {
 }
 
 func (drv threshDriverSingle) get() (min, max int, err error) {
+	if _, err = os.Stat(drv.path); err != nil {
+		logTrace.Printf("Couldn't access %q.", drv.path)
+		return
+	}
+
 	var values [2]string
 	val, err := ioutil.ReadFile(drv.path)
 	if err != nil {
@@ -435,10 +449,18 @@ func (drv threshDriverMinMax) write(min, max int) error {
 		return err
 	}
 	err = drv.writeDo(min, max)
+	if err == nil {
+		logTrace.Println("successful write to driver interface")
+	}
 	return err
 }
 
 func (drv threshDriverMinMax) get() (min, max int, err error) {
+	if _, err = os.Stat(drv.pathMin); err != nil {
+		logTrace.Printf("Couldn't access %q.", drv.pathMin)
+		return
+	}
+
 	var values [2]string
 	val, err := ioutil.ReadFile(drv.pathMin)
 	if err != nil {
@@ -468,6 +490,8 @@ func (drv threshDriverSingle) write(min, max int) error {
 	err := ioutil.WriteFile(drv.path, values, 0664)
 	if err != nil {
 		logError.Println("Failed to set thresholds")
+	} else {
+		logTrace.Println("successful write to driver interface")
 	}
 	return err
 }
