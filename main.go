@@ -119,7 +119,7 @@ func init() {
 	fnscr := fnlockScript{toggleCmd: exec.Command(sudo, "-n", "fnlock", "toggle"), getCmd: exec.Command(sudo, "-n", "fnlock", "status")}
 	fnlockEndpoints = append(fnlockEndpoints, fnscr)
 
-	cmdLine := []string{sudo, "-n", "fnlock"}
+	cmdLine := []string{sudo, "-n", "batpro"}
 	batpro := threshScript{
 		getCmd: exec.Command(sudo, append(cmdLine, "status")...),
 		setCmd: exec.Command(sudo, append(cmdLine, "custom")...),
