@@ -4,6 +4,7 @@ matebook-applet \- system tray applet for Huawei MateBook
 .SH SYNOPSIS
 .B matebook-applet
 [\fB\-v\fR|\fB\-vv\fR]
+[\fB\-r\fR]
 [\fB\-s\fR|\fB\-n\fR]
 [\fB\-wait\fR]
 [\fB\-icon\fR \fIpath\fR]
@@ -15,6 +16,8 @@ provides a simple GUI to control some of the functionality available on Huawei M
 Show additional information in \fIstdout\fR while running (verbose mode).
 .IP \fB-vv
 Show even more information in \fIstdout\fR, useful to debug if you need to ask for help.
+.IP \fB-r
+Attempt to use \fIbatpro\fR and \fIfnlock\fR scripts if no writable driver settings are found. This is currently the default behaviour, which is expected to be changed in version 3.0. 
 .IP \fB-s
 \fBDEPRECATED\fR Every time new battery thresholds are set, save them to \fI/etc/default/huawei-wmi/\fR so that they can be used to automatically reinstate desired thresholds after hibernate or reboot (since version 2.0 this is the default behaviour).
 .IP \fB-n

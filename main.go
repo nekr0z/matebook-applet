@@ -65,6 +65,7 @@ type config struct {
 	thresh     threshEndpoint
 	threshPers threshEndpoint
 	wait       bool
+	useScripts bool
 }
 
 type fnlockEndpoint interface {
@@ -113,25 +114,29 @@ type threshScript struct {
 }
 
 func init() {
-	sudo := "/usr/bin/sudo"
 	fndrv := fnlockDriver{path: fnlockDriverEndpoint}
 	fnlockEndpoints = append(fnlockEndpoints, fndrv)
-	fnscr := fnlockScript{toggleCmd: exec.Command(sudo, "-n", "fnlock", "toggle"), getCmd: exec.Command(sudo, "-n", "fnlock", "status")}
-	fnlockEndpoints = append(fnlockEndpoints, fnscr)
-
-	cmdLine := []string{sudo, "-n", "batpro"}
-	batpro := threshScript{
-		getCmd: exec.Command(sudo, append(cmdLine, "status")...),
-		setCmd: exec.Command(sudo, append(cmdLine, "custom")...),
-		offCmd: exec.Command(sudo, append(cmdLine, "off")...),
-	}
 
 	for i := 0; i < 10; i++ {
 		min := threshKernelPath + strconv.Itoa(i) + threshKernelMin
 		max := threshKernelPath + strconv.Itoa(i) + threshKernelMax
 		threshEndpoints = append(threshEndpoints, threshDriver{threshDriverMinMax{pathMin: min, pathMax: max}})
 	}
-	threshEndpoints = append(threshEndpoints, threshDriver2, threshDriver1, batpro)
+	threshEndpoints = append(threshEndpoints, threshDriver2, threshDriver1)
+
+	if cfg.useScripts {
+		sudo := "/usr/bin/sudo"
+		fnscr := fnlockScript{toggleCmd: exec.Command(sudo, "-n", "fnlock", "toggle"), getCmd: exec.Command(sudo, "-n", "fnlock", "status")}
+		fnlockEndpoints = append(fnlockEndpoints, fnscr)
+
+		cmdLine := []string{sudo, "-n", "batpro"}
+		batpro := threshScript{
+			getCmd: exec.Command(sudo, append(cmdLine, "status")...),
+			setCmd: exec.Command(sudo, append(cmdLine, "custom")...),
+			offCmd: exec.Command(sudo, append(cmdLine, "off")...),
+		}
+		threshEndpoints = append(threshEndpoints, batpro)
+	}
 }
 
 func logInit(
@@ -161,8 +166,9 @@ func main() {
 	verboseMore := flag.Bool("vv", false, "be very verbose")
 	flag.StringVar(&iconPath, "icon", "", "path of a custom icon to use")
 	flag.BoolVar(&waitForDriver, "wait", false, "wait for driver to set battery thresholds (obsolete)")
-	flag.BoolVar(&saveValues, "s", true, "save values for persistence (deprecated)")
+	flag.BoolVar(&saveValues, "s", true, "save values for persistence (deprecated)") // TODO: remove in v3
 	flag.BoolVar(&noSaveValues, "n", false, "do not save values")
+	flag.BoolVar(&cfg.useScripts, "r", true, "use fnlock and batpro scripts if all else fails") // TODO: default to false in v3
 	flag.Parse()
 
 	if noSaveValues {
