@@ -165,7 +165,7 @@ func updateRepo(filename string) {
 	if updateLocalRepo(filename) {
 		cmd := exec.Command("rsync", "-v", "-r", "-h", "--del", "~/.aptly/public/", "evgenykuznetsov.org:~/repository/")
 		if err := cmd.Run(); err != nil {
-			fmt.Println("failed to rsync to evgenykuznetsov.org")
+			fmt.Printf("failed to rsync to evgenykuznetsov.org: %s", err)
 		}
 	}
 }
