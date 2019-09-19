@@ -63,8 +63,10 @@ var (
 	}
 	debDeps = []string{
 		"libappindicator3-1",
-		"huawei-wmi",
 		"libc6",
+	}
+	debRecs = []string{
+		"huawei-wmi",
 	}
 )
 
@@ -136,6 +138,9 @@ func buildDeb(ver string) {
 	}
 	for _, dep := range debDeps {
 		args = append(args, "-d", dep)
+	}
+	for _, rec := range debRecs {
+		args = append(args, "--deb-recommends", rec)
 	}
 	for _, file := range distFiles {
 		arg := file.src + "=" + file.dst
