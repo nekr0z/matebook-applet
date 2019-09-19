@@ -43,21 +43,25 @@ const (
 )
 
 var (
-	logTrace        *log.Logger
-	logInfo         *log.Logger
-	logWarning      *log.Logger
-	logError        *log.Logger
-	waitForDriver   bool
-	version         string = "custom-build"
-	iconPath        string
-	saveValues      bool
-	noSaveValues    bool
-	saveValuesPath  string = "/etc/default/huawei-wmi/"
-	fnlockEndpoints        = []fnlockEndpoint{}
-	threshEndpoints        = []threshEndpoint{}
-	threshDriver1          = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
-	threshDriver2          = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
-	config          struct {
+	logTrace            *log.Logger
+	logInfo             *log.Logger
+	logWarning          *log.Logger
+	logError            *log.Logger
+	waitForDriver       bool
+	version             string = "custom-build"
+	iconPath            string
+	saveValues          bool
+	noSaveValues        bool
+	saveValuesPath      string = "/etc/default/huawei-wmi/"
+	fnlockEndpoints            = []fnlockEndpoint{}
+	threshEndpoints            = []threshEndpoint{}
+	threshSaveEndpoints        = []threshDriver{
+		threshDriver{threshDriverSingle{path: (saveValuesPath + "charge_control_thresholds")}},
+		threshDriver{threshDriverSingle{path: (saveValuesPath + "charge_thresholds")}},
+	}
+	threshDriver1 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
+	threshDriver2 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
+	config        struct {
 		fnlock     fnlockEndpoint
 		thresh     threshEndpoint
 		threshPers threshEndpoint
@@ -169,12 +173,6 @@ func main() {
 	flag.BoolVar(&config.useScripts, "r", true, "use fnlock and batpro scripts if all else fails") // TODO: default to false in v3
 	flag.Parse()
 
-	if noSaveValues {
-		saveValues = false
-	} else {
-		config.threshPers = threshDriver{threshDriverSingle{path: saveValuesPath + "charge_thresholds"}}
-	}
-
 	config.wait = waitForDriver
 
 	switch {
@@ -215,6 +213,20 @@ func main() {
 	}
 
 	if config.thresh != nil || config.fnlock != nil {
+		if noSaveValues {
+			saveValues = false
+		} else {
+			logTrace.Println("looking for endpoint to save thresholds to...")
+			for _, ep := range threshSaveEndpoints {
+				_, _, err := ep.get()
+				if err == nil {
+					logInfo.Println("Persistence thresholds values endpoint found.")
+					config.threshPers = ep
+					break
+				}
+			}
+		}
+
 		systray.Run(onReady, onExit)
 	} else {
 		logError.Println("Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions")
