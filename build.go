@@ -135,6 +135,7 @@ func buildDeb(ver string) {
 		"--description", "System tray applet for Huawei MateBook",
 		"--url", "https://github.com/nekr0z/matebook-applet",
 		"--license", "GPL-3",
+		"--deb-priority", "optional",
 	}
 	for _, dep := range debDeps {
 		args = append(args, "-d", dep)
