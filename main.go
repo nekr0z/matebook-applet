@@ -57,16 +57,14 @@ var (
 	threshEndpoints        = []threshEndpoint{}
 	threshDriver1          = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
 	threshDriver2          = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
-	cfg             config
+	config          struct {
+		fnlock     fnlockEndpoint
+		thresh     threshEndpoint
+		threshPers threshEndpoint
+		wait       bool
+		useScripts bool
+	}
 )
-
-type config struct {
-	fnlock     fnlockEndpoint
-	thresh     threshEndpoint
-	threshPers threshEndpoint
-	wait       bool
-	useScripts bool
-}
 
 type fnlockEndpoint interface {
 	toggle()
@@ -124,7 +122,7 @@ func init() {
 		threshEndpoints = append(threshEndpoints, threshDriver{threshDriverMinMax{pathMin: min, pathMax: max}})
 	}
 
-	if cfg.useScripts {
+	if config.useScripts {
 		sudo := "/usr/bin/sudo"
 		fnscr := fnlockScript{toggleCmd: exec.Command(sudo, "-n", "fnlock", "toggle"), getCmd: exec.Command(sudo, "-n", "fnlock", "status")}
 		fnlockEndpoints = append(fnlockEndpoints, fnscr)
@@ -168,16 +166,16 @@ func main() {
 	flag.BoolVar(&waitForDriver, "wait", false, "wait for driver to set battery thresholds (obsolete)")
 	flag.BoolVar(&saveValues, "s", true, "save values for persistence (deprecated)") // TODO: remove in v3
 	flag.BoolVar(&noSaveValues, "n", false, "do not save values")
-	flag.BoolVar(&cfg.useScripts, "r", true, "use fnlock and batpro scripts if all else fails") // TODO: default to false in v3
+	flag.BoolVar(&config.useScripts, "r", true, "use fnlock and batpro scripts if all else fails") // TODO: default to false in v3
 	flag.Parse()
 
 	if noSaveValues {
 		saveValues = false
 	} else {
-		cfg.threshPers = threshDriver{threshDriverSingle{path: saveValuesPath + "charge_thresholds"}}
+		config.threshPers = threshDriver{threshDriverSingle{path: saveValuesPath + "charge_thresholds"}}
 	}
 
-	cfg.wait = waitForDriver
+	config.wait = waitForDriver
 
 	switch {
 	case *verbose:
@@ -196,7 +194,7 @@ func main() {
 		if err != nil {
 			continue
 		}
-		cfg.fnlock = fnlck
+		config.fnlock = fnlck
 		if fnlck.isWritable() {
 			logInfo.Println("Found writable fnlock endpoint, will use it")
 			break
@@ -209,14 +207,14 @@ func main() {
 		if err != nil {
 			continue
 		}
-		cfg.thresh = thresh
+		config.thresh = thresh
 		if thresh.isWritable() {
 			logInfo.Println("Found writable battery thresholds endpoint, will use it")
 			break
 		}
 	}
 
-	if cfg.thresh != nil || cfg.fnlock != nil {
+	if config.thresh != nil || config.fnlock != nil {
 		systray.Run(onReady, onExit)
 	} else {
 		logError.Println("Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions")
@@ -236,20 +234,20 @@ func onReady() {
 	mFnlock := systray.AddMenuItem("", "")
 	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the applet")
-	if cfg.thresh == nil {
+	if config.thresh == nil {
 		mStatus.Hide()
 		logTrace.Println("no access to BP information, not showing it")
 	} else {
 		mStatus.SetTitle(getStatus())
 	}
-	if !cfg.thresh.isWritable() {
+	if !config.thresh.isWritable() {
 		mOff.Hide()
 		mTravel.Hide()
 		mOffice.Hide()
 		mHome.Hide()
 		logTrace.Println("no way to change BP settings, not showing the corresponding GUI")
 	}
-	if cfg.fnlock == nil {
+	if config.fnlock == nil {
 		mFnlock.Hide()
 		logTrace.Println("no access to Fn-Lock setting, not showing its GUI")
 	} else {
@@ -280,7 +278,7 @@ func onReady() {
 				mStatus.SetTitle(getStatus())
 			case <-mFnlock.ClickedCh:
 				logTrace.Println("Got a click on fnlock")
-				cfg.fnlock.toggle()
+				config.fnlock.toggle()
 				mFnlock.SetTitle(getFnlockStatus())
 			case <-mQuit.ClickedCh:
 				logTrace.Println("Got a click on Quit")
@@ -515,7 +513,7 @@ func (drv threshDriver) set(min, max int) {
 	if err := drv.write(min, max); err != nil {
 		return
 	}
-	if cfg.wait {
+	if config.wait {
 		logTrace.Println("thresholds pushed to driver, will wait for them to be set")
 		// driver takes some time to set values due to ACPI bug
 		for i := 1; i < 5; i++ {
@@ -563,16 +561,16 @@ func (scr threshScript) set(min, max int) {
 }
 
 func setThresholds(min int, max int) {
-	cfg.thresh.set(min, max)
-	if cfg.threshPers != nil {
+	config.thresh.set(min, max)
+	if config.threshPers != nil {
 		logTrace.Println("Saving values for persistence...")
-		cfg.threshPers.set(min, max)
+		config.threshPers.set(min, max)
 	}
 }
 
 func getStatus() string {
 	var r string
-	min, max, err := cfg.thresh.get()
+	min, max, err := config.thresh.get()
 	if err != nil {
 		r = "ERROR: can not get BP status!"
 	} else {
@@ -600,7 +598,7 @@ func getStatus() string {
 
 func getFnlockStatus() string {
 	var r string
-	state, err := cfg.fnlock.get()
+	state, err := config.fnlock.get()
 	if state {
 		r = "Fn-Lock ON"
 	} else {
