@@ -117,12 +117,12 @@ func init() {
 	fndrv := fnlockDriver{path: fnlockDriverEndpoint}
 	fnlockEndpoints = append(fnlockEndpoints, fndrv)
 
+	threshEndpoints = append(threshEndpoints, threshDriver2, threshDriver1)
 	for i := 0; i < 10; i++ {
 		min := threshKernelPath + strconv.Itoa(i) + threshKernelMin
 		max := threshKernelPath + strconv.Itoa(i) + threshKernelMax
 		threshEndpoints = append(threshEndpoints, threshDriver{threshDriverMinMax{pathMin: min, pathMax: max}})
 	}
-	threshEndpoints = append(threshEndpoints, threshDriver2, threshDriver1)
 
 	if cfg.useScripts {
 		sudo := "/usr/bin/sudo"
