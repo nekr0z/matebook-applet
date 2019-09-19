@@ -132,7 +132,7 @@ func buildDeb(ver string) {
 		"-m", maintainer,
 		"--vendor", maintainer,
 		"--category", "misc",
-		"--description", "System tray applet for Huawei MateBook",
+		"--description", "System tray applet for Huawei MateBook\nAllows one to control Huawei MateBook features,\nlike Fn-Lock and Battery Protection settings, via GUI.",
 		"--url", "https://github.com/nekr0z/matebook-applet",
 		"--license", "GPL-3",
 		"--deb-priority", "optional",
