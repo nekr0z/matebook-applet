@@ -213,20 +213,6 @@ func main() {
 	}
 
 	if config.thresh != nil || config.fnlock != nil {
-		if noSaveValues {
-			saveValues = false
-		} else {
-			logTrace.Println("looking for endpoint to save thresholds to...")
-			for _, ep := range threshSaveEndpoints {
-				_, _, err := ep.get()
-				if err == nil {
-					logInfo.Println("Persistence thresholds values endpoint found.")
-					config.threshPers = ep
-					break
-				}
-			}
-		}
-
 		systray.Run(onReady, onExit)
 	} else {
 		logError.Println("Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions")
@@ -265,6 +251,20 @@ func onReady() {
 	} else {
 		mFnlock.SetTitle(getFnlockStatus())
 	}
+	if noSaveValues {
+		saveValues = false
+	} else {
+		logTrace.Println("looking for endpoint to save thresholds to...")
+		for _, ep := range threshSaveEndpoints {
+			_, _, err := ep.get()
+			if err == nil {
+				logInfo.Println("Persistence thresholds values endpoint found.")
+				config.threshPers = ep
+				break
+			}
+		}
+	}
+
 	logTrace.Println("Menu is now ready")
 	go func() {
 		for {
