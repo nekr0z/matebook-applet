@@ -153,18 +153,6 @@ func buildDeb(ver string) {
 		log.Fatalln("failed to build .deb")
 	}
 	fmt.Println(".deb package created")
-	args = []string{
-		"--sign=orig",
-		"-k", keyID,
-		"matebook-applet_" + ver + "_amd64.deb",
-	}
-	cmd = exec.Command("debsigs", args...)
-	if err := cmd.Run(); err != nil {
-		fmt.Println(err)
-		fmt.Println("failed to sign .deb package")
-	} else {
-		fmt.Println(".deb signed successfully")
-	}
 }
 
 func buildTar() {
