@@ -1,6 +1,7 @@
 module github.com/nekr0z/matebook-applet
 
 require (
+	github.com/andlabs/ui v0.0.0-20180902183112-867a9e5a498d
 	github.com/getlantern/context v0.0.0-20190109183933-c447772a6520 // indirect
 	github.com/getlantern/errors v0.0.0-20190325191628-abdb3e3e36f7 // indirect
 	github.com/getlantern/golog v0.0.0-20170508214112-cca714f7feb5 // indirect

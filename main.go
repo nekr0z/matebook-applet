@@ -22,6 +22,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/andlabs/ui"
 	"github.com/getlantern/systray"
 	"io"
 	"io/ioutil"
@@ -308,6 +309,25 @@ func onReady() {
 }
 
 func custom() {
+	if err := ui.Main(setupCustom); err != nil {
+		logError.Println("Could not set up window")
+	}
+}
+
+func setupCustom() {
+	mainwin := ui.NewWindow("Custom battery thresholds", 640, 480, false)
+	mainwin.OnClosing(func(*ui.Window) bool {
+		ui.Quit()
+		return true
+	})
+	ui.OnShouldQuit(func() bool {
+		mainwin.Destroy()
+		return true
+	})
+	vbox := ui.NewVerticalBox()
+	vbox.SetPadded(true)
+	mainwin.SetChild(vbox)
+	mainwin.Show()
 }
 
 func (drv fnlockDriver) get() (bool, error) {
