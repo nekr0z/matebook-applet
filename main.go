@@ -228,6 +228,7 @@ func onReady() {
 	mTravel := systray.AddMenuItem("TRAVEL (95%-100%)", "Set battery protection to TRAVEL")
 	mOffice := systray.AddMenuItem("OFFICE (70%-90%)", "Set battery protection to OFFICE")
 	mHome := systray.AddMenuItem("HOME (40%-70%)", "Set battery protection to HOME")
+	mCustom := systray.AddMenuItem("CUSTOM", "Set custom battery protection thresholds")
 	systray.AddSeparator()
 	mFnlock := systray.AddMenuItem("", "")
 	systray.AddSeparator()
@@ -243,6 +244,7 @@ func onReady() {
 		mTravel.Hide()
 		mOffice.Hide()
 		mHome.Hide()
+		mCustom.Hide()
 		logTrace.Println("no way to change BP settings, not showing the corresponding GUI")
 	}
 	if config.fnlock == nil {
@@ -288,6 +290,10 @@ func onReady() {
 				logTrace.Println("Got a click on BP HOME")
 				setThresholds(40, 70)
 				mStatus.SetTitle(getStatus())
+			case <-mCustom.ClickedCh:
+				logTrace.Println("Got a click on BP CUSTOM")
+				custom()
+				mStatus.SetTitle(getStatus())
 			case <-mFnlock.ClickedCh:
 				logTrace.Println("Got a click on fnlock")
 				config.fnlock.toggle()
@@ -299,6 +305,9 @@ func onReady() {
 			}
 		}
 	}()
+}
+
+func custom() {
 }
 
 func (drv fnlockDriver) get() (bool, error) {
