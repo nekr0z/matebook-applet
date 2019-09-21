@@ -69,6 +69,7 @@ var (
 		wait       bool
 		useScripts bool
 	}
+	customWindow *ui.Window
 )
 
 type fnlockEndpoint interface {
@@ -291,10 +292,6 @@ func onReady() {
 				logTrace.Println("Got a click on BP HOME")
 				setThresholds(40, 70)
 				mStatus.SetTitle(getStatus())
-			case <-mCustom.ClickedCh:
-				logTrace.Println("Got a click on BP CUSTOM")
-				custom()
-				mStatus.SetTitle(getStatus())
 			case <-mFnlock.ClickedCh:
 				logTrace.Println("Got a click on fnlock")
 				config.fnlock.toggle()
@@ -306,28 +303,36 @@ func onReady() {
 			}
 		}
 	}()
-}
-
-func custom() {
-	if err := ui.Main(setupCustom); err != nil {
-		logError.Println("Could not set up window")
+	logInfo.Println("Setting up GUI thread...")
+	if err := ui.Main(func() {
+		go func() {
+			for {
+				select {
+				case <-mCustom.ClickedCh:
+					logTrace.Println("Got a click on BP CUSTOM")
+					ui.QueueMain(custom)
+					mStatus.SetTitle(getStatus())
+				}
+			}
+		}()
+	}); err != nil {
+		logError.Println(err)
 	}
 }
 
-func setupCustom() {
-	mainwin := ui.NewWindow("Custom battery thresholds", 640, 480, false)
-	mainwin.OnClosing(func(*ui.Window) bool {
-		ui.Quit()
-		return true
-	})
-	ui.OnShouldQuit(func() bool {
-		mainwin.Destroy()
+func custom() {
+	customWindow := ui.NewWindow("Custom battery thresholds", 640, 480, false)
+	customWindow.OnClosing(func(*ui.Window) bool {
 		return true
 	})
 	vbox := ui.NewVerticalBox()
 	vbox.SetPadded(true)
-	mainwin.SetChild(vbox)
-	mainwin.Show()
+	customWindow.SetChild(vbox)
+	minSlider := ui.NewSlider(0, 100)
+	maxSlider := ui.NewSlider(0, 100)
+	vbox.Append(minSlider, false)
+	vbox.Append(maxSlider, false)
+	customWindow.Show()
 }
 
 func (drv fnlockDriver) get() (bool, error) {
