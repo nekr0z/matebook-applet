@@ -348,7 +348,7 @@ func customThresholds(ch chan struct{}) {
 	if err != nil {
 		logWarning.Println("Failed to get thresholds")
 	}
-	customWindow = ui.NewWindow("Custom battery thresholds", 640, 480, false)
+	customWindow = ui.NewWindow("Custom battery thresholds", 640, 240, false)
 	customWindow.OnClosing(func(*ui.Window) bool {
 		close(ch)
 		return true
@@ -356,6 +356,8 @@ func customThresholds(ch chan struct{}) {
 	customWindow.SetMargined(true)
 	vbox := ui.NewVerticalBox()
 	vbox.SetPadded(true)
+	hbox := ui.NewHorizontalBox()
+	hbox.SetPadded(true)
 	customWindow.SetChild(vbox)
 	minSlider := ui.NewSlider(0, 100)
 	maxSlider := ui.NewSlider(0, 100)
@@ -370,16 +372,19 @@ func customThresholds(ch chan struct{}) {
 		}
 	})
 	vbox.Append(minSlider, false)
+	minLabel := ui.NewLabel("MIN: the battery won't be charged unless it is lower than this level when AC is plugged")
+	vbox.Append(minLabel, false)
 	vbox.Append(maxSlider, false)
-	hbox := ui.NewHorizontalBox()
+	maxLabel := ui.NewLabel("MAX: the battery won't be charged above this level")
+	vbox.Append(maxLabel, false)
 	setButton := ui.NewButton("Set")
 	setButton.OnClicked(func(*ui.Button) {
 		setThresholds(minSlider.Value(), maxSlider.Value())
 		customWindow.Destroy()
 		close(ch)
 	})
-	vbox.Append(setButton, false)
 	vbox.Append(hbox, false)
+	hbox.Append(setButton, true)
 	minSlider.SetValue(min)
 	maxSlider.SetValue(max)
 	customWindow.Show()
