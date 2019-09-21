@@ -97,6 +97,7 @@ PRs are most welcome!
 ## Credits
 This software includes the following software or parts thereof:
 * [getlantern/systray](https://github.com/getlantern/systray)
+* [andlabs/ui](https://github.com/andlabs/ui) Copyright © 2014 Pietro Gagliardi
 * [slurcooL/vfsgen](https://github.com/shurcooL/vfsgen) Copyright © 2015 Dmitri Shuralyov
 * [The Go Programming Language](https://golang.org) Copyright © 2009 The Go Authors
 * [Enkel Icons](https://www.deviantart.com/froyoshark/art/WIP-Enkel-Icon-Pack-for-Mac-498003378) by [FroyoShark](https://www.deviantart.com/froyoshark)
