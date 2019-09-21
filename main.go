@@ -69,7 +69,7 @@ var (
 		wait       bool
 		useScripts bool
 	}
-	customWindow *ui.Window
+	appQuit = make(chan struct{})
 )
 
 type fnlockEndpoint interface {
@@ -296,43 +296,51 @@ func onReady() {
 				logTrace.Println("Got a click on fnlock")
 				config.fnlock.toggle()
 				mFnlock.SetTitle(getFnlockStatus())
-			case <-mQuit.ClickedCh:
-				logTrace.Println("Got a click on Quit")
+			case <-appQuit:
+				logTrace.Println("Shutting down systray applet")
 				systray.Quit()
 				return
 			}
 		}
 	}()
-	logInfo.Println("Setting up GUI thread...")
+	logTrace.Println("Setting up GUI thread...")
 	if err := ui.Main(func() {
 		go func() {
+			customWindow := ui.NewWindow("Custom battery thresholds", 640, 480, false)
+			customWindow.OnClosing(func(*ui.Window) bool {
+				return true
+			})
+			ui.OnShouldQuit(func() bool {
+				customWindow.Destroy()
+				logTrace.Println("ready to quit GUI thread")
+				return true
+			})
+			vbox := ui.NewVerticalBox()
+			vbox.SetPadded(true)
+			customWindow.SetChild(vbox)
+			minSlider := ui.NewSlider(0, 100)
+			maxSlider := ui.NewSlider(0, 100)
+			vbox.Append(minSlider, false)
+			vbox.Append(maxSlider, false)
 			for {
 				select {
 				case <-mCustom.ClickedCh:
 					logTrace.Println("Got a click on BP CUSTOM")
-					ui.QueueMain(custom)
+					ui.QueueMain(func() { customWindow.Show() })
 					mStatus.SetTitle(getStatus())
+				case <-mQuit.ClickedCh:
+					logTrace.Println("Got a click on Quit")
+					ui.Quit()
+					close(appQuit)
+					return
 				}
 			}
 		}()
 	}); err != nil {
 		logError.Println(err)
 	}
-}
-
-func custom() {
-	customWindow := ui.NewWindow("Custom battery thresholds", 640, 480, false)
-	customWindow.OnClosing(func(*ui.Window) bool {
-		return true
-	})
-	vbox := ui.NewVerticalBox()
-	vbox.SetPadded(true)
-	customWindow.SetChild(vbox)
-	minSlider := ui.NewSlider(0, 100)
-	maxSlider := ui.NewSlider(0, 100)
-	vbox.Append(minSlider, false)
-	vbox.Append(maxSlider, false)
-	customWindow.Show()
+	logInfo.Println("Exiting the applet...")
+	os.Exit(0)
 }
 
 func (drv fnlockDriver) get() (bool, error) {
