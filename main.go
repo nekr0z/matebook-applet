@@ -69,7 +69,8 @@ var (
 		wait       bool
 		useScripts bool
 	}
-	appQuit = make(chan struct{})
+	appQuit      = make(chan struct{})
+	customWindow *ui.Window
 )
 
 type fnlockEndpoint interface {
@@ -306,7 +307,7 @@ func onReady() {
 	logTrace.Println("Setting up GUI thread...")
 	if err := ui.Main(func() {
 		go func() {
-			customWindow := ui.NewWindow("Custom battery thresholds", 640, 480, false)
+			customWindow = ui.NewWindow("Custom battery thresholds", 640, 480, false)
 			customWindow.OnClosing(func(*ui.Window) bool {
 				return true
 			})
@@ -315,27 +316,11 @@ func onReady() {
 				logTrace.Println("ready to quit GUI thread")
 				return true
 			})
-			vbox := ui.NewVerticalBox()
-			vbox.SetPadded(true)
-			customWindow.SetChild(vbox)
-			minSlider := ui.NewSlider(0, 100)
-			maxSlider := ui.NewSlider(0, 100)
-			vbox.Append(minSlider, false)
-			vbox.Append(maxSlider, false)
 			for {
 				select {
 				case <-mCustom.ClickedCh:
 					logTrace.Println("Got a click on BP CUSTOM")
-					ui.QueueMain(func() {
-						min, max, err := config.thresh.get()
-						if err != nil {
-							logWarning.Println("Failed to get thresholds")
-						}
-						minSlider.SetValue(min)
-						maxSlider.SetValue(max)
-						customWindow.Show()
-					})
-					mStatus.SetTitle(getStatus())
+					ui.QueueMain(customThresholds)
 				case <-mQuit.ClickedCh:
 					logTrace.Println("Got a click on Quit")
 					ui.Quit()
@@ -349,6 +334,33 @@ func onReady() {
 	}
 	logInfo.Println("Exiting the applet...")
 	os.Exit(0)
+}
+
+func customThresholds() {
+	min, max, err := config.thresh.get()
+	if err != nil {
+		logWarning.Println("Failed to get thresholds")
+	}
+	vbox := ui.NewVerticalBox()
+	vbox.SetPadded(true)
+	customWindow.SetChild(vbox)
+	minSlider := ui.NewSlider(0, 100)
+	maxSlider := ui.NewSlider(0, 100)
+	minSlider.OnChanged(func(*ui.Slider) {
+		if minSlider.Value() > maxSlider.Value() {
+			minSlider.SetValue(maxSlider.Value())
+		}
+	})
+	maxSlider.OnChanged(func(*ui.Slider) {
+		if maxSlider.Value() < minSlider.Value() {
+			maxSlider.SetValue(minSlider.Value())
+		}
+	})
+	vbox.Append(minSlider, false)
+	vbox.Append(maxSlider, false)
+	minSlider.SetValue(min)
+	maxSlider.SetValue(max)
+	customWindow.Show()
 }
 
 func (drv fnlockDriver) get() (bool, error) {
