@@ -306,21 +306,28 @@ func onReady() {
 	}()
 	logTrace.Println("Setting up GUI thread...")
 	if err := ui.Main(func() {
+		ui.OnShouldQuit(func() bool {
+			customWindow.Destroy()
+			logTrace.Println("ready to quit GUI thread")
+			return true
+		})
 		go func() {
-			customWindow = ui.NewWindow("Custom battery thresholds", 640, 480, false)
-			customWindow.OnClosing(func(*ui.Window) bool {
-				return true
-			})
-			ui.OnShouldQuit(func() bool {
-				customWindow.Destroy()
-				logTrace.Println("ready to quit GUI thread")
-				return true
-			})
 			for {
 				select {
 				case <-mCustom.ClickedCh:
 					logTrace.Println("Got a click on BP CUSTOM")
-					ui.QueueMain(customThresholds)
+					ch := make(chan struct{})
+					ui.QueueMain(func() { customThresholds(ch) })
+					<-ch
+					mStatus.SetTitle(getStatus())
+				case <-appQuit:
+					return
+				}
+			}
+		}()
+		go func() {
+			for {
+				select {
 				case <-mQuit.ClickedCh:
 					logTrace.Println("Got a click on Quit")
 					ui.Quit()
@@ -336,11 +343,17 @@ func onReady() {
 	os.Exit(0)
 }
 
-func customThresholds() {
+func customThresholds(ch chan struct{}) {
 	min, max, err := config.thresh.get()
 	if err != nil {
 		logWarning.Println("Failed to get thresholds")
 	}
+	customWindow = ui.NewWindow("Custom battery thresholds", 640, 480, false)
+	customWindow.OnClosing(func(*ui.Window) bool {
+		close(ch)
+		return true
+	})
+	customWindow.SetMargined(true)
 	vbox := ui.NewVerticalBox()
 	vbox.SetPadded(true)
 	customWindow.SetChild(vbox)
@@ -358,6 +371,15 @@ func customThresholds() {
 	})
 	vbox.Append(minSlider, false)
 	vbox.Append(maxSlider, false)
+	hbox := ui.NewHorizontalBox()
+	setButton := ui.NewButton("Set")
+	setButton.OnClicked(func(*ui.Button) {
+		setThresholds(minSlider.Value(), maxSlider.Value())
+		customWindow.Destroy()
+		close(ch)
+	})
+	vbox.Append(setButton, false)
+	vbox.Append(hbox, false)
 	minSlider.SetValue(min)
 	maxSlider.SetValue(max)
 	customWindow.Show()
