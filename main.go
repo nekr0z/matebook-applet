@@ -326,7 +326,15 @@ func onReady() {
 				select {
 				case <-mCustom.ClickedCh:
 					logTrace.Println("Got a click on BP CUSTOM")
-					ui.QueueMain(func() { customWindow.Show() })
+					ui.QueueMain(func() {
+						min, max, err := config.thresh.get()
+						if err != nil {
+							logWarning.Println("Failed to get thresholds")
+						}
+						minSlider.SetValue(min)
+						maxSlider.SetValue(max)
+						customWindow.Show()
+					})
 					mStatus.SetTitle(getStatus())
 				case <-mQuit.ClickedCh:
 					logTrace.Println("Got a click on Quit")
