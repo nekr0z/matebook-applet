@@ -326,15 +326,10 @@ func onReady() {
 			}
 		}()
 		go func() {
-			for {
-				select {
-				case <-mQuit.ClickedCh:
-					logTrace.Println("Got a click on Quit")
-					ui.Quit()
-					close(appQuit)
-					return
-				}
-			}
+			<-mQuit.ClickedCh
+			logTrace.Println("Got a click on Quit")
+			ui.Quit()
+			close(appQuit)
 		}()
 	}); err != nil {
 		logError.Println(err)
