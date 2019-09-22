@@ -32,7 +32,6 @@ var (
 	logInfo             *log.Logger
 	logWarning          *log.Logger
 	logError            *log.Logger
-	waitForDriver       bool
 	version             string = "custom-build"
 	iconPath            string
 	saveValues          bool
@@ -85,14 +84,12 @@ func main() {
 	verbose := flag.Bool("v", false, "be verbose")
 	verboseMore := flag.Bool("vv", false, "be very verbose")
 	flag.StringVar(&iconPath, "icon", "", "path of a custom icon to use")
-	flag.BoolVar(&waitForDriver, "wait", false, "wait for driver to set battery thresholds (obsolete)")
+	flag.BoolVar(&config.wait, "wait", false, "wait for driver to set battery thresholds (obsolete)")
 	flag.BoolVar(&saveValues, "s", true, "save values for persistence (deprecated)") // TODO: remove in v3
 	flag.BoolVar(&noSaveValues, "n", false, "do not save values")
 	flag.BoolVar(&config.useScripts, "r", true, "use fnlock and batpro scripts if all else fails") // TODO: default to false in v3
 	flag.BoolVar(&config.windowed, "w", false, "windowed mode")
 	flag.Parse()
-
-	config.wait = waitForDriver
 
 	switch {
 	case *verbose:
