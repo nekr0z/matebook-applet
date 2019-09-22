@@ -43,13 +43,21 @@ func launchUI() {
 	mainWindow.SetChild(vbox)
 
 	batteryGroup := ui.NewGroup("")
-	batteryGroup.SetTitle(getStatus())
 	batteryGroup.SetMargined(true)
-	vbox.Append(batteryGroup, false)
+	if config.thresh == nil {
+		logTrace.Println("no access to BP information, not showing the corresponding UI")
+	} else {
+		vbox.Append(batteryGroup, false)
+		batteryGroup.SetTitle(getStatus())
+	}
 
 	batteryVbox := ui.NewVerticalBox()
 	batteryVbox.SetPadded(true)
-	batteryGroup.SetChild(batteryVbox)
+	if config.thresh.isWritable() {
+		batteryGroup.SetChild(batteryVbox)
+	} else {
+		logTrace.Println("BP endpoint read-only, not showing BP buttons")
+	}
 
 	offButton := ui.NewButton("Off")
 	offButton.OnClicked(func(*ui.Button) {
@@ -100,9 +108,13 @@ func launchUI() {
 	batteryVbox.Append(customButton, false)
 
 	fnlockGroup := ui.NewGroup("")
-	fnlockGroup.SetTitle(getFnlockStatus())
 	fnlockGroup.SetMargined(true)
-	vbox.Append(fnlockGroup, false)
+	if config.fnlock == nil {
+		logTrace.Println("no access to Fn-Lock setting, not showing the corresponding GUI")
+	} else {
+		vbox.Append(fnlockGroup, false)
+		fnlockGroup.SetTitle(getFnlockStatus())
+	}
 
 	fnlockVbox := ui.NewVerticalBox()
 	fnlockVbox.SetPadded(true)
@@ -114,7 +126,11 @@ func launchUI() {
 		config.fnlock.toggle()
 		fnlockGroup.SetTitle(getFnlockStatus())
 	})
-	fnlockVbox.Append(fnlockToggle, false)
+	if config.fnlock.isWritable() {
+		fnlockVbox.Append(fnlockToggle, false)
+	} else {
+		logTrace.Println("Fn-Lock setting read-only, not showing the button")
+	}
 
 	mainWindow.Show()
 }
