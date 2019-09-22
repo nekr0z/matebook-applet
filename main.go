@@ -349,7 +349,7 @@ func onReady() {
 
 func launchUI() {
 	logTrace.Println("Setting up GUI...")
-	mainWindow = ui.NewWindow("matebook-applet", 640, 480, false)
+	mainWindow = ui.NewWindow("matebook-applet", 480, 360, false)
 	mainWindow.OnClosing(func(*ui.Window) bool {
 		ui.Quit()
 		return true
@@ -365,7 +365,8 @@ func launchUI() {
 	vbox.SetPadded(true)
 	mainWindow.SetChild(vbox)
 
-	batteryGroup := ui.NewGroup("Battery protection thresholds")
+	batteryGroup := ui.NewGroup("")
+	batteryGroup.SetTitle(getStatus())
 	batteryGroup.SetMargined(true)
 	vbox.Append(batteryGroup, false)
 
@@ -373,14 +374,11 @@ func launchUI() {
 	batteryVbox.SetPadded(true)
 	batteryGroup.SetChild(batteryVbox)
 
-	batteryStatus := ui.NewLabel(getStatus())
-	batteryVbox.Append(batteryStatus, false)
-
 	offButton := ui.NewButton("Off")
 	logTrace.Println("Off button clicked")
 	offButton.OnClicked(func(*ui.Button) {
 		setThresholds(0, 100)
-		batteryStatus.SetText(getStatus())
+		batteryGroup.SetTitle(getStatus())
 	})
 	batteryVbox.Append(offButton, false)
 
@@ -388,7 +386,7 @@ func launchUI() {
 	logTrace.Println("Travel button clicked")
 	travelButton.OnClicked(func(*ui.Button) {
 		setThresholds(95, 100)
-		batteryStatus.SetText(getStatus())
+		batteryGroup.SetTitle(getStatus())
 	})
 	batteryVbox.Append(travelButton, false)
 
@@ -396,7 +394,7 @@ func launchUI() {
 	logTrace.Println("Office button clicked")
 	officeButton.OnClicked(func(*ui.Button) {
 		setThresholds(70, 90)
-		batteryStatus.SetText(getStatus())
+		batteryGroup.SetTitle(getStatus())
 	})
 	batteryVbox.Append(officeButton, false)
 
@@ -404,7 +402,7 @@ func launchUI() {
 	logTrace.Println("Home button clicked")
 	homeButton.OnClicked(func(*ui.Button) {
 		setThresholds(40, 70)
-		batteryStatus.SetText(getStatus())
+		batteryGroup.SetTitle(getStatus())
 	})
 	batteryVbox.Append(homeButton, false)
 
@@ -417,31 +415,29 @@ func launchUI() {
 			ch := make(chan struct{})
 			ui.QueueMain(func() { customThresholds(ch) })
 			<-ch
-			batteryStatus.SetText(getStatus())
+			batteryGroup.SetTitle(getStatus())
 			customButton.OnClicked(customButtonOnClicked)
 		}()
 	}
 	customButton.OnClicked(customButtonOnClicked)
 	batteryVbox.Append(customButton, false)
 
-	fnlockGroup := ui.NewGroup("Fn-Lock")
+	fnlockGroup := ui.NewGroup("")
+	fnlockGroup.SetTitle(getFnlockStatus())
 	fnlockGroup.SetMargined(true)
 	vbox.Append(fnlockGroup, false)
 
-	fnlockHbox := ui.NewHorizontalBox()
-	fnlockHbox.SetPadded(true)
-	fnlockGroup.SetChild(fnlockHbox)
-
-	fnlockLabel := ui.NewLabel(getFnlockStatus())
+	fnlockVbox := ui.NewVerticalBox()
+	fnlockVbox.SetPadded(true)
+	fnlockGroup.SetChild(fnlockVbox)
 
 	fnlockToggle := ui.NewButton("Toggle")
 	fnlockToggle.OnClicked(func(*ui.Button) {
 		logTrace.Println("Fnlock toggle button clicked")
 		config.fnlock.toggle()
-		fnlockLabel.SetText(getFnlockStatus())
+		fnlockGroup.SetTitle(getFnlockStatus())
 	})
-	fnlockHbox.Append(fnlockToggle, false)
-	fnlockHbox.Append(fnlockLabel, false)
+	fnlockVbox.Append(fnlockToggle, false)
 
 	mainWindow.Show()
 }
