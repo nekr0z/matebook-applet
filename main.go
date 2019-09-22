@@ -85,7 +85,7 @@ func main() {
 	verboseMore := flag.Bool("vv", false, "be very verbose")
 	flag.StringVar(&iconPath, "icon", "", "path of a custom icon to use")
 	flag.BoolVar(&config.wait, "wait", false, "wait for driver to set battery thresholds (obsolete)")
-	flag.BoolVar(&saveValues, "s", true, "save values for persistence (deprecated)") // TODO: remove in v3
+	flag.BoolVar(&saveValues, "s", false, "save values for persistence (deprecated)") // TODO: remove in v3
 	flag.BoolVar(&noSaveValues, "n", false, "do not save values")
 	flag.BoolVar(&config.useScripts, "r", true, "use fnlock and batpro scripts if all else fails") // TODO: default to false in v3
 	flag.BoolVar(&config.windowed, "w", false, "windowed mode")
@@ -128,9 +128,11 @@ func main() {
 		}
 	}
 
-	if noSaveValues {
-		saveValues = false
-	} else {
+	if saveValues {
+		logWarning.Println("-s option is deprecated, applet is now saving values for persistence by default")
+	}
+
+	if !noSaveValues {
 		logTrace.Println("looking for endpoint to save thresholds to...")
 		for _, ep := range threshSaveEndpoints {
 			_, _, err := ep.get()
