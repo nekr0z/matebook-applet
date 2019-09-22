@@ -68,9 +68,11 @@ var (
 		threshPers threshEndpoint
 		wait       bool
 		useScripts bool
+		windowed   bool
 	}
 	appQuit      = make(chan struct{})
 	customWindow *ui.Window
+	mainWindow   *ui.Window
 )
 
 type fnlockEndpoint interface {
@@ -174,6 +176,7 @@ func main() {
 	flag.BoolVar(&saveValues, "s", true, "save values for persistence (deprecated)") // TODO: remove in v3
 	flag.BoolVar(&noSaveValues, "n", false, "do not save values")
 	flag.BoolVar(&config.useScripts, "r", true, "use fnlock and batpro scripts if all else fails") // TODO: default to false in v3
+	flag.BoolVar(&config.windowed, "w", false, "windowed mode")
 	flag.Parse()
 
 	config.wait = waitForDriver
@@ -216,7 +219,13 @@ func main() {
 	}
 
 	if config.thresh != nil || config.fnlock != nil {
-		systray.Run(onReady, onExit)
+		if config.windowed {
+			if err := ui.Main(launchUI); err != nil {
+				logError.Println(err)
+			}
+		} else {
+			systray.Run(onReady, onExit)
+		}
 	} else {
 		logError.Println("Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions")
 	}
@@ -338,7 +347,51 @@ func onReady() {
 	os.Exit(0)
 }
 
+func launchUI() {
+	logTrace.Println("Setting up GUI...")
+	mainWindow = ui.NewWindow("matebook-applet", 640, 480, false)
+	mainWindow.OnClosing(func(*ui.Window) bool {
+		ui.Quit()
+		return true
+	})
+	ui.OnShouldQuit(func() bool {
+		customWindow.Destroy()
+		mainWindow.Destroy()
+		return true
+	})
+
+	mainWindow.SetMargined(true)
+	vbox := ui.NewVerticalBox()
+	vbox.SetPadded(true)
+	mainWindow.SetChild(vbox)
+
+	batteryGroup := ui.NewGroup("Battery protection thresholds")
+	batteryGroup.SetMargined(true)
+	vbox.Append(batteryGroup, false)
+
+	batteryVbox := ui.NewVerticalBox()
+	batteryGroup.SetChild(batteryVbox)
+
+	customButton := ui.NewButton("Custom")
+	var customButtonOnClicked func(*ui.Button)
+	customButtonOnClicked = func(*ui.Button) {
+		logTrace.Println("Custom button clicked")
+		go func() {
+			customButton.OnClicked(func(*ui.Button) {})
+			ch := make(chan struct{})
+			ui.QueueMain(func() { customThresholds(ch) })
+			<-ch
+			customButton.OnClicked(customButtonOnClicked)
+		}()
+	}
+	customButton.OnClicked(customButtonOnClicked)
+	batteryVbox.Append(customButton, false)
+
+	mainWindow.Show()
+}
+
 func customThresholds(ch chan struct{}) {
+	logTrace.Println("Launching custom thresholds window")
 	min, max, err := config.thresh.get()
 	if err != nil {
 		logWarning.Println("Failed to get thresholds")
