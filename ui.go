@@ -32,32 +32,32 @@ func launchUI() {
 	batteryGroup.SetChild(batteryVbox)
 
 	offButton := ui.NewButton("Off")
-	logTrace.Println("Off button clicked")
 	offButton.OnClicked(func(*ui.Button) {
+		logTrace.Println("Off button clicked")
 		setThresholds(0, 100)
 		batteryGroup.SetTitle(getStatus())
 	})
 	batteryVbox.Append(offButton, false)
 
 	travelButton := ui.NewButton("Travel")
-	logTrace.Println("Travel button clicked")
 	travelButton.OnClicked(func(*ui.Button) {
+		logTrace.Println("Travel button clicked")
 		setThresholds(95, 100)
 		batteryGroup.SetTitle(getStatus())
 	})
 	batteryVbox.Append(travelButton, false)
 
 	officeButton := ui.NewButton("Office")
-	logTrace.Println("Office button clicked")
 	officeButton.OnClicked(func(*ui.Button) {
+		logTrace.Println("Office button clicked")
 		setThresholds(70, 90)
 		batteryGroup.SetTitle(getStatus())
 	})
 	batteryVbox.Append(officeButton, false)
 
 	homeButton := ui.NewButton("Home")
-	logTrace.Println("Home button clicked")
 	homeButton.OnClicked(func(*ui.Button) {
+		logTrace.Println("Home button clicked")
 		setThresholds(40, 70)
 		batteryGroup.SetTitle(getStatus())
 	})
