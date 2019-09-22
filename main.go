@@ -28,24 +28,15 @@ import (
 )
 
 var (
-	logTrace            *log.Logger
-	logInfo             *log.Logger
-	logWarning          *log.Logger
-	logError            *log.Logger
-	version             string = "custom-build"
-	iconPath            string
-	saveValues          bool
-	noSaveValues        bool
-	saveValuesPath      string = "/etc/default/huawei-wmi/"
-	fnlockEndpoints            = []fnlockEndpoint{}
-	threshEndpoints            = []threshEndpoint{}
-	threshSaveEndpoints        = []threshDriver{
-		threshDriver{threshDriverSingle{path: (saveValuesPath + "charge_control_thresholds")}},
-		threshDriver{threshDriverSingle{path: (saveValuesPath + "charge_thresholds")}},
-	}
-	threshDriver1 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
-	threshDriver2 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
-	config        struct {
+	logTrace     *log.Logger
+	logInfo      *log.Logger
+	logWarning   *log.Logger
+	logError     *log.Logger
+	version      string = "custom-build"
+	iconPath     string
+	saveValues   bool
+	noSaveValues bool
+	config       struct {
 		fnlock     fnlockEndpoint
 		thresh     threshEndpoint
 		threshPers threshEndpoint
@@ -53,9 +44,6 @@ var (
 		useScripts bool
 		windowed   bool
 	}
-	appQuit      = make(chan struct{})
-	customWindow *ui.Window
-	mainWindow   *ui.Window
 )
 
 func logInit(

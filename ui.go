@@ -4,6 +4,11 @@ import (
 	"github.com/andlabs/ui"
 )
 
+var (
+	customWindow *ui.Window
+	mainWindow   *ui.Window
+)
+
 func launchUI() {
 	logTrace.Println("Setting up GUI...")
 	mainWindow = ui.NewWindow("matebook-applet", 480, 360, false)

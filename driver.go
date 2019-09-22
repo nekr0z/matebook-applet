@@ -33,6 +33,18 @@ const (
 	threshKernelPath     = "/sys/class/power_supply/BAT"
 	threshKernelMin      = "/charge_control_start_threshold"
 	threshKernelMax      = "/charge_control_end_threshold"
+	saveValuesPath       = "/etc/default/huawei-wmi/"
+)
+
+var (
+	fnlockEndpoints     = []fnlockEndpoint{}
+	threshEndpoints     = []threshEndpoint{}
+	threshSaveEndpoints = []threshDriver{
+		threshDriver{threshDriverSingle{path: (saveValuesPath + "charge_control_thresholds")}},
+		threshDriver{threshDriverSingle{path: (saveValuesPath + "charge_thresholds")}},
+	}
+	threshDriver1 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
+	threshDriver2 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
 )
 
 func init() {

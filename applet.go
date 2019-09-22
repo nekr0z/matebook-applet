@@ -26,6 +26,10 @@ const (
 	defaultIcon = "/matebook-applet.png"
 )
 
+var (
+	appQuit = make(chan struct{})
+)
+
 func onReady() {
 	logTrace.Println("Setting up menu...")
 	systray.SetIcon(getIcon(iconPath, defaultIcon))
