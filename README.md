@@ -13,7 +13,7 @@ This simple applet is designed to make some of the proptietary Huawei PC Manager
 * [Credits](#credits)
 
 ## Installation and setup
-The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it depends on `libappindicator` to be installed on your system, and it relies on underlying pieces of software to be installed so that it is user-accessible (more on that below).
+The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it depends on GTK+ and `libappindicator` to be installed on your system, and it relies on underlying pieces of software to be installed so that it is user-accessible (more on that below).
 
 Debian users can add this repo:
 ```
@@ -73,7 +73,7 @@ Both scripts depend on [ioport](https://people.redhat.com/~rjones/ioport/) to wo
             $ sudo fnlock status
 
 ### Compiling matebook-applet
-You can always download precompiled amd64 binary from [releases page](https://github.com/nekr0z/matebook-applet/releases), but it's also perfectly OK to compile matebook-applet yourself:
+You can always download precompiled amd64 binary from [releases page](https://github.com/nekr0z/matebook-applet/releases), but it's also perfectly OK to compile matebook-applet yourself. Provided that you have the dependencies (GTK+ and libappindicator) installed (on Debian you can `sudo apt install libgtk-3-dev libappindicator3-dev`), all you need to do is:
 
         $ git clone https://github.com/nekr0z/matebook-applet.git
         $ cd matebook-applet

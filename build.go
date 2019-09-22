@@ -64,6 +64,7 @@ var (
 	debDeps = []string{
 		"libappindicator3-1",
 		"libc6",
+		"libgtk-3-0 >= 3.10",
 	}
 	debRecs = []string{
 		"huawei-wmi",
