@@ -370,7 +370,11 @@ func launchUI() {
 	vbox.Append(batteryGroup, false)
 
 	batteryVbox := ui.NewVerticalBox()
+	batteryVbox.SetPadded(true)
 	batteryGroup.SetChild(batteryVbox)
+
+	batteryStatus := ui.NewLabel(getStatus())
+	batteryVbox.Append(batteryStatus, false)
 
 	customButton := ui.NewButton("Custom")
 	var customButtonOnClicked func(*ui.Button)
@@ -381,11 +385,31 @@ func launchUI() {
 			ch := make(chan struct{})
 			ui.QueueMain(func() { customThresholds(ch) })
 			<-ch
+			batteryStatus.SetText(getStatus())
 			customButton.OnClicked(customButtonOnClicked)
 		}()
 	}
 	customButton.OnClicked(customButtonOnClicked)
 	batteryVbox.Append(customButton, false)
+
+	fnlockGroup := ui.NewGroup("Fn-Lock")
+	fnlockGroup.SetMargined(true)
+	vbox.Append(fnlockGroup, false)
+
+	fnlockHbox := ui.NewHorizontalBox()
+	fnlockHbox.SetPadded(true)
+	fnlockGroup.SetChild(fnlockHbox)
+
+	fnlockLabel := ui.NewLabel(getFnlockStatus())
+
+	fnlockToggle := ui.NewButton("Toggle")
+	fnlockToggle.OnClicked(func(*ui.Button) {
+		logTrace.Println("Fnlock toggle button clicked")
+		config.fnlock.toggle()
+		fnlockLabel.SetText(getFnlockStatus())
+	})
+	fnlockHbox.Append(fnlockToggle, false)
+	fnlockHbox.Append(fnlockLabel, false)
 
 	mainWindow.Show()
 }
