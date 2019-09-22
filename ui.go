@@ -53,7 +53,7 @@ func launchUI() {
 
 	batteryVbox := ui.NewVerticalBox()
 	batteryVbox.SetPadded(true)
-	if config.thresh.isWritable() {
+	if config.thresh != nil && config.thresh.isWritable() {
 		batteryGroup.SetChild(batteryVbox)
 	} else {
 		logTrace.Println("BP endpoint read-only, not showing BP buttons")
@@ -126,7 +126,7 @@ func launchUI() {
 		config.fnlock.toggle()
 		fnlockGroup.SetTitle(getFnlockStatus())
 	})
-	if config.fnlock.isWritable() {
+	if config.fnlock != nil && config.fnlock.isWritable() {
 		fnlockVbox.Append(fnlockToggle, false)
 	} else {
 		logTrace.Println("Fn-Lock setting read-only, not showing the button")

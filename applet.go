@@ -50,7 +50,7 @@ func onReady() {
 	} else {
 		mStatus.SetTitle(getStatus())
 	}
-	if !config.thresh.isWritable() {
+	if config.thresh == nil || !config.thresh.isWritable() {
 		mOff.Hide()
 		mTravel.Hide()
 		mOffice.Hide()
