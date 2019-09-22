@@ -376,6 +376,38 @@ func launchUI() {
 	batteryStatus := ui.NewLabel(getStatus())
 	batteryVbox.Append(batteryStatus, false)
 
+	offButton := ui.NewButton("Off")
+	logTrace.Println("Off button clicked")
+	offButton.OnClicked(func(*ui.Button) {
+		setThresholds(0, 100)
+		batteryStatus.SetText(getStatus())
+	})
+	batteryVbox.Append(offButton, false)
+
+	travelButton := ui.NewButton("Travel")
+	logTrace.Println("Travel button clicked")
+	travelButton.OnClicked(func(*ui.Button) {
+		setThresholds(95, 100)
+		batteryStatus.SetText(getStatus())
+	})
+	batteryVbox.Append(travelButton, false)
+
+	officeButton := ui.NewButton("Office")
+	logTrace.Println("Office button clicked")
+	officeButton.OnClicked(func(*ui.Button) {
+		setThresholds(70, 90)
+		batteryStatus.SetText(getStatus())
+	})
+	batteryVbox.Append(officeButton, false)
+
+	homeButton := ui.NewButton("Home")
+	logTrace.Println("Home button clicked")
+	homeButton.OnClicked(func(*ui.Button) {
+		setThresholds(40, 70)
+		batteryStatus.SetText(getStatus())
+	})
+	batteryVbox.Append(homeButton, false)
+
 	customButton := ui.NewButton("Custom")
 	var customButtonOnClicked func(*ui.Button)
 	customButtonOnClicked = func(*ui.Button) {
