@@ -3,6 +3,7 @@
 matebook-applet \- system tray applet for Huawei MateBook
 .SH SYNOPSIS
 .B matebook-applet
+[\fB\-w\fR]
 [\fB\-v\fR|\fB\-vv\fR]
 [\fB\-r\fR]
 [\fB\-s\fR|\fB\-n\fR]
@@ -12,6 +13,8 @@ matebook-applet \- system tray applet for Huawei MateBook
 .B matebook-applet 
 provides a simple GUI to control some of the functionality available on Huawei MateBooks and exposed by Huawei-WMI kernel driver. It allows to enable battery protection and set thresholds for battery charging as well as enable or disable Fn-Lock functionality.
 .SH OPTIONS
+.IP \fB-w
+Windowed mode. System tray is not used, instead a window is created.
 .IP \fB-v
 Show additional information in \fIstdout\fR while running (verbose mode).
 .IP \fB-vv
