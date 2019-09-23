@@ -1,9 +1,13 @@
 # matebook-applet
 System tray applet for Huawei Matebook
 
-This simple applet is designed to make some of the proptietary Huawei PC Manager's functionality available via GUI on Linux. It can be used as a system tray applet (left) or as a windowed app (right).
+This simple applet is designed to make some of the proptietary Huawei PC Manager's functionality available via GUI on Linux.
+ 
+![Applet screenshot](screenshot-applet.png?raw=true "matebook-applet")
 
-![Applet screenshot](screenshot-applet.png?raw=true "matebook-applet") ![Windowed screenshot](screenshot-windowed.png?raw=true "matebook-applet windowed mode")
+It can be used as a system tray applet (above) or as a windowed app (below).
+
+![Windowed screenshot](screenshot-windowed.png?raw=true "matebook-applet windowed mode")
 
 ##### Table of Contents
 * [Installation and setup](#installation-and-setup)
