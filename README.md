@@ -1,7 +1,9 @@
 # matebook-applet
 System tray applet for Huawei Matebook
 
-This simple applet is designed to make some of the proptietary Huawei PC Manager's functionality available via GUI on Linux.
+This simple applet is designed to make some of the proptietary Huawei PC Manager's functionality available via GUI on Linux. It can be used as a system tray applet (left) or as a windowed app (right).
+
+![Applet screenshot](screenshot-applet.png?raw=true "matebook-applet") ![Windowed screenshot](screenshot-windowed.png?raw=true "matebook-applet windowed mode")
 
 ##### Table of Contents
 * [Installation and setup](#installation-and-setup)
@@ -84,7 +86,12 @@ The user interface is intentionally as simple as they get. You get an icon in sy
 
 The entry that shows current Fn-Lock status is clickable, too, that toggles Fn-Lock (from ON to OFF or vice versa). Again, no probing here, so if you change Fn-Lock status by other means it will not reflect the change until clicked, but then it will toggle Fn-Lock again.
 
-Command line options can be found on the included manpage:
+Command line option `-w` launches the applet in windowed (app) mode, i.e.:
+```
+$ matebook-applet -w
+```
+
+Other command line options can be found on the included manpage:
 ```
 $ man -l matebook-applet.1
   or, if you installed applet from repository or .deb package,
