@@ -229,7 +229,7 @@ func signFile(f string, k string) {
 
 func getVersion() string {
 	s, err := getString("git", "describe", "--always", "--dirty")
-	versionRe := regexp.MustCompile(`^v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(\-[0-9]{1,3}\-g[0-9a-f]{5,15})?`)
+	versionRe := regexp.MustCompile(`^v?[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(\-[0-9]{1,3}\-g[0-9a-f]{5,15})?`)
 	if err == nil {
 		if versionRe.MatchString(s) {
 			return s

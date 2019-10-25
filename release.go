@@ -55,7 +55,7 @@ func main() {
 	}
 
 	// check version format
-	re := regexp.MustCompile(`^v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$`)
+	re := regexp.MustCompile(`^v?[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$`)
 	if !re.MatchString(version) {
 		log.Fatalln("version", version, "doesn't make sense, giving up!")
 	}
