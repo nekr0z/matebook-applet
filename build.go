@@ -228,14 +228,47 @@ func signFile(f string, k string) {
 }
 
 func getVersion() string {
-	s, err := getString("git", "describe", "--always", "--dirty")
-	versionRe := regexp.MustCompile(`^v?[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(\-[0-9]{1,3}\-g[0-9a-f]{5,15})?`)
-	if err == nil {
-		if versionRe.MatchString(s) {
-			return s
-		}
+	desc, err1 := getString("git", "describe", "--always", "--dirty")
+	br, err2 := getString("git", "symbolic-ref", "--short", "-q", "HEAD")
+	if err1 == nil && err2 == nil {
+		return parseVersion(desc, br)
 	}
 	return "unknown"
+}
+
+func parseVersion(desc, branch string) string {
+	descRe := regexp.MustCompile(`^v?(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))??(?:\-(?P<after>0|[1-9]\d*)\-(?P<commit>g[0-9a-f]{5,15}))?(?:\-(?P<dirty>dirty))??$`)
+	if !descRe.MatchString(desc) {
+		return "unknown"
+	}
+
+	ver := descRe.ReplaceAllString(desc, "${major}.${minor}.${patch}")
+	pre := descRe.ReplaceAllString(desc, "${prerelease}")
+	after := descRe.ReplaceAllString(desc, "${after}")
+	commit := descRe.ReplaceAllString(desc, "${commit}")
+	dirty := descRe.ReplaceAllString(desc, "${dirty}")
+
+	if pre != "" {
+		ver = fmt.Sprintf("%s-%s", ver, pre)
+	}
+
+	if (after != "" || dirty != "") && branch != "master" {
+		ver = fmt.Sprintf("%s.%s", ver, branch)
+	}
+
+	if after != "" {
+		ver = fmt.Sprintf("%s.%s", ver, after)
+	}
+
+	if dirty != "" {
+		ver = fmt.Sprintf("%s.%s", ver, "dirty")
+	}
+
+	if commit != "" {
+		ver = fmt.Sprintf("%s+%s", ver, commit)
+	}
+
+	return ver
 }
 
 func getString(c string, a ...string) (string, error) {
