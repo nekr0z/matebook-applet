@@ -29,6 +29,8 @@ func TestParseVersion(t *testing.T) {
 	}{
 		{"v2.3.0-6-g30208ef-dirty", "master", "2.3.0.6.dirty+g30208ef"},
 		{"1.2.3", "master", "1.2.3"},
+		{"2.2.2-3.3.3", "master", "2.2.2-3.3.3"},
+		{"1.1.1-4", "master", "1.1.1-4"},
 		{"43.765.39-beta", "dev", "43.765.39-beta"},
 		{"67.1.1-3-g0101afde", "dev", "67.1.1.dev.3+g0101afde"},
 		{"v2.0.0-dirty", "dev", "2.0.0.dev.dirty"},
