@@ -266,7 +266,7 @@ func signFile(f string, k string) {
 func getVersion() string {
 	desc, err1 := getString("git", "describe", "--always", "--dirty")
 	br, err2 := getString("git", "symbolic-ref", "--short", "-q", "HEAD")
-	if err1 == nil && err2 == nil {
+	if err1 == nil && (br == "" || err2 == nil) {
 		return parseVersion(desc, br)
 	}
 	return "unknown"
@@ -288,7 +288,7 @@ func parseVersion(desc, branch string) string {
 		ver = fmt.Sprintf("%s-%s", ver, pre)
 	}
 
-	if (after != "" || dirty != "") && branch != "master" {
+	if (after != "" || dirty != "") && branch != "master" && branch != "" {
 		ver = fmt.Sprintf("%s.%s", ver, branch)
 	}
 
