@@ -19,6 +19,7 @@ package main
 
 import (
 	"archive/tar"
+	"bufio"
 	"bytes"
 	"compress/gzip"
 	"flag"
@@ -134,6 +135,31 @@ func buildDeb(ver string) {
 		cl, err := changelog.ParseMd(fd)
 		if err != nil {
 			fmt.Printf("error parsing changelog: %s\n", err)
+		}
+		cmd := exec.Command("git", "tag", "-l", `--format=%(creatordate:iso)|%(refname:short)`)
+		var bb bytes.Buffer
+		out := bufio.NewWriter(&bb)
+		cmd.Stdout = out
+		if err := cmd.Run(); err != nil {
+			fmt.Printf("failed to read tag times: %s", err)
+		} else {
+			out.Flush()
+			scanner := bufio.NewScanner(&bb)
+			for scanner.Scan() {
+				line := scanner.Text()
+				s := strings.Split(line, "|")
+				if len(s) == 2 {
+					d, err := time.Parse("2006-01-02 15:04:05 -0700", s[0])
+					if err == nil {
+						ver, err := changelog.ToVersion(strings.TrimPrefix(s[1], "v"))
+						if err == nil {
+							rel := cl[ver]
+							rel.Date = d
+							cl[ver] = rel
+						}
+					}
+				}
+			}
 		}
 		for v, rel := range cl {
 			rel.Maintainer = maintainer

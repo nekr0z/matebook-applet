@@ -4,7 +4,7 @@ require (
 	github.com/andlabs/ui v0.0.0-20180902183112-867a9e5a498d
 	github.com/getlantern/golog v0.0.0-20190830074920-4ef2e798c2d7 // indirect
 	github.com/getlantern/systray v0.0.0-20190727060347-6f0e5a3c556c
-	github.com/nekr0z/changelog v0.0.0-20191031121708-01218b6120b8 // indirect
+	github.com/nekr0z/changelog v0.0.0-20191031151904-2a1ba643d4e7 // indirect
 	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
 	github.com/shurcooL/vfsgen v0.0.0-20181202132449-6a9ea43bcacd // indirect
 	github.com/stretchr/objx v0.2.0 // indirect

@@ -29,6 +29,8 @@ github.com/nekr0z/changelog v0.0.0-20191031121000-82f31e087ac5 h1:In1IMkgWfe5sVz
 github.com/nekr0z/changelog v0.0.0-20191031121000-82f31e087ac5/go.mod h1:gK6BUSA9da5g0J3lG7Vb/BpKz6CU4ypPBP8LTFCxUiE=
 github.com/nekr0z/changelog v0.0.0-20191031121708-01218b6120b8 h1:bHooe5d8MaQfXLLWkOOZd0CZgRc4xXaPX37eueq2Flg=
 github.com/nekr0z/changelog v0.0.0-20191031121708-01218b6120b8/go.mod h1:gK6BUSA9da5g0J3lG7Vb/BpKz6CU4ypPBP8LTFCxUiE=
+github.com/nekr0z/changelog v0.0.0-20191031151904-2a1ba643d4e7 h1:UCOlF1CJuUbU3ErAJkFeUVx0tGRyM2GLMOBz0PsLqxo=
+github.com/nekr0z/changelog v0.0.0-20191031151904-2a1ba643d4e7/go.mod h1:gK6BUSA9da5g0J3lG7Vb/BpKz6CU4ypPBP8LTFCxUiE=
 github.com/oxtoacart/bpool v0.0.0-20190227141107-8c4636f812cc h1:uhnyuvDwdKbjemAXHKsiEZOPagHim2nRjMcazH1g26A=
 github.com/oxtoacart/bpool v0.0.0-20190227141107-8c4636f812cc/go.mod h1:L3UMQOThbttwfYRNFOWLLVXMhk5Lkio4GGOtw5UrxS0=
 github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c h1:rp5dCmg/yLR3mgFuSOe4oEnDDmGLROTvMragMUXpTQw=
