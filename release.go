@@ -86,6 +86,7 @@ func process(version string) {
 	// build
 	fmt.Println("building...")
 	cmd := exec.Command("go", "run", "build.go", "-t", "-d")
+	cmd.Stdout = os.Stdout
 	if err := cmd.Run(); err != nil {
 		log.Fatalln(err)
 	}
