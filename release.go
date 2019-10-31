@@ -66,7 +66,7 @@ func main() {
 
 func process(version string) {
 	gitVersion := version
-	version = version[1:]
+	version = strings.TrimPrefix(version, "v")
 
 	// check if corresponding tag even exists
 	res, err := getString("git", "ls-remote", "origin", gitVersion)
