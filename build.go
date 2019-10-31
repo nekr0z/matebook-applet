@@ -23,6 +23,7 @@ import (
 	"compress/gzip"
 	"flag"
 	"fmt"
+	"github.com/nekr0z/changelog"
 	"io"
 	"log"
 	"os"
@@ -52,6 +53,7 @@ var (
 		{src: "README.md", dst: "README.md", mod: 0644},
 		{src: "SOURCE.txt", dst: "SOURCE.txt", mod: 0644},
 		{src: "matebook-applet.1", dst: "matebook-applet.1", mod: 0644},
+		{src: "CHANGELOG.md", dst: "CHANGELOG.md", mod: 0644},
 	}
 	distFiles = []distFile{
 		{src: "LICENSE", dst: "/usr/share/doc/matebook-applet/"},
@@ -122,7 +124,38 @@ func buildAssets(t int64) {
 }
 
 func buildDeb(ver string) {
-	maintainer := "Evgeny Kuznetsov <evgeny@kuznetsov.md>"
+	maintainer := changelog.Maintainer{Name: "Evgeny Kuznetsov", Email: "evgeny@kuznetsov.md"}
+	var clok bool
+	fd, err := os.Open("CHANGELOG.md")
+	if err != nil {
+		fmt.Printf("error opening changelog: %s\n", err)
+	} else {
+		defer fd.Close()
+		cl, err := changelog.ParseMd(fd)
+		if err != nil {
+			fmt.Printf("error parsing changelog: %s\n", err)
+		}
+		for v, rel := range cl {
+			rel.Maintainer = maintainer
+			cl[v] = rel
+		}
+		b, err := cl.Debian("matebook-applet")
+		if err != nil {
+			fmt.Printf("error converting changelog to Debian format: %s\n", err)
+		}
+		clDeb, err := os.Create("debian.changelog")
+		if err != nil {
+			fmt.Printf("error creating Debian changelog: %s\n", err)
+		} else {
+			defer clDeb.Close()
+			_, err := clDeb.Write(b)
+			if err != nil {
+				fmt.Printf("error writing Debian changelog: %s\n", err)
+			}
+			clDeb.Sync()
+			clok = true
+		}
+	}
 	ver = strings.TrimPrefix(ver, "v")
 	args := []string{
 		"-f",
@@ -130,13 +163,16 @@ func buildDeb(ver string) {
 		"-s", "dir",
 		"-n", "matebook-applet",
 		"-v", ver,
-		"-m", maintainer,
-		"--vendor", maintainer,
+		"-m", fmt.Sprintf("%s <%s>", maintainer.Name, maintainer.Email),
+		"--vendor", fmt.Sprintf("%s <%s>", maintainer.Name, maintainer.Email),
 		"--category", "misc",
 		"--description", "System tray applet for Huawei MateBook\nAllows one to control Huawei MateBook features,\nlike Fn-Lock and Battery Protection settings, via GUI.",
 		"--url", "https://github.com/nekr0z/matebook-applet",
 		"--license", "GPL-3",
 		"--deb-priority", "optional",
+	}
+	if clok {
+		args = append(args, "--deb-changelog", "debian.changelog")
 	}
 	for _, dep := range debDeps {
 		args = append(args, "-d", dep)

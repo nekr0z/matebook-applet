@@ -5,3 +5,4 @@ matebook-applet
 *.tar.gz
 *.deb
 assets.go
+debian.changelog
