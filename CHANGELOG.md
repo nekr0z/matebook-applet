@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.2] - 2019-10-31
+### Fixed
+- release script
+
 ## [2.3.1] - 2019-10-31
 ### Fixed
 - lack of proper changelog
@@ -133,7 +137,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - setting battery protection thresholds
 - checks for scripts availability
 
-[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/v2.3.1...HEAD
+[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/v2.3.2...HEAD
+[2.3.2]: https://github.com/nekr0z/matebook-applet/compare/v2.3.1...v2.3.2
 [2.3.1]: https://github.com/nekr0z/matebook-applet/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/nekr0z/matebook-applet/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/nekr0z/matebook-applet/compare/v2.1.4...v2.2.0
