@@ -1,5 +1,5 @@
 # matebook-applet
-System tray applet for Huawei Matebook
+System tray applet/control app for Huawei Matebook
 
 This simple applet is designed to make some of the proptietary Huawei PC Manager's functionality available via GUI on Linux.
  
