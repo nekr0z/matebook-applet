@@ -165,6 +165,8 @@ func getString(c string, a ...string) (string, error) {
 func updateRepo(filename string) {
 	if updateLocalRepo(filename) {
 		cmd := exec.Command("rsync", "-r", "--del", "~/.aptly/public/", "evgenykuznetsov.org:~/repository/")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stdout
 		if err := cmd.Run(); err != nil {
 			fmt.Printf("failed to rsync to evgenykuznetsov.org: %s", err)
 		}
