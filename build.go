@@ -182,7 +182,7 @@ func buildDeb(ver string) {
 			clok = true
 		}
 	}
-	ver = strings.TrimPrefix(ver, "v")
+	ver = strings.Replace(strings.TrimPrefix(ver, "v"), "-", "~", 1)
 	args := []string{
 		"-f",
 		"-t", "deb",
