@@ -32,7 +32,7 @@ var (
 	logInfo      *log.Logger
 	logWarning   *log.Logger
 	logError     *log.Logger
-	version      string = "custom-build"
+	version      = "custom-build"
 	iconPath     string
 	saveValues   bool
 	noSaveValues bool

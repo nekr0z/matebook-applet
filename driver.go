@@ -40,8 +40,8 @@ var (
 	fnlockEndpoints     = []fnlockEndpoint{}
 	threshEndpoints     = []threshEndpoint{}
 	threshSaveEndpoints = []threshDriver{
-		threshDriver{threshDriverSingle{path: (saveValuesPath + "charge_control_thresholds")}},
-		threshDriver{threshDriverSingle{path: (saveValuesPath + "charge_thresholds")}},
+		{threshDriverSingle{path: (saveValuesPath + "charge_control_thresholds")}},
+		{threshDriverSingle{path: (saveValuesPath + "charge_thresholds")}},
 	}
 	threshDriver1 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
 	threshDriver2 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
@@ -184,21 +184,21 @@ func (drv fnlockDriver) toggle() {
 	logTrace.Println("successful write to driver interface")
 }
 
-func (s threshScript) isWritable() bool {
+func (scr threshScript) isWritable() bool {
 	return true
 }
 
-func (d threshDriver) isWritable() bool {
+func (drv threshDriver) isWritable() bool {
 	logTrace.Println("Checking if the threshold endpoint is writable...")
-	return d.checkWritable()
+	return drv.checkWritable()
 }
 
-func (d fnlockDriver) isWritable() bool {
+func (drv fnlockDriver) isWritable() bool {
 	logTrace.Println("Checking if the fnlock endpoint is writable...")
-	return d.checkWritable()
+	return drv.checkWritable()
 }
 
-func (s fnlockScript) isWritable() bool {
+func (scr fnlockScript) isWritable() bool {
 	return true
 }
 
@@ -240,15 +240,14 @@ func (drv threshDriverSingle) get() (min, max int, err error) {
 	valuesReceived := strings.Split(strings.TrimSpace(string(val)), " ")
 	logTrace.Println("got values from interface:", valuesReceived)
 	if len(valuesReceived) != 2 {
-		logError.Println("Can not make sence of driver interface value", val)
-		return
-	} else {
-		for i := 0; i < 2; i++ {
-			values[i] = valuesReceived[i]
-		}
-		min, max, err = valuesAtoi(values[0], values[1])
+		logError.Println("Can not make sense of driver interface value", val)
 		return
 	}
+	for i := 0; i < 2; i++ {
+		values[i] = valuesReceived[i]
+	}
+	min, max, err = valuesAtoi(values[0], values[1])
+	return
 }
 
 func valuesAtoi(mins, maxs string) (min, max int, err error) {
