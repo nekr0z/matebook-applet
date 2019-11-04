@@ -1,3 +1,27 @@
-[appletVersion]
+[AppletVersion]
 hash = "sha1-e6e5ae8775614e73320396887c93031d91678847"
 other = "matebook-applet версия {{.Version}}"
+
+[DetectedLocale]
+hash = "sha1-f2361d52c8ce223901ca406f40f508dc5716cb0b"
+other = "обнаружена локаль: {{.Locale}}"
+
+[FoundBattery]
+hash = "sha1-20d74c4968759d3fe6e71bf8ea98363f492ad80f"
+other = "Обнаружен доступный на запись интерфейс порогов заряда батареи, используем его"
+
+[FoundBatteryPers]
+hash = "sha1-d65c7add0e2927bcec3933d22c766009aaefe543"
+other = "Обнаружен интерфейс для сохранения значений порогов заряда батареи."
+
+[FoundFnlock]
+hash = "sha1-056676c11e2b7af1303427004a156d4378b60c3c"
+other = "Обнаружен доступный на запись интерфейс fnlock, используем его"
+
+[NothingToWorkWith]
+hash = "sha1-8d0c7ee99e7ec2f5b81a5ad0a761fb44a7124e3c"
+other = "Не найдено поддерживаемой версии драйвера Huawei-WMI и ни один из требуемых скриптов не установлен правильно, см. инструкции README.md#installation-and-setup"
+
+[OptionSDeprecated]
+hash = "sha1-20a5402420c6b1d8474d197544a84fbb2c9786ca"
+other = "опция -s объявлена устаревшей, теперь значения порогов заряда сохраняются по умолчанию"

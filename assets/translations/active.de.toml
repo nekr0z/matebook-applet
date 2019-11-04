@@ -1,3 +1,0 @@
-[appletVersion]
-hash = "sha1-e6e5ae8775614e73320396887c93031d91678847"
-other = "matebook-applet Version {{.Version}}"
