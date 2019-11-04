@@ -124,9 +124,9 @@ func main() {
 	}
 
 	localizer = i18n.NewLocalizer(bundle, lang)
-	logTrace.Printf("detected locale: %s\n", lang)
+	logTrace.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DetectedLocale", Other: "detected locale: {{.Locale}}"}, TemplateData: map[string]interface{}{"Locale": lang}}))
 
-	logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "appletVersion", Other: "matebook-applet version {{.Version}}"}, TemplateData: map[string]interface{}{"Version": version}}))
+	logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "AppletVersion", Other: "matebook-applet version {{.Version}}"}, TemplateData: map[string]interface{}{"Version": version}}))
 
 	// need to find working fnlock interface (if any)
 	for _, fnlck := range fnlockEndpoints {
@@ -136,7 +136,7 @@ func main() {
 		}
 		config.fnlock = fnlck
 		if fnlck.isWritable() {
-			logInfo.Println("Found writable fnlock endpoint, will use it")
+			logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FoundFnlock", Other: "Found writable fnlock endpoint, will use it"}}))
 			break
 		}
 	}
@@ -149,13 +149,13 @@ func main() {
 		}
 		config.thresh = thresh
 		if thresh.isWritable() {
-			logInfo.Println("Found writable battery thresholds endpoint, will use it")
+			logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FoundBattery", Other: "Found writable battery thresholds endpoint, will use it"}}))
 			break
 		}
 	}
 
 	if saveValues {
-		logWarning.Println("-s option is deprecated, applet is now saving values for persistence by default")
+		logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "OptionSDeprecated", Other: "-s option is deprecated, applet is now saving values for persistence by default"}}))
 	}
 
 	if !noSaveValues {
@@ -163,7 +163,7 @@ func main() {
 		for _, ep := range threshSaveEndpoints {
 			_, _, err := ep.get()
 			if err == nil {
-				logInfo.Println("Persistence thresholds values endpoint found.")
+				logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FoundBatteryPers", Other: "Persistence thresholds values endpoint found."}}))
 				config.threshPers = ep
 				break
 			}
@@ -179,6 +179,6 @@ func main() {
 			systray.Run(onReady, onExit)
 		}
 	} else {
-		logError.Println("Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "NothingToWorkWith", Other: "Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions"}}))
 	}
 }
