@@ -159,7 +159,7 @@ func main() {
 	}
 
 	if !noSaveValues {
-		logTrace.Println("looking for endpoint to save thresholds to...")
+		logTrace.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "LookingForBatteryPers", Other: "looking for endpoint to save thresholds to..."}}))
 		for _, ep := range threshSaveEndpoints {
 			_, _, err := ep.get()
 			if err == nil {
