@@ -19,12 +19,17 @@ package main
 
 import (
 	"flag"
+	"github.com/BurntSushi/toml"
 	"github.com/andlabs/ui"
+	"github.com/cloudfoundry/jibber_jabber"
 	"github.com/getlantern/systray"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"golang.org/x/text/language"
 	"io"
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 var (
@@ -36,6 +41,7 @@ var (
 	iconPath     string
 	saveValues   bool
 	noSaveValues bool
+	localizer    *i18n.Localizer
 	config       struct {
 		fnlock     fnlockEndpoint
 		thresh     threshEndpoint
@@ -88,7 +94,39 @@ func main() {
 		logInit(ioutil.Discard, ioutil.Discard, os.Stdout, os.Stderr)
 	}
 
-	logInfo.Printf("matebook-applet version %s\n", version)
+	// i18n init
+	bundle := i18n.NewBundle(language.English)
+	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	if tr, err := assets.Open("/translations"); err == nil {
+		if files, err := tr.Readdir(-1); err == nil {
+			for _, file := range files {
+				if ok, err := filepath.Match("active.*.toml", file.Name()); ok && err == nil {
+					f, err := assets.Open(filepath.Join("/translations", file.Name()))
+					if err == nil {
+						b, err := ioutil.ReadAll(f)
+						if err == nil {
+							_, err := bundle.ParseMessageFileBytes(b, file.Name())
+							if err != nil {
+								logError.Printf("error reading translation file %s: %s", file.Name(), err)
+							}
+						}
+						f.Close()
+					}
+				}
+			}
+		}
+		tr.Close()
+	}
+
+	lang, err := jibber_jabber.DetectIETF()
+	if err != nil {
+		logWarning.Println("could not detect locale")
+	}
+
+	localizer = i18n.NewLocalizer(bundle, lang)
+	logTrace.Printf("detected locale: %s\n", lang)
+
+	logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "appletVersion", Other: "matebook-applet version {{.Version}}"}, TemplateData: map[string]interface{}{"Version": version}}))
 
 	// need to find working fnlock interface (if any)
 	for _, fnlck := range fnlockEndpoints {
