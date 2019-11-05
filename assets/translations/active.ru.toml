@@ -42,6 +42,10 @@ other = "РАБОТА (70%-90%)"
 hash = "sha1-448ab73ba1c21e671e218fb91f2644c834f0c16f"
 other = "Установить"
 
+[DoToggle]
+hash = "sha1-d5e14b063514cb6630e55f0aeb0ad3b37897efca"
+other = "Переключить"
+
 [DoTravel]
 hash = "sha1-25bbe11089ea5bf1312b4a022e0e9106f5024792"
 other = "ПОЕЗДКА (95%-100%)"
@@ -93,6 +97,26 @@ other = "Подготовка меню..."
 [Quit]
 hash = "sha1-1a2285d8881f226e13430515a9dd2b9fb6294200"
 other = "Выход"
+
+[SetCustom]
+hash = "sha1-081ae3fdc403609cf6e760849ebb14117b7a50cb"
+other = "Другой"
+
+[SetHome]
+hash = "sha1-70f8bb9a8a5393ef080507a89e4b98d139000d65"
+other = "Дом"
+
+[SetOff]
+hash = "sha1-e3de5ab0ca4c69dbf00e86d2558843e8d806bb49"
+other = "Выкл"
+
+[SetOffice]
+hash = "sha1-6c3a72eaf6235dfa967f2bba4dfc3e431c3e1180"
+other = "Работа"
+
+[SetTravel]
+hash = "sha1-22fb76e46f645ef6e6c964d6dd08c200b91bca31"
+other = "Поездка"
 
 [StatusCustom]
 hash = "sha1-3bd84615a6ebcfa7885b32b34b938fab187109ec"

@@ -60,7 +60,7 @@ func launchUI() {
 		logTrace.Println("BP endpoint read-only, not showing BP buttons")
 	}
 
-	offButton := ui.NewButton("Off")
+	offButton := ui.NewButton(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "SetOff", Other: "Off"}}))
 	offButton.OnClicked(func(*ui.Button) {
 		logTrace.Println("Off button clicked")
 		setThresholds(0, 100)
@@ -68,7 +68,7 @@ func launchUI() {
 	})
 	batteryVbox.Append(offButton, false)
 
-	travelButton := ui.NewButton("Travel")
+	travelButton := ui.NewButton(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "SetTravel", Other: "Travel"}}))
 	travelButton.OnClicked(func(*ui.Button) {
 		logTrace.Println("Travel button clicked")
 		setThresholds(95, 100)
@@ -76,7 +76,7 @@ func launchUI() {
 	})
 	batteryVbox.Append(travelButton, false)
 
-	officeButton := ui.NewButton("Office")
+	officeButton := ui.NewButton(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "SetOffice", Other: "Office"}}))
 	officeButton.OnClicked(func(*ui.Button) {
 		logTrace.Println("Office button clicked")
 		setThresholds(70, 90)
@@ -84,7 +84,7 @@ func launchUI() {
 	})
 	batteryVbox.Append(officeButton, false)
 
-	homeButton := ui.NewButton("Home")
+	homeButton := ui.NewButton(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "SetHome", Other: "Home"}}))
 	homeButton.OnClicked(func(*ui.Button) {
 		logTrace.Println("Home button clicked")
 		setThresholds(40, 70)
@@ -92,7 +92,7 @@ func launchUI() {
 	})
 	batteryVbox.Append(homeButton, false)
 
-	customButton := ui.NewButton("Custom")
+	customButton := ui.NewButton(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "SetCustom", Other: "Custom"}}))
 	var customButtonOnClicked func(*ui.Button)
 	customButtonOnClicked = func(*ui.Button) {
 		logTrace.Println("Custom button clicked")
@@ -121,7 +121,7 @@ func launchUI() {
 	fnlockVbox.SetPadded(true)
 	fnlockGroup.SetChild(fnlockVbox)
 
-	fnlockToggle := ui.NewButton("Toggle")
+	fnlockToggle := ui.NewButton(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DoToggle", Other: "Toggle"}}))
 	fnlockToggle.OnClicked(func(*ui.Button) {
 		logTrace.Println("Fnlock toggle button clicked")
 		config.fnlock.toggle()
