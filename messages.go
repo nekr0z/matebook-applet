@@ -29,4 +29,12 @@ var messages = []*i18n.Message{
 		ID:    "StatusCustom",
 		Other: "CUSTOM ({{.Min}}%-{{.Max}}%)",
 	},
+	&i18n.Message{
+		ID:    "CantReadFnlock",
+		Other: "could not read Fn-Lock state from driver interface",
+	},
+	&i18n.Message{
+		ID:    "CantSetBattery",
+		Other: "failed to set thresholds",
+	},
 }

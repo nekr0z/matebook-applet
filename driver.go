@@ -126,7 +126,7 @@ func (drv fnlockDriver) get() (bool, error) {
 
 	val, err := ioutil.ReadFile(drv.path)
 	if err != nil {
-		logError.Println("Could not read Fn-Lock state from driver interface")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadFnlock"}))
 		logTrace.Println(err)
 	}
 	value := strings.TrimSpace(string(val))
@@ -170,7 +170,7 @@ func (drv fnlockDriver) checkWritable() bool {
 func (drv fnlockDriver) toggle() {
 	val, err := drv.get()
 	if err != nil {
-		logError.Println("Could not read fn_lock_state from driver interface")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadFnlock"}))
 		logTrace.Println(err)
 		return
 	}
@@ -208,7 +208,7 @@ func (scr fnlockScript) get() (bool, error) {
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
-		logError.Println("Failed to get fnlock status from script")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadFnlockScript", Other: "Failed to get fnlock status from script"}}))
 	}
 	state := parseOnOffStatus(out.String())
 	if state == "on" {
@@ -220,7 +220,7 @@ func (scr fnlockScript) get() (bool, error) {
 func (scr fnlockScript) toggle() {
 	cmd := scr.toggleCmd
 	if err := cmd.Run(); err != nil {
-		logError.Println("Failed to toggle Fn-Lock")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantToggleFnlock", Other: "Failed to toggle Fn-Lock"}}))
 	}
 }
 
@@ -233,14 +233,14 @@ func (drv threshDriverSingle) get() (min, max int, err error) {
 	var values [2]string
 	val, err := ioutil.ReadFile(drv.path)
 	if err != nil {
-		logError.Println("Failed to get thresholds from driver interface")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBattery", Other: "Failed to get thresholds from driver interface"}}))
 		logTrace.Println(err)
 	}
 
 	valuesReceived := strings.Split(strings.TrimSpace(string(val)), " ")
 	logTrace.Println("got values from interface:", valuesReceived)
 	if len(valuesReceived) != 2 {
-		logError.Println("Can not make sense of driver interface value", val)
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantUnderstandBattery", Other: "Can not make sense of driver interface value {{.Value}}"}, TemplateData: map[string]interface{}{"Value": val}}))
 		return
 	}
 	for i := 0; i < 2; i++ {
@@ -265,11 +265,11 @@ func valuesAtoi(mins, maxs string) (min, max int, err error) {
 
 func (drv threshDriverMinMax) writeDo(min, max int) error {
 	if err := ioutil.WriteFile(drv.pathMin, []byte(strconv.Itoa(min)), 0664); err != nil {
-		logError.Println("Failed to set min threshold")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantSetBatteryMin", Other: "Failed to set min threshold"}}))
 		return err
 	}
 	if err := ioutil.WriteFile(drv.pathMax, []byte(strconv.Itoa(max)), 0664); err != nil {
-		logError.Println("Failed to set max threshold")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantSetBatteryMax", Other: "Failed to set max threshold"}}))
 		return err
 	}
 	return nil
@@ -296,14 +296,14 @@ func (drv threshDriverMinMax) get() (min, max int, err error) {
 	var values [2]string
 	val, err := ioutil.ReadFile(drv.pathMin)
 	if err != nil {
-		logError.Println("Failed to get min threshold from driver interface")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryMin", Other: "Failed to get min threshold from driver interface"}}))
 		logTrace.Println(err)
 		return
 	}
 	values[0] = string(val)
 	val, err = ioutil.ReadFile(drv.pathMax)
 	if err != nil {
-		logError.Println("Failed to get max threshold from driver interface")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryMax", Other: "Failed to get max threshold from driver interface"}}))
 		logTrace.Println(err)
 		return
 	}
@@ -321,7 +321,7 @@ func (drv threshDriverSingle) write(min, max int) error {
 	values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
 	err := ioutil.WriteFile(drv.path, values, 0664)
 	if err != nil {
-		logError.Println("Failed to set thresholds")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantSetBattery"}))
 	} else {
 		logTrace.Println("successful write to driver interface")
 	}
@@ -364,7 +364,7 @@ func (scr threshScript) get() (min, max int, err error) {
 	cmd.Stdout = &out
 	err = cmd.Run()
 	if err != nil {
-		logError.Println("Failed to get battery protection status from script")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryScript", Other: "Failed to get battery protection status from script"}}))
 		return
 	}
 	state, min, max := parseStatus(out.String())
@@ -384,7 +384,7 @@ func (scr threshScript) set(min, max int) {
 		cmd.Args = append(cmd.Args, strconv.Itoa(min), strconv.Itoa(max))
 	}
 	if err := cmd.Run(); err != nil {
-		logError.Println("Failed to set thresholds")
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantSetBattery"}))
 	}
 }
 
