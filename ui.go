@@ -140,7 +140,7 @@ func customThresholds(ch chan struct{}) {
 	logTrace.Println("Launching custom thresholds window")
 	min, max, err := config.thresh.get()
 	if err != nil {
-		logWarning.Println("Failed to get thresholds")
+		logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBattery", Other: "failed to get thresholds"}}))
 	}
 	customWindow = ui.NewWindow(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CustomWindowTitle", Other: "Charging thresholds"}}), 640, 240, false)
 	customWindow.OnClosing(func(*ui.Window) bool {

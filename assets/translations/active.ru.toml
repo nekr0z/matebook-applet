@@ -19,6 +19,10 @@ hash = "sha1-e9846550ea495dfbd9d91ac96679bde70db00dfc"
 other = "{{.Status}}, но пороговые значения не имеют смысла."
 
 [CantReadBattery]
+hash = "sha1-0d00dfe4c8f6614f29ff1de976e9ffe918a81184"
+other = "не удалось считать пороговые значения"
+
+[CantReadBatteryDriver]
 hash = "sha1-f2baabb7a67afeb64c1196391906a994f84445ae"
 other = "Не удалось получить пороговые значения от драйвера"
 
@@ -53,6 +57,10 @@ other = "Не удалось установить верхний порог"
 [CantSetBatteryMin]
 hash = "sha1-ba1d770c21568d57cf48e892b3bda687cd287d1c"
 other = "Не удалось установить нижний порог"
+
+[CantSetFnlockDriver]
+hash = "sha1-078c7d74e485c2a6e456eb5f6bcaac907c36f023"
+other = "Не удалось выставить состояние Fn-Lock через драйвер"
 
 [CantToggleFnlock]
 hash = "sha1-e604129118f45b8985c1f828bc58d0835e3b0a86"
@@ -142,6 +150,10 @@ other = "Подготовка меню..."
 hash = "sha1-1a2285d8881f226e13430515a9dd2b9fb6294200"
 other = "Выход"
 
+[ReadOnlyDriver]
+hash = "sha1-1e01dbbc0e4fa8fba178f0008c4f138e82497a7f"
+other = "Интерфейс драйвера доступен для чтения, но не для записи."
+
 [SetCustom]
 hash = "sha1-081ae3fdc403609cf6e760849ebb14117b7a50cb"
 other = "Другой"
@@ -185,3 +197,11 @@ other = "ВКЛ"
 [StatusTravel]
 hash = "sha1-dd99db139f05d43ec01a5da2290030351f424984"
 other = "ПОЕЗДКА"
+
+[StrangeFnlock]
+hash = "sha1-fc0f7d131e287a7cc8ef65fa37eb8cbf47a81fa2"
+other = "Состояние Fn-lock, полученное от драйвера, бессмысленно"
+
+[StrangeThresholds]
+hash = "sha1-78c6ce6350b1637a19cfa3d886ba0c4b9f2ccdf5"
+other = "Пороговые значения для батареи: мин. {{.Min}}%, макс. {{.Max}}% - не имеют смысла"

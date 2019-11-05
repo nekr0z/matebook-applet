@@ -138,7 +138,7 @@ func (drv fnlockDriver) get() (bool, error) {
 		logTrace.Println("Fn-lock is ON")
 		return true, err
 	default:
-		logWarning.Println("Fn-lock state reported by driver doesn't make sense")
+		logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "StrangeFnlock", Other: "Fn-lock state reported by driver doesn't make sense"}}))
 		return false, errors.New("state is reported as " + value)
 	}
 }
@@ -163,7 +163,7 @@ func (drv fnlockDriver) checkWritable() bool {
 		}
 	}
 	logTrace.Println(err)
-	logWarning.Println("Driver interface is readable but not writeable.")
+	logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ReadOnlyDriver", Other: "Driver interface is readable but not writeable."}}))
 	return false
 }
 
@@ -178,7 +178,7 @@ func (drv fnlockDriver) toggle() {
 	err = ioutil.WriteFile(drv.path, value, 0644)
 	if err != nil {
 		logTrace.Println(err)
-		logWarning.Println("Could not set Fn-Lock status through driver interface")
+		logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantSetFnlockDriver", Other: "Could not set Fn-Lock status through driver interface"}}))
 		return
 	}
 	logTrace.Println("successful write to driver interface")
@@ -233,7 +233,7 @@ func (drv threshDriverSingle) get() (min, max int, err error) {
 	var values [2]string
 	val, err := ioutil.ReadFile(drv.path)
 	if err != nil {
-		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBattery", Other: "Failed to get thresholds from driver interface"}}))
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryDriver", Other: "Failed to get thresholds from driver interface"}}))
 		logTrace.Println(err)
 	}
 
@@ -418,7 +418,7 @@ func getStatus() string {
 				status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusCustom", TemplateData: map[string]interface{}{"Min": min, "Max": max}})
 			}
 		} else {
-			logWarning.Printf("BP thresholds don't make sense: min %d%%, max %d%%\n", min, max)
+			logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "StrangeThresholds", Other: "BP thresholds don't make sense: min {{.Min}}%, max {{.Max}}%"}, TemplateData: map[string]interface{}{"Min": min, "Max": max}}))
 			status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusOn"})
 			r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "BatteryProtectionStatusStrange", Other: "{{.Status}}, but thresholds make no sense."}, TemplateData: map[string]interface{}{"Status": status}})
 			return r
