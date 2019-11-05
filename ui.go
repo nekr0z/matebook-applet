@@ -17,6 +17,7 @@ package main
 
 import (
 	"github.com/andlabs/ui"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 var (
@@ -141,7 +142,7 @@ func customThresholds(ch chan struct{}) {
 	if err != nil {
 		logWarning.Println("Failed to get thresholds")
 	}
-	customWindow = ui.NewWindow("Custom battery thresholds", 640, 240, false)
+	customWindow = ui.NewWindow(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CustomWindowTitle", Other: "Charging thresholds"}}), 640, 240, false)
 	customWindow.OnClosing(func(*ui.Window) bool {
 		close(ch)
 		return true
@@ -165,12 +166,12 @@ func customThresholds(ch chan struct{}) {
 		}
 	})
 	vbox.Append(minSlider, false)
-	minLabel := ui.NewLabel("MIN: the battery won't be charged unless it is lower than this level when AC is plugged")
+	minLabel := ui.NewLabel(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "MinThresholdExplain", Other: "MIN: the battery won't be charged unless it is lower than this level when AC is plugged"}}))
 	vbox.Append(minLabel, false)
 	vbox.Append(maxSlider, false)
-	maxLabel := ui.NewLabel("MAX: the battery won't be charged above this level")
+	maxLabel := ui.NewLabel(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "MaxThresholdExplain", Other: "MAX: the battery won't be charged above this level"}}))
 	vbox.Append(maxLabel, false)
-	setButton := ui.NewButton("Set")
+	setButton := ui.NewButton(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DoSet", Other: "Set"}}))
 	setButton.OnClicked(func(*ui.Button) {
 		setThresholds(minSlider.Value(), maxSlider.Value())
 		customWindow.Destroy()
