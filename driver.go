@@ -18,7 +18,7 @@ package main
 import (
 	"bytes"
 	"errors"
-	"fmt"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -397,43 +397,49 @@ func setThresholds(min int, max int) {
 }
 
 func getStatus() string {
-	var r string
+	var r, status string
 	min, max, err := config.thresh.get()
 	if err != nil {
-		r = "ERROR: can not get BP status!"
+		r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "BatteryProtectionStatusError", Other: "ERROR: can not get BP status!"}})
 	} else {
 		if min >= 0 && min <= 100 && max != 0 && max <= 100 && min <= max {
-			r = "Battery protection mode "
 			switch {
 			case min == 0 && max == 100:
-				r = "Battery protection OFF"
+				status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusOff"})
+				r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "BatteryProtectionOff", Other: "Battery protection is {{.Status}}"}, TemplateData: map[string]interface{}{"Status": status}})
+				return r
 			case min == 40 && max == 70:
-				r = r + "HOME"
+				status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusHome"})
 			case min == 70 && max == 90:
-				r = r + "OFFICE"
+				status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusOffice"})
 			case min == 95 && max == 100:
-				r = r + "TRAVEL"
+				status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusTravel"})
 			default:
-				r = r + fmt.Sprintf("custom: %d%%-%d%%", min, max)
+				status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusCustom", TemplateData: map[string]interface{}{"Min": min, "Max": max}})
 			}
 		} else {
 			logWarning.Printf("BP thresholds don't make sense: min %d%%, max %d%%\n", min, max)
-			r = "ON, but thresholds make no sense."
+			status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusOn"})
+			r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "BatteryProtectionStatusStrange", Other: "{{.Status}}, but thresholds make no sense."}, TemplateData: map[string]interface{}{"Status": status}})
+			return r
 		}
+		r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "BatteryProtectionStatus", Other: "Battery protection mode: {{.Status}}"}, TemplateData: map[string]interface{}{"Status": status}})
 	}
 	return r
 }
 
 func getFnlockStatus() string {
-	var r string
+	var r, status string
 	state, err := config.fnlock.get()
 	if state {
-		r = "Fn-Lock ON"
+		status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusOn"})
 	} else {
-		r = "Fn-Lock OFF"
+		status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusOff"})
 	}
 	if err != nil {
-		r = "ERROR: Fn-Lock state unknown"
+		r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FnlockStatusError", Other: "ERROR: Fn-Lock state unknown"}})
+	} else {
+		r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FnlockStatus", Other: "Fn-Lock is {{.Status}}"}, TemplateData: map[string]interface{}{"Status": status}})
 	}
 	return r
 }

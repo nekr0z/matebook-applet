@@ -2,9 +2,49 @@
 hash = "sha1-e6e5ae8775614e73320396887c93031d91678847"
 other = "matebook-applet версия {{.Version}}"
 
+[BatteryProtectionOff]
+hash = "sha1-b44e7fe2b25290213d2d5a76c085c5601bb1a7c6"
+other = "Защита батареи {{.Status}}"
+
+[BatteryProtectionStatus]
+hash = "sha1-94420ef3a2c1811a59992f42ceb44bfada924714"
+other = "Режим защиты батареи: {{.Status}}"
+
+[BatteryProtectionStatusError]
+hash = "sha1-90978e300d12f1ea3a51d1465033209645827483"
+other = "ОШИБКА: не удалось считать состояние защиты батареи!"
+
+[BatteryProtectionStatusStrange]
+hash = "sha1-e9846550ea495dfbd9d91ac96679bde70db00dfc"
+other = "{{.Status}}, но пороговые значения не имеют смысла."
+
 [DetectedLocale]
 hash = "sha1-f2361d52c8ce223901ca406f40f508dc5716cb0b"
 other = "обнаружена локаль: {{.Locale}}"
+
+[DoCustom]
+hash = "sha1-63d55e50dde7ba12ca28578468e41d18d788a893"
+other = "ДРУГОЙ"
+
+[DoHome]
+hash = "sha1-4ab9691cb341277fd8ca187099cad573cfe67bef"
+other = "ДОМ (40%-70%)"
+
+[DoOffice]
+hash = "sha1-6b887fc4d882d724c9248822486ccc11cacaf3e0"
+other = "РАБОТА (70%-90%)"
+
+[DoTravel]
+hash = "sha1-25bbe11089ea5bf1312b4a022e0e9106f5024792"
+other = "ПОЕЗДКА (95%-100%)"
+
+[FnlockStatus]
+hash = "sha1-0e54580a7825f89e05f2686be07e0de4fff2e9b6"
+other = "Fn-Lock {{.Status}}"
+
+[FnlockStatusError]
+hash = "sha1-0b35e53521a39352dbf08e4325aab2c7c3b0cca5"
+other = "ОШИБКА: состояние Fn-Lock неизвестно"
 
 [FoundBattery]
 hash = "sha1-20d74c4968759d3fe6e71bf8ea98363f492ad80f"
@@ -29,3 +69,35 @@ other = "Не найдено поддерживаемой версии драй�
 [OptionSDeprecated]
 hash = "sha1-20a5402420c6b1d8474d197544a84fbb2c9786ca"
 other = "опция -s объявлена устаревшей, теперь значения порогов заряда сохраняются по умолчанию"
+
+[PreparingTray]
+hash = "sha1-88ee9b4868438ba349cd8377fe2a2644d812d128"
+other = "Подготовка меню..."
+
+[Quit]
+hash = "sha1-1a2285d8881f226e13430515a9dd2b9fb6294200"
+other = "Выход"
+
+[StatusCustom]
+hash = "sha1-3bd84615a6ebcfa7885b32b34b938fab187109ec"
+other = "ДРУГОЙ ({{.Min}}%-{{.Max}}%)"
+
+[StatusHome]
+hash = "sha1-7731962fb19e09fff22c1be46abc4b02e9ff78eb"
+other = "ДОМ"
+
+[StatusOff]
+hash = "sha1-ad50489054ddaae044be8b3054bf4d67480648d6"
+other = "ВЫКЛ"
+
+[StatusOffice]
+hash = "sha1-ca80aeb8447fa1048e45429c65903b004e5ef023"
+other = "РАБОТА"
+
+[StatusOn]
+hash = "sha1-387d7a59dbaaef002e0f9ac69ecd4443b9c5cef2"
+other = "ВКЛ"
+
+[StatusTravel]
+hash = "sha1-dd99db139f05d43ec01a5da2290030351f424984"
+other = "ПОЕЗДКА"

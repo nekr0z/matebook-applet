@@ -97,6 +97,7 @@ func main() {
 	// i18n init
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	bundle.MustAddMessages(language.English, messages...)
 	if tr, err := assets.Open("/translations"); err == nil {
 		if files, err := tr.Readdir(-1); err == nil {
 			for _, file := range files {
