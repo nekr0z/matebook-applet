@@ -130,7 +130,7 @@ func onReady() {
 	}); err != nil {
 		logError.Println(err)
 	}
-	logInfo.Println("Exiting the applet...")
+	logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "AppletExit", Other: "Exiting the applet..."}}))
 	os.Exit(0)
 }
 
@@ -140,7 +140,7 @@ func onExit() {
 func getIcon(pth, dflt string) []byte {
 	b, err := ioutil.ReadFile(pth)
 	if err != nil {
-		logInfo.Println("Couldn't get custom icon, falling back to default")
+		logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "NoCustomIcon", Other: "Couldn't get custom icon, falling back to default"}}))
 		file, err := assets.Open(dflt)
 		if err != nil {
 			logError.Println(err)
@@ -151,7 +151,7 @@ func getIcon(pth, dflt string) []byte {
 			logError.Println(err)
 		}
 	} else {
-		logInfo.Println("Successfully loaded custom icon from", pth)
+		logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "GotCustomIcon", Other: "Successfully loaded custom icon from {{.Path}}"}, TemplateData: map[string]interface{}{"Path": pth}}))
 	}
 	return b
 }
