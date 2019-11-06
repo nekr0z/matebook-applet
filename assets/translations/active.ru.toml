@@ -78,10 +78,6 @@ other = "Непонятное значение: {{.Value}} получено от
 hash = "sha1-c285a1c9d64cd3f8f3f21f58d8cce93567cfa714"
 other = "Пороги заряда"
 
-[DetectedLocale]
-hash = "sha1-f2361d52c8ce223901ca406f40f508dc5716cb0b"
-other = "обнаружена локаль: {{.Locale}}"
-
 [DoCustom]
 hash = "sha1-63d55e50dde7ba12ca28578468e41d18d788a893"
 other = "ДРУГОЙ"
@@ -105,6 +101,38 @@ other = "Переключить"
 [DoTravel]
 hash = "sha1-25bbe11089ea5bf1312b4a022e0e9106f5024792"
 other = "ПОЕЗДКА (95%-100%)"
+
+[FlagIcon]
+hash = "sha1-51392cdeb0b59c3754746d3d3978268c126f22c0"
+other = "путь к значку, который будет использоваться вместо встроенного"
+
+[FlagN]
+hash = "sha1-ceda3041d90346fb29676e2f511a21c943582000"
+other = "не сохранять значения"
+
+[FlagR]
+hash = "sha1-bd5751eec8f9f6a154f9ff4eea1a37cd6b09b769"
+other = "использовать скрипты fnlock и batpro, если нет других возможностей"
+
+[FlagS]
+hash = "sha1-0fe7cd0e5637039559540c37b9ff49035e7bdd63"
+other = "сохранять значения для последующего восстановления (устарело)"
+
+[FlagV]
+hash = "sha1-9b303e59d52316b804a030d6b89d5a99cc69c044"
+other = "выводить подробности"
+
+[FlagVV]
+hash = "sha1-015fd2e1238daff957d32ba1f3d50368d72b5963"
+other = "выводить очень много подробностей"
+
+[FlagW]
+hash = "sha1-af1fff6598a1e80d16ea9be4b935f89638df63db"
+other = "оконный режим"
+
+[FlagWait]
+hash = "sha1-7d3e183e08988040912d1dadf0e80ef5b0c7fc85"
+other = "дожидаться, пока драйвер установит пороги заряда батареи (устарело)"
 
 [FnlockStatus]
 hash = "sha1-0e54580a7825f89e05f2686be07e0de4fff2e9b6"
