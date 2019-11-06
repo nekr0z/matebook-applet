@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.3.4] - 2019-11-06
 ### Added
 - internationalization
 ### Translations
@@ -145,7 +147,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - setting battery protection thresholds
 - checks for scripts availability
 
-[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/2.3.3...HEAD
+[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/2.3.4...HEAD
+[2.3.4]: https://github.com/nekr0z/matebook-applet/compare/2.3.3...2.3.4
 [2.3.3]: https://github.com/nekr0z/matebook-applet/compare/2.3.2...2.3.3
 [2.3.2]: https://github.com/nekr0z/matebook-applet/compare/2.3.1...2.3.2
 [2.3.1]: https://github.com/nekr0z/matebook-applet/compare/v2.3.0...2.3.1
