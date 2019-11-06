@@ -24,6 +24,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/user"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -164,7 +166,12 @@ func getString(c string, a ...string) (string, error) {
 // use aptly and rsync to update debian repo
 func updateRepo(filename string) {
 	if updateLocalRepo(filename) {
-		cmd := exec.Command("rsync", "-r", "--del", "~/.aptly/public/", "evgenykuznetsov.org:~/repository/")
+		usr, err := user.Current()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		local := filepath.Join(usr.HomeDir, ".aptly/public/")
+		cmd := exec.Command("rsync", "-r", "--del", local, "evgenykuznetsov.org:~/repository/")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stdout
 		if err := cmd.Run(); err != nil {
