@@ -18,6 +18,7 @@ It can be used as a system tray applet (above) or as a windowed app (below).
   * [Compiling](#compiling-matebook-applet)
 * [Usage](#usage)
 * [Development](#development)
+  * [Contributing translations](#contributing-translations)
 * [Credits](#credits)
 
 ## Installation and setup
@@ -105,7 +106,26 @@ $ man matebook-applet
 ```
 
 ## Development
-PRs are most welcome!
+Pull requests are always welcome!
+
+### Contributing translations
+> In case you don't want to install any Go tools, the notion of having to use `git` scares you, and you don't feel like figuring out what a pull request is and how to make one, but you still feel like contributing a translation, just drop me an email, we'll figure something out. ;-)
+
+The intended way to go about contributing translations to the project is using [go-i18n](https://github.com/nicksyder/go-i18n) tool. Make sure you have it installed and available, clone the repository, and:
+```
+$ cd assets/translations
+$ ls
+$ touch active.xx.toml
+```
+(where `xx` is your language)
+```
+$ goi18n merge active.*.toml
+```
+This will generate `translate.xx.toml` with all the lines that need to be translated to the language `xx`. Go ahead and translate it. Please make sure you delete all the messages you don't feel like translating before the next step, so that English messages don't creep in disguised as messages in your language.
+```
+$ goi18n merge active.*.toml translate.*.toml
+```
+Now all you've translated is in `active.xx.toml` and you can make a pull request.
 
 ## Credits
 This software includes the following software or parts thereof:
