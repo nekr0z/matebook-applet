@@ -41,7 +41,7 @@ before_deploy:
 
 deploy:
   provider: script
-  script: go run release.go
+  script: rvm default do go run release.go
   skip_cleanup: true
   on:
     tags: true
