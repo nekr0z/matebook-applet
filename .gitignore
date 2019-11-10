@@ -6,3 +6,4 @@ matebook-applet
 *.deb
 assets.go
 debian.changelog
+secrets.tar

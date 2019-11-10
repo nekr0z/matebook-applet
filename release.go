@@ -82,9 +82,6 @@ func process(version string) {
 		log.Fatalln("Something wrong. Already released? Giving up.")
 	}
 
-	// git checkout requested version
-	checkout(gitVersion)
-
 	// build
 	fmt.Println("building...")
 	cmd := exec.Command("go", "run", "build.go", "-t", "-d")
@@ -147,14 +144,6 @@ func process(version string) {
 
 	// git checkout back to master
 	checkout("master")
-}
-
-func checkout(version string) {
-	fmt.Printf("trying to git checkout %s...\n", version)
-	cmd := exec.Command("git", "checkout", version)
-	if err := cmd.Run(); err != nil {
-		log.Fatalln(err)
-	}
 }
 
 func getString(c string, a ...string) (string, error) {

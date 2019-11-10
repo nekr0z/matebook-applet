@@ -48,7 +48,7 @@ type distFile struct {
 
 var (
 	filename  string
-	keyID     string = "466F4F38E60211B0"
+	keyID     string = "F25E85CB21A79726"
 	packFiles        = []packFile{
 		{src: "LICENSE", dst: "LICENSE", mod: 0644},
 		{src: "README.md", dst: "README.md", mod: 0644},
