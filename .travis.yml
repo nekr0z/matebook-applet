@@ -36,6 +36,7 @@ script:
 
 before_deploy:
   - go get github.com/itchio/gothub@master
+  - gem install fpm
   - git reset --hard
 
 deploy:
