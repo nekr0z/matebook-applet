@@ -283,7 +283,7 @@ func setFileTime(f string, t int64) {
 }
 
 func signFile(f string, k string) {
-	cmd := exec.Command("gpg", "--detach-sign", "--yes", "-u", k, f)
+	cmd := exec.Command("gpg", "--detach-sign", "--yes", "--passphrase", os.Getenv("GPG_PASSPHRASE"), "--pinentry-mode", "loopback", "-u", k, f)
 	if err := cmd.Run(); err != nil {
 		fmt.Println("signing", f, "failed")
 		filename = filename + "-unsigned"
