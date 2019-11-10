@@ -22,7 +22,7 @@ before_install:
 
 install:
   - gpg --batch --passphrase $GPG_PASSPHRASE --pinentry-mode loopback --import gpgsecret.asc
-  - echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key B5C7C6EAA5B9B41A trust;
+  - echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key F25E85CB21A79726 trust;
   - git reset --hard
     
 before_script:
