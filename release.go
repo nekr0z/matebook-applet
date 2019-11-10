@@ -141,9 +141,6 @@ func process(version string) {
 
 	// update debian repo
 	updateRepo(debFilename)
-
-	// git checkout back to master
-	checkout("master")
 }
 
 func getString(c string, a ...string) (string, error) {
