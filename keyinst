@@ -1,0 +1,23 @@
+#!/bin/bash
+# repository key installation script for matebook-applet
+
+set -e
+
+APT_KEY=/usr/share/keyrings/matebook-applet.asc
+
+case "$1" in
+  configure|reconfigure)
+  echo "Installing matebook-applet package signing key..."
+  apt-key add $APT_KEY
+
+  ;;
+
+  *)
+
+  ;;
+
+esac
+
+#DEBHELPER#
+
+exit 0

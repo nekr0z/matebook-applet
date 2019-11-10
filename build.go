@@ -63,6 +63,7 @@ var (
 		{src: "matebook-applet.1", dst: "/usr/share/man/man1/"},
 		{src: "matebook-applet.desktop", dst: "/usr/share/applications/"},
 		{src: "assets/matebook-applet.png", dst: "/usr/share/icons/hicolor/512x512/apps/"},
+		{src: "matebook-applet.asc", dst: "/usr/share/keyrings/matebook-applet.asc"},
 	}
 	debDeps = []string{
 		"libappindicator3-1",
@@ -198,6 +199,7 @@ func buildDeb(ver string) {
 		"--url", "https://github.com/nekr0z/matebook-applet",
 		"--license", "GPL-3",
 		"--deb-priority", "optional",
+		"--after-install", "keyinst",
 	}
 	if clok {
 		args = append(args, "--deb-changelog", "debian.changelog")
