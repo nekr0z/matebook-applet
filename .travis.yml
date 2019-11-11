@@ -25,7 +25,6 @@ before_install:
 install:
   - gpg --batch --passphrase $GPG_PASSPHRASE --pinentry-mode loopback --import gpgsecret.asc
   - echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key F25E85CB21A79726 trust;
-  - git reset --hard
     
 before_script:
   - go install github.com/golangci/golangci-lint/cmd/golangci-lint
@@ -33,6 +32,7 @@ before_script:
 
 script:
   - golangci-lint run
+  - git reset --hard
   - go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
   - go run build.go
 
