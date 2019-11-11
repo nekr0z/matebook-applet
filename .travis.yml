@@ -25,9 +25,6 @@ before_install:
 install:
   - gpg --batch --passphrase $GPG_PASSPHRASE --pinentry-mode loopback --import gpgsecret.asc
   - echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key F25E85CB21A79726 trust;
-  - gpg1 --no-default-keyring --keyring trustedkeys.gpg --keyserver pool.sks-keyservers.net --recv-keys 79B2B092A63F5E6F
-  - aptly mirror create repo http://evgenykuznetsov.org/repo buster
-  - aptly mirror update repo
   - git reset --hard
     
 before_script:
@@ -42,11 +39,17 @@ script:
 before_deploy:
   - go get github.com/itchio/gothub@master
   - gem install fpm
+  - gpg1 --no-default-keyring --keyring trustedkeys.gpg --keyserver pool.sks-keyservers.net --recv-keys 79B2B092A63F5E6F
+  - aptly mirror create repo http://evgenykuznetsov.org/repo buster
+  - aptly mirror update repo
   - git reset --hard
 
 deploy:
   provider: script
-  script: rvm default do go run release.go
+  script: 
+    - rvm default do go run release.go
+    - aptly repo add repo *.deb
+    - aptly publish repo repo
   skip_cleanup: true
   on:
     tags: true
