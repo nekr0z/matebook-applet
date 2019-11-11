@@ -173,11 +173,6 @@ func updateLocalRepo(filename string) bool {
 		fmt.Println("failed to add", filename, "to local aptly repo")
 		return false
 	}
-	cmd = exec.Command("aptly", "publish", "drop", "buster")
-	if err := cmd.Run(); err != nil {
-		fmt.Println("failed to drop old local release")
-		return false
-	}
 	cmd = exec.Command("aptly", "publish", "repo", "matebook-applet")
 	if err := cmd.Run(); err != nil {
 		fmt.Println("failed to locally publish repo")
