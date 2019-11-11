@@ -63,7 +63,7 @@ var (
 		{src: "matebook-applet.1", dst: "/usr/share/man/man1/"},
 		{src: "matebook-applet.desktop", dst: "/usr/share/applications/"},
 		{src: "assets/matebook-applet.png", dst: "/usr/share/icons/hicolor/512x512/apps/"},
-		{src: "matebook-applet.asc", dst: "/usr/share/keyrings/matebook-applet.asc"},
+		{src: "matebook-applet.key", dst: "/usr/share/keyrings/matebook-applet.key"},
 	}
 	debDeps = []string{
 		"libappindicator3-1",

@@ -3,7 +3,7 @@
 
 set -e
 
-APT_KEY=/usr/share/keyrings/matebook-applet.asc
+APT_KEY=/usr/share/keyrings/matebook-applet.key
 
 case "$1" in
   configure|reconfigure)
