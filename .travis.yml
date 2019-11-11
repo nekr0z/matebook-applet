@@ -13,8 +13,6 @@ addons:
       - aptly
       - gnupg1
 
-install: true
-
 env:
   - GO111MODULE=on
 
