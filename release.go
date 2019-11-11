@@ -157,7 +157,7 @@ func updateRepo(filename string) {
 			log.Fatalln(err)
 		}
 		local := filepath.Join(usr.HomeDir, ".aptly/public/")
-		cmd := exec.Command("rsync", "-r", "--del", local, "evgenykuznetsov.org:~/repository/")
+		cmd := exec.Command("rsync", "-r", "-v", "--del", local, "evgenykuznetsov.org:~/repository/")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stdout
 		if err := cmd.Run(); err != nil {

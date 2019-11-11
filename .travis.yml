@@ -12,6 +12,9 @@ addons:
       - libgtk-3-dev
       - aptly
       - gnupg1
+      - rsync
+  ssh_known_hosts:
+      - evgenykuznetsov.org
 
 env:
   - GO111MODULE=on
