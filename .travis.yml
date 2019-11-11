@@ -11,6 +11,7 @@ addons:
       - libappindicator3-dev
       - libgtk-3-dev
       - aptly
+      - gnupg1
 
 install: true
 
