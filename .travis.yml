@@ -42,14 +42,13 @@ before_deploy:
   - gpg1 --no-default-keyring --keyring trustedkeys.gpg --keyserver pool.sks-keyservers.net --recv-keys 79B2B092A63F5E6F
   - aptly mirror create repo http://evgenykuznetsov.org/repo buster
   - aptly mirror update repo
+  - aptly repo create -distribution="buster" matebook-applet
+  - aptly repo import repo matebook-applet Name
   - git reset --hard
 
 deploy:
   provider: script
-  script: 
-    - rvm default do go run release.go
-    - aptly repo add repo *.deb
-    - aptly publish repo repo
+  script: rvm default do go run release.go
   skip_cleanup: true
   on:
     tags: true
