@@ -77,7 +77,7 @@ func process(version string) {
 		log.Fatalln(err)
 	}
 
-	debFilenames, err := filepath.Glob("*.deb")
+	debFilenames, err := filepath.Glob("./*.deb")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -163,7 +163,7 @@ func updateRepo(filenames []string) {
 // update aptly local repo
 func updateLocalRepo(filenames []string) bool {
 	for _, filename := range filenames {
-		cmd := exec.Command("aptly", "repo", "add", "matebook-applet", "*.deb")
+		cmd := exec.Command("aptly", "repo", "add", "matebook-applet", filename)
 		if err := cmd.Run(); err != nil {
 			fmt.Println("failed to add", filename, "to local aptly repo")
 			return false
