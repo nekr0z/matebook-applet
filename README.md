@@ -138,6 +138,10 @@ This software includes the following software or parts thereof:
 * [The Go Programming Language](https://golang.org) Copyright © 2009 The Go Authors
 * [Enkel Icons](https://www.deviantart.com/froyoshark/art/WIP-Enkel-Icon-Pack-for-Mac-498003378) by [FroyoShark](https://www.deviantart.com/froyoshark)
 
+Translations:
+* German - [Rouven "n3vu0r" Spreckles](https://github.com/n3vu0r)
+* Russian - [Evgeny "nekr0z" Kuznetsov](https://evgenykuznetsov.org)
+
 Packages are built using [fpm](https://github.com/jordansissel/fpm) and [nekr0z/changelog](https://github.com/nekr0z/changelog).
 
 Big **THANK YOU** to [Ayman Bagabas](https://github.com/aymanbagabas) for all his work and support. Without him, there would be no matebook-applet.
