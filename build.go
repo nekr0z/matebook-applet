@@ -291,7 +291,7 @@ func signFile(f string, k string) {
 		filename = filename + "-unsigned"
 	} else {
 		fmt.Println(f, "successfully signed with key", k)
-		packFiles = append(packFiles, packFile{"matebook-applet.sig", "matebook-applet.sig", 0644})
+		packFiles = append(packFiles, packFile{"matebook-applet.asc", "matebook-applet.asc", 0644})
 	}
 }
 
