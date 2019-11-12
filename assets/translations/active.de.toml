@@ -112,7 +112,7 @@ other = "Speichere Werte nicht persistent"
 
 [FlagR]
 hash = "sha1-bd5751eec8f9f6a154f9ff4eea1a37cd6b09b769"
-other = "Benutze fnlock und batpro Skripts wenn alles andere fehlschlägt"
+other = "Benutze fnlock und batpro Skripts, wenn alles andere fehlschlägt"
 
 [FlagS]
 hash = "sha1-0fe7cd0e5637039559540c37b9ff49035e7bdd63"
@@ -168,7 +168,7 @@ other = "Obere: Die Batterie wird nicht über diese Schwelle hinaus aufgeladen"
 
 [MinThresholdExplain]
 hash = "sha1-6221a4781e7a1aad183ec63f149534264728c5da"
-other = "Untere: Die Batterie wird erst wieder aufgeladen wenn sie diese Schwelle unterschreitet"
+other = "Untere: Die Batterie wird erst wieder aufgeladen, wenn sie diese Schwelle unterschreitet"
 
 [NoCustomIcon]
 hash = "sha1-9559357512b19ccd2d6c0ac6dc6265474e2675d6"
