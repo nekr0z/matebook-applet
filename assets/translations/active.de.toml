@@ -1,0 +1,247 @@
+[AppletExit]
+hash = "sha1-b51b59d3a52796e005059bc092355cd0c6cd9272"
+other = "Schließe das Applet..."
+
+[AppletVersion]
+hash = "sha1-e6e5ae8775614e73320396887c93031d91678847"
+other = "matebook-applet Version {{.Version}}"
+
+[BatteryProtectionOff]
+hash = "sha1-b44e7fe2b25290213d2d5a76c085c5601bb1a7c6"
+other = "Batteriepflege ist {{.Status}}"
+
+[BatteryProtectionStatus]
+hash = "sha1-94420ef3a2c1811a59992f42ceb44bfada924714"
+other = "Batteriepflegemodus: {{.Status}}"
+
+[BatteryProtectionStatusError]
+hash = "sha1-90978e300d12f1ea3a51d1465033209645827483"
+other = "FEHLER: Kann Batteriepflegemodus nicht auslesen!"
+
+[BatteryProtectionStatusStrange]
+hash = "sha1-e9846550ea495dfbd9d91ac96679bde70db00dfc"
+other = "{{.Status}}, aber unsinnige Batterieladeschwellen."
+
+[CantReadBattery]
+hash = "sha1-0d00dfe4c8f6614f29ff1de976e9ffe918a81184"
+other = "Kann Batterieladeschwellen nicht auslesen"
+
+[CantReadBatteryDriver]
+hash = "sha1-f2baabb7a67afeb64c1196391906a994f84445ae"
+other = "Kann Batterieladeschwellen nicht von der Treiberschnittstelle auslesen"
+
+[CantReadBatteryMax]
+hash = "sha1-c195481d4f6b6fedb6efc5be59574446f88d0ddb"
+other = "Kann obere Batterieladeschwelle nicht von der Treiberschnittstelle auslesen"
+
+[CantReadBatteryMin]
+hash = "sha1-1af678745f204ff5831081ead720e39da70146fb"
+other = "Kann untere Batterieladeschwelle nicht von der Treiberschnittstelle auslesen"
+
+[CantReadBatteryScript]
+hash = "sha1-83ae9693098a53cb75883d10d898eda37c89cc54"
+other = "Kann Batteriepflegemodus nicht vom Skript auslesen"
+
+[CantReadFnlock]
+hash = "sha1-155457e07003064e7cfb81d142039b1cc9b35519"
+other = "Kann Fn-Einrastezustand nicht von der Treiberschnittstelle auslesen"
+
+[CantReadFnlockScript]
+hash = "sha1-23cca31c4addf21d2ef06866b68666696fcb06b0"
+other = "Kann Fn-Einrastezustand nicht vom Skript auslesen"
+
+[CantSetBattery]
+hash = "sha1-cdcecf2a0a77c2c00ad41a04304ae26fe92bf54a"
+other = "Kann Batterieladeschwellen nicht setzen"
+
+[CantSetBatteryMax]
+hash = "sha1-de7edeb10fa9b7632b33a7b37ed16e0b2cc0c663"
+other = "Kann obere Batterieladeschwelle nicht setzen"
+
+[CantSetBatteryMin]
+hash = "sha1-ba1d770c21568d57cf48e892b3bda687cd287d1c"
+other = "Kann untere Batterieladeschwelle nicht setzen"
+
+[CantSetFnlockDriver]
+hash = "sha1-078c7d74e485c2a6e456eb5f6bcaac907c36f023"
+other = "Kann Fn-Einrastezustand nicht über die Treiberschnittstelle setzen"
+
+[CantToggleFnlock]
+hash = "sha1-e604129118f45b8985c1f828bc58d0835e3b0a86"
+other = "Kann Fn-Einrastezustand nicht umschalten"
+
+[CantUnderstandBattery]
+hash = "sha1-2969995b65bc6bc17ee2e06106f559361452963c"
+other = "Kann unsinnigen Wert {{.Value}} der Treiberschnittstelle nicht verarbeiten"
+
+[CustomWindowTitle]
+hash = "sha1-c285a1c9d64cd3f8f3f21f58d8cce93567cfa714"
+other = "Batterieladeschwellen"
+
+[DoCustom]
+hash = "sha1-63d55e50dde7ba12ca28578468e41d18d788a893"
+other = "BENUTZERDEFINIERT"
+
+[DoHome]
+hash = "sha1-4ab9691cb341277fd8ca187099cad573cfe67bef"
+other = "ZUHAUSE (40%-70%)"
+
+[DoOffice]
+hash = "sha1-6b887fc4d882d724c9248822486ccc11cacaf3e0"
+other = "BÜRO (70%-90%)"
+
+[DoSet]
+hash = "sha1-448ab73ba1c21e671e218fb91f2644c834f0c16f"
+other = "Setzen"
+
+[DoToggle]
+hash = "sha1-d5e14b063514cb6630e55f0aeb0ad3b37897efca"
+other = "Umschalten"
+
+[DoTravel]
+hash = "sha1-25bbe11089ea5bf1312b4a022e0e9106f5024792"
+other = "UNTERWEGS (95%-100%)"
+
+[FlagIcon]
+hash = "sha1-51392cdeb0b59c3754746d3d3978268c126f22c0"
+other = "Dateipfad zu benutzerdefiniertem Symbol"
+
+[FlagN]
+hash = "sha1-ceda3041d90346fb29676e2f511a21c943582000"
+other = "Speichere Werte nicht persistent"
+
+[FlagR]
+hash = "sha1-bd5751eec8f9f6a154f9ff4eea1a37cd6b09b769"
+other = "Benutze fnlock und batpro Skripts, wenn alles andere fehlschlägt"
+
+[FlagS]
+hash = "sha1-0fe7cd0e5637039559540c37b9ff49035e7bdd63"
+other = "Speichere Werte persistent (veraltet)"
+
+[FlagV]
+hash = "sha1-9b303e59d52316b804a030d6b89d5a99cc69c044"
+other = "Detaillierte Ausgabe"
+
+[FlagVV]
+hash = "sha1-015fd2e1238daff957d32ba1f3d50368d72b5963"
+other = "Sehr detaillierte Ausgabe"
+
+[FlagW]
+hash = "sha1-af1fff6598a1e80d16ea9be4b935f89638df63db"
+other = "Fenstermodus"
+
+[FlagWait]
+hash = "sha1-7d3e183e08988040912d1dadf0e80ef5b0c7fc85"
+other = "Warte bis der Treiber die Batterieladeschwellen gesetzt hat (veraltet)"
+
+[FnlockStatus]
+hash = "sha1-0e54580a7825f89e05f2686be07e0de4fff2e9b6"
+other = "Fn-Einrastezustand ist {{.Status}}"
+
+[FnlockStatusError]
+hash = "sha1-0b35e53521a39352dbf08e4325aab2c7c3b0cca5"
+other = "FEHLER: Fn-Einrastezustand unbekannt"
+
+[FoundBattery]
+hash = "sha1-20d74c4968759d3fe6e71bf8ea98363f492ad80f"
+other = "Beschreibbarer Batterieladeschwellen-Endpunkt gefunden, verwende ihn"
+
+[FoundBatteryPers]
+hash = "sha1-d65c7add0e2927bcec3933d22c766009aaefe543"
+other = "Persistenter Batterieladeschwellen-Endpunkt gefunden."
+
+[FoundFnlock]
+hash = "sha1-056676c11e2b7af1303427004a156d4378b60c3c"
+other = "Beschreibbarer Fn-Einrastezustand-Endpunkt gefunden, verwende ihn"
+
+[GotCustomIcon]
+hash = "sha1-a209c78b902dfab942c15fc98a3e2d75d94b1031"
+other = "Benutzerdefiniertes Symbol {{.Path}} erfolgreich geladen"
+
+[LookingForBatteryPers]
+hash = "sha1-b60af6cc22f7957c7e74d597fea9205c4c3e9814"
+other = "Suche nach Batterieladeschwellen-Endpunkt..."
+
+[MaxThresholdExplain]
+hash = "sha1-e186d02d158abea20f7545379848e32aeb459f3d"
+other = "Obere: Die Batterie wird nicht über diese Schwelle hinaus aufgeladen"
+
+[MinThresholdExplain]
+hash = "sha1-6221a4781e7a1aad183ec63f149534264728c5da"
+other = "Untere: Die Batterie wird erst wieder aufgeladen, wenn sie diese Schwelle unterschreitet"
+
+[NoCustomIcon]
+hash = "sha1-9559357512b19ccd2d6c0ac6dc6265474e2675d6"
+other = "Kann benutzerdefiniertes Symbol nicht laden, verwende Standardsymbol"
+
+[NothingToWorkWith]
+hash = "sha1-8d0c7ee99e7ec2f5b81a5ad0a761fb44a7124e3c"
+other = "Weder eine unterstützte Version des Huawei-WMI Treibers noch ein notwendiges Skript ist korrekt installiert, siehe README.md#installation-and-setup für Anweisungen"
+
+[OptionSDeprecated]
+hash = "sha1-20a5402420c6b1d8474d197544a84fbb2c9786ca"
+other = "-s Schalter ist veraltet, Applet speichert Werte nun standardmäßig persistent"
+
+[PreparingTray]
+hash = "sha1-88ee9b4868438ba349cd8377fe2a2644d812d128"
+other = "Erstelle Menü..."
+
+[Quit]
+hash = "sha1-1a2285d8881f226e13430515a9dd2b9fb6294200"
+other = "Schließen"
+
+[ReadOnlyDriver]
+hash = "sha1-1e01dbbc0e4fa8fba178f0008c4f138e82497a7f"
+other = "Treiberschnittstelle ist lesbar aber nicht beschreibbar."
+
+[SetCustom]
+hash = "sha1-081ae3fdc403609cf6e760849ebb14117b7a50cb"
+other = "Benutzerdefiniert"
+
+[SetHome]
+hash = "sha1-70f8bb9a8a5393ef080507a89e4b98d139000d65"
+other = "Zuhause"
+
+[SetOff]
+hash = "sha1-e3de5ab0ca4c69dbf00e86d2558843e8d806bb49"
+other = "Aus"
+
+[SetOffice]
+hash = "sha1-6c3a72eaf6235dfa967f2bba4dfc3e431c3e1180"
+other = "Büro"
+
+[SetTravel]
+hash = "sha1-22fb76e46f645ef6e6c964d6dd08c200b91bca31"
+other = "Unterwegs"
+
+[StatusCustom]
+hash = "sha1-3bd84615a6ebcfa7885b32b34b938fab187109ec"
+other = "BENUTZERDEFINIERT ({{.Min}}%-{{.Max}}%)"
+
+[StatusHome]
+hash = "sha1-7731962fb19e09fff22c1be46abc4b02e9ff78eb"
+other = "ZUHAUSE"
+
+[StatusOff]
+hash = "sha1-ad50489054ddaae044be8b3054bf4d67480648d6"
+other = "AUS"
+
+[StatusOffice]
+hash = "sha1-ca80aeb8447fa1048e45429c65903b004e5ef023"
+other = "Büro"
+
+[StatusOn]
+hash = "sha1-387d7a59dbaaef002e0f9ac69ecd4443b9c5cef2"
+other = "AN"
+
+[StatusTravel]
+hash = "sha1-dd99db139f05d43ec01a5da2290030351f424984"
+other = "UNTERWEGS"
+
+[StrangeFnlock]
+hash = "sha1-fc0f7d131e287a7cc8ef65fa37eb8cbf47a81fa2"
+other = "Unsinniger Fn-Einrastezustand"
+
+[StrangeThresholds]
+hash = "sha1-78c6ce6350b1637a19cfa3d886ba0c4b9f2ccdf5"
+other = "Unsinnige Batterieladeschwellen: Untere {{.Min}}%, obere {{.Max}}%"
