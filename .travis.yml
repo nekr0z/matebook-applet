@@ -13,8 +13,6 @@ addons:
       - aptly
       - gnupg1
       - rsync
-  ssh_known_hosts:
-      - evgenykuznetsov.org
 
 env:
   - GO111MODULE=on
@@ -23,6 +21,7 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_6a908c0ed538_key -iv $encrypted_6a908c0ed538_iv -in secrets.tar.enc -out secrets.tar -d
   - tar xvf secrets.tar
   - mv id_rsa ~/.ssh/
+  - cat .known_hosts >> $HOME/.ssh/known_hosts
 
 install:
   - gpg --batch --passphrase $GPG_PASSPHRASE --pinentry-mode loopback --import gpgsecret.asc
