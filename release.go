@@ -18,7 +18,9 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -30,9 +32,24 @@ import (
 
 var (
 	githubRepo string = "matebook-applet"
+	packages          = []string{
+		"huawei-wmi",
+		"matebook-applet",
+	}
+	maxKeep = 10
 )
 
 func main() {
+	cleanup := flag.Bool("c", false, "clean debian repository")
+	flag.Parse()
+
+	if *cleanup {
+		if cleanRepo(githubRepo) {
+			publishRepo(githubRepo)
+		}
+		os.Exit(0)
+	}
+
 	if os.Getenv("GITHUB_TOKEN") == "" {
 		log.Fatalln("github token not available, can't work")
 	}
@@ -146,17 +163,7 @@ func getString(c string, a ...string) (string, error) {
 // use aptly and rsync to update debian repo
 func updateRepo(filenames []string) {
 	if updateLocalRepo(filenames) {
-		usr, err := user.Current()
-		if err != nil {
-			log.Fatalln(err)
-		}
-		local := filepath.Join(usr.HomeDir, ".aptly/public/")
-		cmd := exec.Command("rsync", "-r", "-v", "--del", local+"/", "nekr0z@evgenykuznetsov.org:~/repository/")
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stdout
-		if err := cmd.Run(); err != nil {
-			fmt.Printf("failed to rsync to evgenykuznetsov.org: %s", err)
-		}
+		publishRepo("matebook-applet")
 	}
 }
 
@@ -169,11 +176,73 @@ func updateLocalRepo(filenames []string) bool {
 			return false
 		}
 	}
-	cmd := exec.Command("aptly", "publish", "repo", "matebook-applet")
+	return true
+}
+func publishRepo(repo string) {
+	cmd := exec.Command("aptly", "publish", "repo", repo)
 	if err := cmd.Run(); err != nil {
 		fmt.Println("failed to locally publish repo")
-		return false
+		return
 	}
 	fmt.Println("local repo update successful")
-	return true
+	usr, err := user.Current()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	local := filepath.Join(usr.HomeDir, ".aptly/public/")
+	cmd = exec.Command("rsync", "-r", "-v", "--del", local+"/", "nekr0z@evgenykuznetsov.org:~/repository/")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stdout
+	if err := cmd.Run(); err != nil {
+		fmt.Printf("failed to rsync to evgenykuznetsov.org: %s", err)
+	}
+}
+
+func cleanRepo(repo string) bool {
+	repoContents := readRepo(repo)
+	done := false
+
+	for pkg, versions := range repoContents {
+		var drop string
+		if len(versions) > maxKeep {
+			drop = fmt.Sprintf("%s (<= %s)", pkg, versions[maxKeep])
+		} else if len(versions) > 1 {
+			drop = fmt.Sprintf("%s (= %s)", pkg, versions[len(versions)-1])
+		}
+		if drop != "" {
+			cmd := exec.Command("aptly", "repo", "remove", repo, drop)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stdout
+			if err := cmd.Run(); err != nil {
+				log.Fatalln(err)
+			}
+			done = true
+		}
+	}
+	return done
+}
+
+func readRepo(repo string) map[string][]string {
+	contents := make(map[string][]string)
+	cmd := exec.Command("aptly", "repo", "search", `-format={{.Package}} {{.Version}}`, repo, "Name")
+	b, err := cmd.CombinedOutput()
+	if err != nil {
+		return contents
+	}
+
+	r := bytes.NewReader(b)
+	scanner := bufio.NewScanner(r)
+	for scanner.Scan() {
+		line := scanner.Text()
+		values := strings.Split(line, " ")
+		if len(values) != 2 {
+			continue
+		}
+		var versions []string
+		versions = contents[values[0]]
+		versions = append(versions, values[1])
+		contents[values[0]] = versions
+	}
+
+	return contents
 }
