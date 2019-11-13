@@ -3,6 +3,8 @@ language: go
 go:
   - 1.13.x
 
+os: linux
+
 dist: bionic
 
 addons:
@@ -50,7 +52,6 @@ before_deploy:
 deploy:
   provider: script
   script: rvm default do go run release.go
-  skip_cleanup: true
   on:
     tags: true
 
