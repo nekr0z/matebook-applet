@@ -88,9 +88,7 @@ func process(version string) {
 
 	// build
 	fmt.Println("building...")
-	cmd := exec.Command("go", "run", "build.go", "-t", "-d")
-	cmd.Stdout = os.Stdout
-	if err := cmd.Run(); err != nil {
+	if err := runWithOutput("go", "run", "build.go", "-t", "-d"); err != nil {
 		log.Fatalln(err)
 	}
 
@@ -122,7 +120,7 @@ func process(version string) {
 			"-n", version,
 			"-d", desc,
 		}
-		cmd = exec.Command("gothub", args...)
+		cmd := exec.Command("gothub", args...)
 		if err := cmd.Run(); err != nil {
 			log.Fatalln(err)
 		}
@@ -160,6 +158,14 @@ func getString(c string, a ...string) (string, error) {
 	return string(bytes.TrimSpace(b)), err
 }
 
+func runWithOutput(c string, a ...string) error {
+	cmd := exec.Command(c, a...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	return err
+}
+
 // use aptly and rsync to update debian repo
 func updateRepo(filenames []string) {
 	if updateLocalRepo(filenames) {
@@ -190,10 +196,7 @@ func publishRepo(repo string) {
 		log.Fatalln(err)
 	}
 	local := filepath.Join(usr.HomeDir, ".aptly/public/")
-	cmd = exec.Command("rsync", "-r", "-v", "--del", local+"/", "nekr0z@evgenykuznetsov.org:~/repository/")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stdout
-	if err := cmd.Run(); err != nil {
+	if err := runWithOutput("rsync", "-r", "-v", "--del", local+"/", "nekr0z@evgenykuznetsov.org:~/repository/"); err != nil {
 		fmt.Printf("failed to rsync to evgenykuznetsov.org: %s", err)
 	}
 }
@@ -210,10 +213,8 @@ func cleanRepo(repo string) bool {
 			drop = fmt.Sprintf("%s (= %s)", pkg, versions[len(versions)-1])
 		}
 		if drop != "" {
-			cmd := exec.Command("aptly", "repo", "remove", repo, drop)
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stdout
-			if err := cmd.Run(); err != nil {
+			err := runWithOutput("aptly", "repo", "remove", repo, drop)
+			if err != nil {
 				log.Fatalln(err)
 			}
 			done = true
