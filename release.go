@@ -186,7 +186,7 @@ func updateLocalRepo(filenames []string) bool {
 }
 func publishRepo(repo string) {
 	if err := runWithOutput("aptly", "publish", "repo", repo); err != nil {
-		fmt.Println("failed to locally publish repo")
+		log.Fatalln("failed to locally publish repo")
 		return
 	}
 	fmt.Println("local repo update successful")
