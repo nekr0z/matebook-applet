@@ -43,6 +43,7 @@ before_deploy:
   - go get github.com/itchio/gothub@master
   - gem install fpm
   - gpg1 --no-default-keyring --keyring trustedkeys.gpg --keyserver pool.sks-keyservers.net --recv-keys 79B2B092A63F5E6F
+  - gpg1 --no-default-keyring --keyring trustedkeys.gpg --import matebook-applet.key
   - aptly mirror create repo http://evgenykuznetsov.org/repo buster
   - aptly mirror update repo
   - aptly repo create -distribution="buster" matebook-applet
