@@ -30,13 +30,17 @@ import (
 	"strings"
 )
 
-var (
+const (
+	keyID      string = "F25E85CB21A79726"
 	githubRepo string = "matebook-applet"
-	packages          = []string{
+	maxKeep           = 10
+)
+
+var (
+	packages = []string{
 		"huawei-wmi",
 		"matebook-applet",
 	}
-	maxKeep = 10
 )
 
 func main() {
@@ -185,6 +189,11 @@ func updateLocalRepo(filenames []string) bool {
 	return true
 }
 func publishRepo(repo string) {
+	// need to prime GPG with passphrase for signing, because aptly can't really do that
+	if err := runWithOutput("gpg", "--detach-sign", "--yes", "--passphrase", os.Getenv("GPG_PASSPHRASE"), "--pinentry-mode", "loopback", "-a", "-u", keyID, ".travis.yml"); err != nil {
+		log.Fatalln(err)
+	}
+
 	if err := runWithOutput("aptly", "publish", "repo", repo); err != nil {
 		log.Fatalln("failed to locally publish repo")
 		return
