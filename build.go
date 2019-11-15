@@ -107,7 +107,7 @@ func main() {
 }
 
 func buildBinary(version string, t int64) {
-	cmdline := fmt.Sprintf("go build -trimpath -ldflags=\"-buildid= -X main.version=%s\"", version)
+	cmdline := fmt.Sprintf("go build -buildmode=pie -trimpath -ldflags=\"-buildid= -X main.version=%s\"", version)
 	cmd := exec.Command("bash", "-c", cmdline)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
