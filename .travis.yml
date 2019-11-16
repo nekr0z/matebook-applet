@@ -19,16 +19,6 @@ addons:
 env:
   - GO111MODULE=on
 
-before_install:
-  - openssl aes-256-cbc -K $encrypted_6a908c0ed538_key -iv $encrypted_6a908c0ed538_iv -in secrets.tar.enc -out secrets.tar -d
-  - tar xvf secrets.tar
-  - mv id_rsa ~/.ssh/
-  - cat .known_hosts >> $HOME/.ssh/known_hosts
-
-install:
-  - gpg --batch --passphrase $GPG_PASSPHRASE --pinentry-mode loopback --import gpgsecret.asc
-  - echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key F25E85CB21A79726 trust;
-    
 before_script:
   - go install github.com/golangci/golangci-lint/cmd/golangci-lint
   - go generate
@@ -40,6 +30,12 @@ script:
   - go run build.go
 
 before_deploy:
+  - openssl aes-256-cbc -K $encrypted_6a908c0ed538_key -iv $encrypted_6a908c0ed538_iv -in secrets.tar.enc -out secrets.tar -d
+  - tar xvf secrets.tar
+  - mv id_rsa ~/.ssh/
+  - cat .known_hosts >> $HOME/.ssh/known_hosts
+  - gpg --batch --passphrase $GPG_PASSPHRASE --pinentry-mode loopback --import gpgsecret.asc
+  - echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key F25E85CB21A79726 trust;
   - go get github.com/itchio/gothub@master
   - gem install fpm
   - gpg1 --no-default-keyring --keyring trustedkeys.gpg --keyserver pool.sks-keyservers.net --recv-keys 79B2B092A63F5E6F
