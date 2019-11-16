@@ -19,15 +19,18 @@ addons:
 env:
   - GO111MODULE=on
 
+before_install:
+
 install:
+  - go install github.com/golangci/golangci-lint/cmd/golangci-lint
 
 before_script:
-  - go install github.com/golangci/golangci-lint/cmd/golangci-lint
   - go generate
-
-script:
+  - go vet ./...
   - golangci-lint run
   - git reset --hard
+
+script:
   - go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
   - go run build.go
 
