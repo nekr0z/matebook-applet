@@ -28,10 +28,16 @@ Debian users can add this repo:
 ```
 deb http://evgenykuznetsov.org/repo/ buster main
 ```
-to their `/etc/apt/sources.list` and add my public key:
+to their `/etc/apt/sources.list` and add the public key:
 ```
-$ sudo apt-key adv --keyserver pool.sks-keyservers.net --recv 79B2B092A63F5E6F
+$ wget -qO - https://raw.githubusercontent.com/nekr0z/matebook-applet/master/matebook-applet.key | sudo apt-key add -
 ```
+
+> The repository used to be signed by another public key, so if you installed matebook-applet `.deb` package via this repository in 2019, you may still have the old key in your APT trusted keyring. This poses no security issue as such (because the key in question was never used to sign any packages except for matebook-applet, and will not be used to sign packages in future), but you may still want to remove that key from your system just to be sure:
+> ```
+> sudo apt-key del 0BA9571368CD3C34EFCA7D40466F4F38E60211B0
+> ```
+
 From there, the applet is just a `sudo apt install matebook-applet` away.
 
 ### Huawei-WMI driver

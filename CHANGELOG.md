@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.8] - 2019-12-11
+### Changed
+- migrated Debian repo to a new signing key
+
 ## [2.4.7] - 2019-11-12
 ### Translations
 - German
@@ -177,7 +181,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - setting battery protection thresholds
 - checks for scripts availability
 
-[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/2.4.7...HEAD
+[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/2.4.8...HEAD
+[2.4.8]: https://github.com/nekr0z/matebook-applet/compare/2.4.7...2.4.8
 [2.4.7]: https://github.com/nekr0z/matebook-applet/compare/2.4.6...2.4.7
 [2.4.6]: https://github.com/nekr0z/matebook-applet/compare/2.4.5...2.4.6
 [2.4.5]: https://github.com/nekr0z/matebook-applet/compare/2.4.4...2.4.5
