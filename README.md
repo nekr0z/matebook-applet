@@ -21,6 +21,9 @@ It can be used as a system tray applet (above) or as a windowed app (below).
   * [Contributing translations](#contributing-translations)
 * [Credits](#credits)
 
+#### Help `matebook-applet` get better!
+Join the [development](#development) (or just [buy me a coffee](https://www.buymeacoffee.com/nekr0z), that helps, too).
+
 ## Installation and setup
 The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it depends on GTK+ and `libappindicator` to be installed on your system, and it relies on underlying pieces of software to be installed so that it is user-accessible (more on that below).
 
