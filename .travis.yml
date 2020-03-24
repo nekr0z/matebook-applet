@@ -22,7 +22,7 @@ env:
 before_install:
 
 install:
-  - go install github.com/golangci/golangci-lint/cmd/golangci-lint
+  - bash <(curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.24.0)
 
 before_script:
   - go generate
