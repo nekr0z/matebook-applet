@@ -8,3 +8,4 @@ assets.go
 debian.changelog
 secrets.tar
 coverage.txt
+/release/

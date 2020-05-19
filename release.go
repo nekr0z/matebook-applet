@@ -83,12 +83,6 @@ func process(version string) {
 	}
 
 	releaseGithub := true
-	// check if this version is already released
-	res, err = getString("gothub", "info", "-r", githubRepo, "-t", gitVersion)
-	if err == nil || res != "error: could not find the release corresponding to tag "+gitVersion {
-		fmt.Println("Something wrong. Already released? Won't be pushing to Github.")
-		releaseGithub = false
-	}
 
 	// build
 	fmt.Println("building...")
@@ -102,33 +96,6 @@ func process(version string) {
 	}
 
 	if release && releaseGithub {
-		// get release description from tag
-		desc, err := getString("git", "tag", "-ln", "--format=%(contents)", gitVersion)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		descStrings := strings.Split(desc, "\n")
-		for i, descString := range descStrings {
-			if descString == "-----BEGIN PGP SIGNATURE-----" {
-				descStrings = descStrings[:i]
-				break
-			}
-		}
-		desc = strings.Join(descStrings, "\n")
-
-		// release version
-		args := []string{
-			"release",
-			"-r", githubRepo,
-			"-t", gitVersion,
-			"-n", version,
-			"-d", desc,
-		}
-		cmd := exec.Command("gothub", args...)
-		if err := cmd.Run(); err != nil {
-			log.Fatalln(err)
-		}
-
 		// release packages
 		fileNames := []string{
 			"matebook-applet-amd64-" + gitVersion + ".tar.gz",
@@ -136,17 +103,14 @@ func process(version string) {
 		fileNames = append(fileNames, debFilenames...)
 		for _, fileName := range fileNames {
 			args := []string{
-				"upload",
-				"-r", githubRepo,
-				"-t", gitVersion,
-				"-n", fileName,
-				"-f", fileName,
+				fileName,
+				"release/",
 			}
-			cmd := exec.Command("gothub", args...)
+			cmd := exec.Command("cp", args...)
 			if err := cmd.Run(); err != nil {
-				fmt.Println("failed to upload", fileName)
+				fmt.Println("failed to copy", fileName)
 			}
-			fmt.Println(fileName, "uploaded successfully")
+			fmt.Println(fileName, "copied to release/ successfully")
 		}
 	}
 

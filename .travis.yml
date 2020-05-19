@@ -41,7 +41,6 @@ before_deploy:
   - cat .known_hosts >> $HOME/.ssh/known_hosts
   - gpg --batch --passphrase $GPG_PASSPHRASE --pinentry-mode loopback --import gpgsecret.asc
   - echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key F25E85CB21A79726 trust;
-  - go get github.com/itchio/gothub@master
   - gem install fpm
   - gpg1 --no-default-keyring --keyring trustedkeys.gpg --import matebook-applet.key
   - aptly mirror create repo http://evgenykuznetsov.org/repo buster
@@ -49,6 +48,7 @@ before_deploy:
   - aptly repo create -distribution="buster" matebook-applet
   - aptly repo import repo matebook-applet Name
   - git reset --hard
+  - mkdir release
 
 deploy:
   - provider: script
@@ -59,6 +59,13 @@ deploy:
     script: go run release.go -c
     on:
       condition: $TRAVIS_EVENT_TYPE = cron
+  - provider: releases
+    api_key: $GITHUB_TOKEN
+    file_glob: true
+    file: release/*
+    skip_cleanup: true
+    on:
+      tags: true      
 
 cache:
   directories:
