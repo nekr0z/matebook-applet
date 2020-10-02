@@ -115,6 +115,8 @@ $ man -l matebook-applet.1
   or, if you installed applet from repository or .deb package,
 $ man matebook-applet
 ```
+### Gnome
+As of Gnome 3.26 [the "legacy tray" is removed](https://bugzilla.gnome.org/show_bug.cgi?id=785956). Launching the applet in windowed (app) mode still works. An extension is needed for the system tray icon to show up, for example [AppIndicator](https://github.com/ubuntu/gnome-shell-extension-appindicator). 
 
 ## Development
 Pull requests are always welcome!
