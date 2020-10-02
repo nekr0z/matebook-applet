@@ -36,13 +36,6 @@ const (
 	maxKeep           = 10
 )
 
-var (
-	packages = []string{
-		"huawei-wmi",
-		"matebook-applet",
-	}
-)
-
 func main() {
 	cleanup := flag.Bool("c", false, "clean debian repository")
 	flag.Parse()
@@ -72,7 +65,6 @@ func main() {
 
 func process(version string) {
 	gitVersion := version
-	version = strings.TrimPrefix(version, "v")
 
 	release := true
 	// check if corresponding tag even exists
