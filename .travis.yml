@@ -59,6 +59,7 @@ deploy:
     script: rvm default do go run release.go
     on:
       tags: true
+    skip_cleanup: true
   - provider: script
     script: go run release.go -c
     on:
