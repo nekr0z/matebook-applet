@@ -15,7 +15,11 @@
 
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+)
 
 func TestParseStatus(t *testing.T) {
 	type testval struct {
@@ -58,4 +62,30 @@ func TestBtobb(t *testing.T) {
 			t.Error("For", test.b, "expected", test.s, "got", result)
 		}
 	}
+}
+
+func TestGetStatus(t *testing.T) {
+	bundle := i18nPrepare()
+	localizer = i18n.NewLocalizer(bundle, "en-US")
+	config.thresh = threshDriver{mockDriver{0, 0}}
+	s := getStatus()
+	want := "Battery protection is OFF"
+
+	if s != want {
+		t.Fatalf("want: %v, got: %v", want, s)
+	}
+}
+
+type mockDriver struct {
+	vMin, vMax int
+}
+
+func (drv mockDriver) get() (min, max int, err error) {
+	return drv.vMin, drv.vMax, nil
+}
+
+func (drv mockDriver) write(min, max int) error {
+	drv.vMin = min
+	drv.vMax = max
+	return nil
 }
