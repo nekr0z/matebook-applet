@@ -5,9 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.5.0] - 2020-12-19
 ### Added
 - information on kernel 5.5 in README
-
 ### Changed
 - BP values of `0 0` returned from the driver are no longer considered invalid but are treated as BP OFF, since this seems to be the case sometimes, especially on 2020 models
 
@@ -186,7 +187,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - setting battery protection thresholds
 - checks for scripts availability
 
-[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/2.4.8...HEAD
+[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/2.5.0...HEAD
+[2.5.0]: https://github.com/nekr0z/matebook-applet/compare/2.4.8...2.5.0
 [2.4.8]: https://github.com/nekr0z/matebook-applet/compare/2.4.7...2.4.8
 [2.4.7]: https://github.com/nekr0z/matebook-applet/compare/2.4.6...2.4.7
 [2.4.6]: https://github.com/nekr0z/matebook-applet/compare/2.4.5...2.4.6
