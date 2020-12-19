@@ -67,12 +67,38 @@ func TestBtobb(t *testing.T) {
 func TestGetStatus(t *testing.T) {
 	bundle := i18nPrepare()
 	localizer = i18n.NewLocalizer(bundle, "en-US")
-	config.thresh = threshDriver{mockDriver{0, 0}}
-	s := getStatus()
-	want := "Battery protection is OFF"
+	config.thresh = threshDriver{&mockDriver{}}
 
-	if s != want {
-		t.Fatalf("want: %v, got: %v", want, s)
+	tests := map[string]struct {
+		min, max int
+		want     string
+	}{
+		"0 0": {
+			min:  0,
+			max:  0,
+			want: "Battery protection is OFF",
+		},
+		"0 100": {
+			min:  0,
+			max:  100,
+			want: "Battery protection is OFF",
+		},
+		"travel": {
+			min:  95,
+			max:  100,
+			want: "Battery protection mode: TRAVEL",
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			config.thresh.set(tc.min, tc.max)
+			got := getStatus()
+
+			if got != tc.want {
+				t.Fatalf("want: %v, got: %v", tc.want, got)
+			}
+		})
 	}
 }
 
@@ -80,11 +106,11 @@ type mockDriver struct {
 	vMin, vMax int
 }
 
-func (drv mockDriver) get() (min, max int, err error) {
+func (drv *mockDriver) get() (min, max int, err error) {
 	return drv.vMin, drv.vMax, nil
 }
 
-func (drv mockDriver) write(min, max int) error {
+func (drv *mockDriver) write(min, max int) error {
 	drv.vMin = min
 	drv.vMax = max
 	return nil
