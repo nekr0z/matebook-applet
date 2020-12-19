@@ -50,9 +50,9 @@ before_deploy:
       aptly mirror update repo;
       aptly repo create -distribution="buster" matebook-applet;
       aptly repo import repo matebook-applet Name;
+      git reset --hard;
+      mkdir release;
     fi
-  - git reset --hard
-  - mkdir release
 
 deploy:
   - provider: script
