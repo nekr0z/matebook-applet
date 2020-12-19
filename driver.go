@@ -402,9 +402,9 @@ func getStatus() string {
 	if err != nil {
 		r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "BatteryProtectionStatusError", Other: "ERROR: can not get BP status!"}})
 	} else {
-		if min >= 0 && min <= 100 && max != 0 && max <= 100 && min <= max {
+		if min >= 0 && min <= 100 && max >= 0 && max <= 100 && min <= max {
 			switch {
-			case min == 0 && max == 100:
+			case min == 0 && (max == 100 || max == 0):
 				status = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusOff"})
 				r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "BatteryProtectionOff", Other: "Battery protection is {{.Status}}"}, TemplateData: map[string]interface{}{"Status": status}})
 				return r
