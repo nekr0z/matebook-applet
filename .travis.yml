@@ -35,18 +35,22 @@ script:
   - go run build.go
 
 before_deploy:
-  - openssl aes-256-cbc -K $encrypted_6a908c0ed538_key -iv $encrypted_6a908c0ed538_iv -in secrets.tar.enc -out secrets.tar -d
-  - tar xvf secrets.tar
-  - mv id_rsa ~/.ssh/
-  - cat .known_hosts >> $HOME/.ssh/known_hosts
-  - gpg --batch --passphrase $GPG_PASSPHRASE --pinentry-mode loopback --import gpgsecret.asc
-  - echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key F25E85CB21A79726 trust;
-  - gem install fpm
-  - gpg1 --no-default-keyring --keyring trustedkeys.gpg --import matebook-applet.key
-  - aptly mirror create repo http://evgenykuznetsov.org/repo buster
-  - aptly mirror update repo
-  - aptly repo create -distribution="buster" matebook-applet
-  - aptly repo import repo matebook-applet Name
+  - >
+    if ! [ "$BEFORE_DEPLOY_RUN" ]; then
+      export BEFORE_DEPLOY_RUN=1;
+      openssl aes-256-cbc -K $encrypted_6a908c0ed538_key -iv $encrypted_6a908c0ed538_iv -in secrets.tar.enc -out secrets.tar -d;
+      tar xvf secrets.tar;
+      mv id_rsa ~/.ssh/;
+      cat .known_hosts >> $HOME/.ssh/known_hosts;
+      gpg --batch --passphrase $GPG_PASSPHRASE --pinentry-mode loopback --import gpgsecret.asc;
+      echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key F25E85CB21A79726 trust;
+      gem install fpm;
+      gpg1 --no-default-keyring --keyring trustedkeys.gpg --import matebook-applet.key;
+      aptly mirror create repo http://evgenykuznetsov.org/repo buster;
+      aptly mirror update repo;
+      aptly repo create -distribution="buster" matebook-applet;
+      aptly repo import repo matebook-applet Name;
+    fi
   - git reset --hard
   - mkdir release
 
