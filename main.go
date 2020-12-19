@@ -166,6 +166,18 @@ func logInit(
 }
 
 func i18nInit() {
+	bundle := i18nPrepare()
+
+	lang, err := jibber_jabber.DetectIETF()
+	if err != nil {
+		fmt.Println("could not detect locale")
+	}
+	fmt.Println(lang)
+
+	localizer = i18n.NewLocalizer(bundle, lang)
+}
+
+func i18nPrepare() *i18n.Bundle {
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	bundle.MustAddMessages(language.English, messages...)
@@ -189,11 +201,5 @@ func i18nInit() {
 		}
 		tr.Close()
 	}
-
-	lang, err := jibber_jabber.DetectIETF()
-	if err != nil {
-		fmt.Println("could not detect locale")
-	}
-
-	localizer = i18n.NewLocalizer(bundle, lang)
+	return bundle
 }

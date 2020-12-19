@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - information on kernel 5.5 in README
 
+### Changed
+- BP values of `0 0` returned from the driver are no longer considered invalid but are treated as BP OFF, since this seems to be the case sometimes, especially on 2020 models
+
 ## [2.4.8] - 2019-12-11
 ### Changed
 - migrated Debian repo to a new signing key

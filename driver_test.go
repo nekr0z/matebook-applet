@@ -15,7 +15,11 @@
 
 package main
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+)
 
 func TestParseStatus(t *testing.T) {
 	type testval struct {
@@ -58,4 +62,56 @@ func TestBtobb(t *testing.T) {
 			t.Error("For", test.b, "expected", test.s, "got", result)
 		}
 	}
+}
+
+func TestGetStatus(t *testing.T) {
+	bundle := i18nPrepare()
+	localizer = i18n.NewLocalizer(bundle, "en-US")
+	config.thresh = threshDriver{&mockDriver{}}
+
+	tests := map[string]struct {
+		min, max int
+		want     string
+	}{
+		"0 0": {
+			min:  0,
+			max:  0,
+			want: "Battery protection is OFF",
+		},
+		"0 100": {
+			min:  0,
+			max:  100,
+			want: "Battery protection is OFF",
+		},
+		"travel": {
+			min:  95,
+			max:  100,
+			want: "Battery protection mode: TRAVEL",
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			config.thresh.set(tc.min, tc.max)
+			got := getStatus()
+
+			if got != tc.want {
+				t.Fatalf("want: %v, got: %v", tc.want, got)
+			}
+		})
+	}
+}
+
+type mockDriver struct {
+	vMin, vMax int
+}
+
+func (drv *mockDriver) get() (min, max int, err error) {
+	return drv.vMin, drv.vMax, nil
+}
+
+func (drv *mockDriver) write(min, max int) error {
+	drv.vMin = min
+	drv.vMax = max
+	return nil
 }
