@@ -3,7 +3,7 @@ System tray applet/control app for Huawei Matebook
 
 [![Build Status](https://travis-ci.com/nekr0z/matebook-applet.svg?branch=master)](https://travis-ci.com/nekr0z/matebook-applet) [![codecov](https://codecov.io/gh/nekr0z/matebook-applet/branch/master/graph/badge.svg)](https://codecov.io/gh/nekr0z/matebook-applet) [![Go Report Card](https://goreportcard.com/badge/github.com/nekr0z/matebook-applet)](https://goreportcard.com/report/github.com/nekr0z/matebook-applet)
 
-This simple applet is designed to make some of the proptietary Huawei PC Manager's functionality available via GUI on Linux.
+This simple applet is designed to make some of the proprietary Huawei PC Manager's functionality available via GUI on Linux.
  
 ![Applet screenshot](screenshot-applet.png?raw=true "matebook-applet")
 
