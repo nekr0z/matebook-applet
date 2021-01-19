@@ -16,7 +16,6 @@
 package main
 
 import (
-	"github.com/andlabs/ui"
 	"github.com/getlantern/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"io/ioutil"
@@ -100,36 +99,7 @@ func onReady() {
 			}
 		}
 	}()
-	logTrace.Println("Setting up GUI thread...")
-	if err := ui.Main(func() {
-		ui.OnShouldQuit(func() bool {
-			customWindow.Destroy()
-			logTrace.Println("ready to quit GUI thread")
-			return true
-		})
-		go func() {
-			for {
-				select {
-				case <-mCustom.ClickedCh:
-					logTrace.Println("Got a click on BP CUSTOM")
-					ch := make(chan struct{})
-					ui.QueueMain(func() { customThresholds(ch) })
-					<-ch
-					mStatus.SetTitle(getStatus())
-				case <-appQuit:
-					return
-				}
-			}
-		}()
-		go func() {
-			<-mQuit.ClickedCh
-			logTrace.Println("Got a click on Quit")
-			ui.Quit()
-			close(appQuit)
-		}()
-	}); err != nil {
-		logError.Println(err)
-	}
+	guiThread(mQuit, mCustom, mStatus)
 	logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "AppletExit", Other: "Exiting the applet..."}}))
 	os.Exit(0)
 }

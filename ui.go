@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along tihe this program. If not, see <https://www.gnu.org/licenses/>.
 
+// +build !darwin
+
 package main
 
 import (
@@ -24,6 +26,12 @@ var (
 	customWindow *ui.Window
 	mainWindow   *ui.Window
 )
+
+func startUI() {
+	if err := ui.Main(launchUI); err != nil {
+		logError.Println(err)
+	}
+}
 
 func launchUI() {
 	logTrace.Println("Setting up GUI...")
