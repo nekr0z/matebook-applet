@@ -47,32 +47,6 @@ var (
 	threshDriver2 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
 )
 
-func init() {
-	fndrv := fnlockDriver{path: fnlockDriverEndpoint}
-	fnlockEndpoints = append(fnlockEndpoints, fndrv)
-
-	threshEndpoints = append(threshEndpoints, threshDriver2, threshDriver1)
-	for i := 0; i < 10; i++ {
-		min := threshKernelPath + strconv.Itoa(i) + threshKernelMin
-		max := threshKernelPath + strconv.Itoa(i) + threshKernelMax
-		threshEndpoints = append(threshEndpoints, threshDriver{threshDriverMinMax{pathMin: min, pathMax: max}})
-	}
-
-	if config.useScripts {
-		sudo := "/usr/bin/sudo"
-		fnscr := fnlockScript{toggleCmd: exec.Command(sudo, "-n", "fnlock", "toggle"), getCmd: exec.Command(sudo, "-n", "fnlock", "status")}
-		fnlockEndpoints = append(fnlockEndpoints, fnscr)
-
-		cmdLine := []string{sudo, "-n", "batpro"}
-		batpro := threshScript{
-			getCmd: exec.Command(sudo, append(cmdLine, "status")...),
-			setCmd: exec.Command(sudo, append(cmdLine, "custom")...),
-			offCmd: exec.Command(sudo, append(cmdLine, "off")...),
-		}
-		threshEndpoints = append(threshEndpoints, batpro)
-	}
-}
-
 type fnlockEndpoint interface {
 	toggle()
 	get() (bool, error)
