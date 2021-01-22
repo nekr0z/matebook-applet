@@ -32,11 +32,11 @@ type splitThreshEndpoint struct {
 	setter *threshSetter
 }
 
-func (ste *splitThreshEndpoint) write(min, max int) error {
+func (ste splitThreshEndpoint) write(min, max int) error {
 	return ste.setter.set(min, max)
 }
 
-func (ste *splitThreshEndpoint) get() (min, max int, err error) {
+func (ste splitThreshEndpoint) get() (min, max int, err error) {
 	return ste.getter.get()
 }
 
@@ -53,13 +53,13 @@ type threshSetter interface {
 // zeroGetter always returns 0 100
 type zeroGetter struct{}
 
-func (_ *zeroGetter) get() (min, max int, err error) {
+func (_ zeroGetter) get() (min, max int, err error) {
 	return 0, 100, nil
 }
 
 // errSetter always returs error
 type errSetter struct{}
 
-func (_ *errSetter) set(_, _ int) error {
+func (_ errSetter) set(_, _ int) error {
 	return fmt.Errorf("not implemented")
 }
