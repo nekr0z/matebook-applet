@@ -22,7 +22,7 @@ import (
 )
 
 func init() {
-	threshEndpoints = append(threshEndpoints, splitThreshEndpoint{zeroGetter{}, errSetter{}})
+	threshEndpoints = append(threshEndpoints, threshDriver{splitThreshEndpoint{zeroGetter{}, errSetter{}}})
 }
 
 // splitThreshEndpoint is a wmiDriver that has really differing
