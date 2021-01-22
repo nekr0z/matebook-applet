@@ -22,14 +22,14 @@ import (
 )
 
 func init() {
-	threshEndpoints = append(threshEndpoints, splitThreshEndpoint{*zeroGetter{}, *errSetter{}})
+	threshEndpoints = append(threshEndpoints, splitThreshEndpoint{zeroGetter{}, errSetter{}})
 }
 
 // splitThreshEndpoint is a wmiDriver that has really differing
 // ways of reading and writing
 type splitThreshEndpoint struct {
-	getter *threshGetter
-	setter *threshSetter
+	getter threshGetter
+	setter threshSetter
 }
 
 func (ste splitThreshEndpoint) write(min, max int) error {
