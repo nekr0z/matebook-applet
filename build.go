@@ -110,7 +110,7 @@ func buildBinary(version string, t int64) {
 	cmdline := fmt.Sprintf("go build -buildmode=pie -trimpath -ldflags=\"-buildid= -X main.version=%s\"", version)
 	cmd := exec.Command("bash", "-c", cmdline)
 	if runtime.GOOS == "darwin" {
-		cmd.Env = append(cmd.Env, "GCO_CFLAGS=-mmacosx-version-min=10.8")
+		cmd.Env = append(os.Environ(), "GCO_CFLAGS=-mmacosx-version-min=10.8")
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
