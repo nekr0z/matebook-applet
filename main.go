@@ -52,7 +52,7 @@ var (
 	}
 )
 
-func init() {
+func doInit() {
 	i18nInit()
 	parseFlags()
 

@@ -22,6 +22,10 @@ import (
 	"github.com/getlantern/systray"
 )
 
+func init() {
+	doInit()
+}
+
 func main() {
 	if config.windowed {
 		if err := ui.Main(launchUI); err != nil {
