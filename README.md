@@ -39,21 +39,21 @@ to their `/etc/apt/sources.list` and add the public key:
 $ wget -qO - https://raw.githubusercontent.com/nekr0z/matebook-applet/master/matebook-applet.key | sudo apt-key add -
 ```
 
+From there, the applet is just a `sudo apt install matebook-applet` away.
+
+Users report that this way also works on Debian derivatives such as Ubuntu or Linux Mint.
+
 > The repository used to be signed by another public key, so if you installed matebook-applet `.deb` package via this repository in 2019, you may still have the old key in your APT trusted keyring. This poses no security issue as such (because the key in question was never used to sign any packages except for matebook-applet, and will not be used to sign packages in future), but you may still want to remove that key from your system just to be sure:
 > ```
 > sudo apt-key del 0BA9571368CD3C34EFCA7D40466F4F38E60211B0
 > ```
-
-From there, the applet is just a `sudo apt install matebook-applet` away.
-
-Users report that this way also works on Debian derivatives such as Ubuntu or Linux Mint.
 
 ### Other Linux
 If you're running a Linux with relatively new kernel version, it already includes the required driver. Make sure your system has GTK+ and `libappindicator` installed, download (from the [releases page](https://github.com/nekr0z/matebook-applet/releases)) or [build](#compiling-matebook-applet) `matebook-applet`, and it should work *in read-only mode* right away.
 
 For pre-5.5 kernels you may need to update the [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI). The applet requres at least version 3.0 of the driver.
 
-To be able *to change settings* as opposed to simply displaying them, you eiher need to run the applet as root (absolutely not recommended), or make sure all the necessary files (the hooks in `/sys/devices/platform/huawei-wmi` as well as `/etc/default/huawei-wmi/` directory) are user-writable. A good way to set everything up is to make use of [Rouven Spreckels](https://github.com/n3vu0r)' awesome [project](https://github.com/qu1x/huawei-wmi):
+To be able *to change settings* as opposed to simply displaying them, you either need to run the applet as root (absolutely not recommended), or make sure all the necessary files (the hooks in `/sys/devices/platform/huawei-wmi` as well as `/etc/default/huawei-wmi/` directory) are user-writable. A good way to set everything up is to make use of [Rouven Spreckels](https://github.com/n3vu0r)' awesome [project](https://github.com/qu1x/huawei-wmi):
 ```
 $ git clone https://github.com/qu1x/huawei-wmi.git
 $ cd huawei-wmi/generic
@@ -98,7 +98,7 @@ Both scripts depend on [ioport](https://people.redhat.com/~rjones/ioport/) to wo
             $ sudo fnlock status
 
 ### Compiling matebook-applet
-You can always download precompiled amd64 binary from [releases page](https://github.com/nekr0z/matebook-applet/releases), but it's also perfectly OK to compile matebook-applet yourself. Provided that you have the dependencies (GTK+ and libappindicator) installed (on Debian you can `sudo apt install libgtk-3-dev libappindicator3-dev`), all you need to do is:
+You can always download precompiled amd64 binary from the [releases page](https://github.com/nekr0z/matebook-applet/releases), but it's also perfectly OK to compile matebook-applet yourself. Provided that you have the dependencies (GTK+ and libappindicator) installed (on Debian you can `sudo apt install libgtk-3-dev libappindicator3-dev`), all you need to do is:
 
         $ git clone https://github.com/nekr0z/matebook-applet.git
         $ cd matebook-applet
