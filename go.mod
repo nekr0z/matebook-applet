@@ -10,9 +10,12 @@ require (
 	github.com/getlantern/ops v0.0.0-20200403153110-8476b16edcd6 // indirect
 	github.com/getlantern/systray v1.1.0
 	github.com/kr/pretty v0.2.1 // indirect
+	github.com/nekr0z/changelog v0.0.0-20200324061809-6103b09e7c4f // indirect
 	github.com/nicksnyder/go-i18n/v2 v2.0.2
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.4 // indirect
+	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
+	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546 // indirect
 	github.com/stretchr/testify v1.4.0 // indirect
 	golang.org/x/sys v0.0.0-20210122093101-04d7465088b8 // indirect
 	golang.org/x/text v0.3.3

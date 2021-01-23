@@ -18,11 +18,17 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"os"
+	"os/exec"
+	"time"
+
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 func init() {
-	threshEndpoints = append(threshEndpoints, threshDriver{splitThreshEndpoint{zeroGetter{}, errSetter{}}})
+	threshEndpoints = append(threshEndpoints, threshDriver{splitThreshEndpoint{ioioGetter{}, errSetter}}, threshDriver{splitThreshEndpoint{zeroGetter{}, errSetter{}}})
 }
 
 // splitThreshEndpoint is a wmiDriver that has really differing
@@ -62,4 +68,32 @@ type errSetter struct{}
 
 func (_ errSetter) set(_, _ int) error {
 	return fmt.Errorf("not implemented")
+}
+
+// ioioGetter is a crude and suboptimal threshGetter using ioio and system log
+type ioioGetter struct{}
+
+func (_ ioioGetter) get() (min, max int, err error) {
+	cmdLog := exec.Command("log", "stream", "--predicate", "senderImagePath contains \"ACPIDebug\"")
+	var out bytes.Buffer
+	cmdLog.Stdout = &out
+	cmdIoio := exec.Command("ioio", "-s", "org_rehabman_ACPIDebug", "dbg4", "0")
+
+	err := cmdLog.Start()
+	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryIoio", Other: "Failed to get battery protection status from the system"}}))
+		return
+	}
+	defer cmdLog.Process.Signal(os.Kill)
+	time.Sleep(200 * time.Millisecond)
+	err = cmdIoio.Run()
+	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryIoio", Other: "Failed to get battery protection status from the system"}}))
+		return
+	}
+	time.Sleep(500 * time.Millisecond)
+
+	logTrace.Printf("Read from the log: %s", out.String())
+
+	return 0, 100, nil
 }
