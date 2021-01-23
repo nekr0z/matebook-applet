@@ -81,14 +81,15 @@ func (_ ioioGetter) get() (min, max int, err error) {
 
 	err = cmdLog.Start()
 	if err != nil {
-		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryIoio", Other: "Failed to get battery protection status from the system"}}))
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantRunLog", Other: "Failed to run the \"log\" command. Is \"log\" binary not in PATH?"}}))
 		return
 	}
 	defer cmdLog.Process.Signal(os.Kill)
+	defer logTrace.Println("Killing the log output process...")
 	time.Sleep(200 * time.Millisecond)
 	err = cmdIoio.Run()
 	if err != nil {
-		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryIoio", Other: "Failed to get battery protection status from the system"}}))
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantRunIoio", Other: "Failed to run the \"ioio\" command. Is the binary not in PATH?"}}))
 		return
 	}
 	time.Sleep(500 * time.Millisecond)
