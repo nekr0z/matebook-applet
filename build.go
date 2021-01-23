@@ -107,12 +107,11 @@ func main() {
 }
 
 func buildBinary(version string, t int64) {
-	var opts string
-	if runtime.GOOS == "darwin" {
-		opts = " GCO_CFLAGS=-mmacosx-version-min=10.8"
-	}
-	cmdline := fmt.Sprintf("go build -buildmode=pie -trimpath -ldflags=\"-buildid= -X main.version=%s\"%s", version, opts)
+	cmdline := fmt.Sprintf("go build -buildmode=pie -trimpath -ldflags=\"-buildid= -X main.version=%s\"", version)
 	cmd := exec.Command("bash", "-c", cmdline)
+	if runtime.GOOS == "darwin" {
+		cmd.Env = append(cmd.Env, "GCO_CFLAGS=-mmacosx-version-min=10.8")
+	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
 	if err := cmd.Run(); err != nil {
