@@ -55,8 +55,7 @@ var (
 	}
 )
 
-func main() {
-	runtime.LockOSThread()
+func init() {
 	i18nInit()
 	parseFlags()
 
@@ -80,17 +79,20 @@ func main() {
 			}
 		}
 	}
+	if config.thresh == nil && config.fnlock == nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "NothingToWorkWith", Other: "Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions"}}))
+		os.Exit(0)
+	}
+}
 
-	if config.thresh != nil || config.fnlock != nil {
-		if config.windowed {
-			if err := ui.Main(launchUI); err != nil {
-				logError.Println(err)
-			}
-		} else {
-			systray.Run(onReady, onExit)
+func main() {
+	runtime.LockOSThread()
+	if config.windowed {
+		if err := ui.Main(launchUI); err != nil {
+			logError.Println(err)
 		}
 	} else {
-		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "NothingToWorkWith", Other: "Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions"}}))
+		systray.Run(onReady, onExit)
 	}
 }
 
