@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
 	"time"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -97,4 +98,45 @@ func (_ ioioGetter) get() (min, max int, err error) {
 	logTrace.Printf("Read from the log: %s", out.String())
 
 	return 0, 100, nil
+}
+
+// ioioSetter is a threshSetter that uses ioio
+type ioioSetter struct{}
+
+func (_ ioioSetter) set(min, max int) error {
+	if min == 0 && max == 100 {
+		logTrace.Println("Using ioio to switch battery protection off...")
+		return ioioThreshOff()
+	}
+
+	logTrace.Printf("Using ioio to set battery thresholds to %d-%d", min, max)
+	return ioioThreshSet(min, max)
+}
+
+func ioioThreshOff() error {
+	cmd := exec.Command("ioio", "-s", "org_rehabman_ACPIDebug", "dbg0", "5")
+	err := cmd.Run()
+	return err
+}
+
+func ioioThreshSet(min, max int) error {
+	arg := threshToHexArg(min, max)
+	cmd := exec.Command("ioio", "-s", "org_rehabman_ACPIDebug", "dbg5", arg)
+	err := cmd.Run()
+	return err
+}
+
+func threshToHexArg(min, max int) string {
+	minHex := decToHex(min)
+	maxHex := decToHex(max)
+	argHex := fmt.Sprintf("%s%s0000", maxHex, minHex)
+	arg, err := strconv.ParseInt(argHex, 16, 32)
+	if err != nil {
+		return "0"
+	}
+	return strconv.FormatInt(arg, 10)
+}
+
+func decToHex(i int) string {
+	return strconv.FormatInt(int64(i), 16)
 }
