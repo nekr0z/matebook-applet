@@ -11,7 +11,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along tihe this program. If not, see <https://www.gnu.org/licenses/>.
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 //go:generate go run assets_generate.go
 
@@ -55,6 +55,7 @@ var (
 func doInit() {
 	i18nInit()
 	parseFlags()
+	initEndpoints()
 
 	logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "AppletVersion", Other: "matebook-applet version {{.Version}}"}, TemplateData: map[string]interface{}{"Version": version}}))
 

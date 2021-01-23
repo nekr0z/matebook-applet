@@ -11,7 +11,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along tihe this program. If not, see <https://www.gnu.org/licenses/>.
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 // +build linux
 
@@ -22,7 +22,7 @@ import (
 	"strconv"
 )
 
-func init() {
+func initEndpoints() {
 	fndrv := fnlockDriver{path: fnlockDriverEndpoint}
 	fnlockEndpoints = append(fnlockEndpoints, fndrv)
 

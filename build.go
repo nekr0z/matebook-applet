@@ -11,7 +11,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along tihe this program. If not, see <https://www.gnu.org/licenses/>.
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 // +build ignore
 
@@ -111,7 +111,7 @@ func buildBinary(version string, t int64) {
 	cmd := exec.Command("bash", "-c", cmdline)
 	if runtime.GOOS == "darwin" {
 		fmt.Println("Building for darwin, adding necessary flags...")
-		cmd.Env = append(os.Environ(), "GCO_CFLAGS=-mmacosx-version-min=10.8")
+		cmd.Env = append(os.Environ(), "CGO_CFLAGS=-mmacosx-version-min=10.8")
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout

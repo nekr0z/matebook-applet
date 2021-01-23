@@ -11,7 +11,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along tihe this program. If not, see <https://www.gnu.org/licenses/>.
+// along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 // +build darwin
 
@@ -22,13 +22,13 @@ import (
 )
 
 // TODO: systray crashes on OS X
-//func main() {
-//	systray.Run(onReady, onExit)
-//}
-
 func main() {
-	doInit()
-	if err := ui.Main(launchUI); err != nil {
-		logError.Println(err)
-	}
+	systray.Run(onReady, onExit)
 }
+
+//func main() {
+//	doInit()
+//	if err := ui.Main(launchUI); err != nil {
+//		logError.Println(err)
+//	}
+//}

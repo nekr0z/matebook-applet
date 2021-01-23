@@ -23,13 +23,14 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
-func init() {
-	threshEndpoints = append(threshEndpoints, threshDriver{splitThreshEndpoint{ioioGetter{}, errSetter{}}}, threshDriver{splitThreshEndpoint{zeroGetter{}, errSetter{}}})
+func initEndpoints() {
+	threshEndpoints = append(threshEndpoints, threshDriver{splitThreshEndpoint{ioioGetter{}, ioioSetter{}}}, threshDriver{splitThreshEndpoint{zeroGetter{}, errSetter{}}})
 }
 
 // splitThreshEndpoint is a wmiDriver that has really differing
@@ -139,4 +140,41 @@ func threshToHexArg(min, max int) string {
 
 func decToHex(i int) string {
 	return strconv.FormatInt(int64(i), 16)
+}
+
+func getThreshFromLog(log string) (min, max int, err error) {
+	fail := fmt.Errorf("failed to parse log fragment")
+
+	l := strings.Split(log, "Reading (hexadecimal values):")
+	if len(l) < 2 {
+		err = fail
+		return
+	}
+	l = strings.Split(l[1], ",")
+
+	val := []int{}
+	for _, s := range l {
+		i := strings.Index(s, "x")
+		if i == -1 {
+			continue
+		}
+		if len(s) != i+3 {
+			err = fail
+			return
+		}
+		logTrace.Printf("Found hex value:%s", s)
+		var v int64
+		h := s[i+1:]
+		v, err = strconv.ParseInt(h, 16, 32)
+		if err != nil {
+			err = fail
+			return
+		}
+		val = append(val, int(v))
+	}
+	if len(val) != 2 {
+		err = fail
+		return
+	}
+	return val[0], val[1], nil
 }
