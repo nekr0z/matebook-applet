@@ -18,7 +18,8 @@
 package main
 
 import (
-	"github.com/getlantern/systray"
+	"github.com/andlabs/ui"
+	//"github.com/getlantern/systray"
 )
 
 // TODO: systray crashes on OS X
