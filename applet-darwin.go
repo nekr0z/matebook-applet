@@ -13,15 +13,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+// +build darwin
+
 package main
 
-import (
-	"testing"
-)
+func guiThread(mQuit, mCustom, mStatus *systray.MenuItem) {
+	logTrace.Println("GUI thread not implemented")
 
-// the following declaration is required to init the testing package
-// before flags are parsed
-var _ = func() bool {
-	testing.Init()
-	return true
-}()
+	go func() {
+		<-mQuit.ClickedCh
+		logTrace.Println("Got a click on Quit")
+		close(appQuit)
+	}()
+}
