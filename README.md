@@ -13,10 +13,12 @@ It can be used as a system tray applet (above) or as a windowed app (below).
 
 ##### Table of Contents
 * [Installation and setup](#installation-and-setup)
-  * [Huawei-WMI driver](#huawei-wmi-driver) - for those running Linux kernel 5.0 or later
-  * [EC scripts](#embedded-controller-scripts) - for those with older kernel
+  * [Debian and derivatives](#debian)
+  * [Other Linux](#other-linux) - kernel 5.0 and newer
+  * [Old Linux](#old-linux) - for those with pre-5.0 kernel
   * [Compiling](#compiling-matebook-applet)
 * [Usage](#usage)
+  * [Gnome](#gnome)
 * [Development](#development)
   * [Contributing translations](#contributing-translations)
 * [Credits](#credits)
@@ -25,8 +27,11 @@ It can be used as a system tray applet (above) or as a windowed app (below).
 Join the [development](#development) (or just [buy me a coffee](https://www.buymeacoffee.com/nekr0z), that helps, too).
 
 ## Installation and setup
-The applet requires no installation as such (although you may want to add it to autorun so that it gets started automatically when you load your DE). However, it depends on GTK+ and `libappindicator` to be installed on your system, and it relies on underlying pieces of software to be installed so that it is user-accessible (more on that below).
+The applet requires no installation as such. However, it has dependencies, its functionality may be limited without proper setup, and you may want to add it to autorun so that it gets started automatically when you load your DE. Read on for the details.
 
+However, it depends on GTK+ and `libappindicator` to be installed on your system, and it relies on underlying pieces of software to be installed so that it is user-accessible (more on that below).
+
+### Debian
 Debian users can add this repo:
 ```
 deb http://evgenykuznetsov.org/repo/ buster main
@@ -43,12 +48,14 @@ $ wget -qO - https://raw.githubusercontent.com/nekr0z/matebook-applet/master/mat
 
 From there, the applet is just a `sudo apt install matebook-applet` away.
 
-### Huawei-WMI driver
-Starting with version 1.2 the best way to get the matebook-applet working is to install [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI) by [Ayman Bagabas](https://github.com/aymanbagabas). You'll need at least version 3.0 of his driver. Be advised that the driver is only compatible with Linux kernel 5.0 or later.
+Users report that this way also works on Debian derivatives such as Ubuntu or Linux Mint.
 
-Linux kernel 5.5 includes version 3.3 of the driver, so from that version on there's no need to install the driver separately.
+### Other Linux
+If you're running a Linux with relatively new kernel version, it already includes the required driver. Simply download (from the releases page) or build `matebook-applet`, and it should work *in read-only* mode right away.
 
-After installing the driver you may start using the matebook-applet right away. However, it will only be able to display the current settings, not change them. In order to do that you either need to run the applet as root (absolutely not recommended), or make sure all the necessary files (the hooks in `/sys/devices/platform/huawei-wmi` as well as `/etc/default/huawei-wmi/` directory) are user-writable. A good way to set everything up is to make use of [Rouven Spreckels](https://github.com/n3vu0r)' awesome [project](https://github.com/qu1x/huawei-wmi). Debian users will have it installed from the abovementioned repository, the rest can:
+For pre-5.5 kernels you may need to update the [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI). The applet requres at least version 3.0 of the driver.
+
+To be able *to change settings* as opposed to simply displaying them, you eiher need to run the applet as root (absolutely not recommended), or make sure all the necessary files (the hooks in `/sys/devices/platform/huawei-wmi` as well as `/etc/default/huawei-wmi/` directory) are user-writable. A good way to set everything up is to make use of [Rouven Spreckels](https://github.com/n3vu0r)' awesome [project](https://github.com/qu1x/huawei-wmi):
 ```
 $ git clone https://github.com/qu1x/huawei-wmi.git
 $ cd huawei-wmi/generic
@@ -56,7 +63,7 @@ $ sudo make install
 ```
 You may need to re-login for adding your user to group to take effect.
 
-### Embedded controller scripts
+### Old Linux
 
 On Linux kernels earlier than 5.0 you can make this matebook-applet work using the two scripts as explained below. Any one of them is enough, but you need both for full functionality. You may download them both in one archive [here](https://github.com/nekr0z/linux-on-huawei-matebook-13-2019/releases). Please note that these scripts are for MateBook 13 and will not work on other MateBooks (you can still get them to work by changing them to address EC registers proper for your particular model, but make sure you know exactly what you're doing, you've been warned).
 
