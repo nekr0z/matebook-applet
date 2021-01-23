@@ -25,6 +25,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/BurntSushi/toml"
 	"github.com/andlabs/ui"
@@ -55,6 +56,7 @@ var (
 )
 
 func main() {
+	runtime.LockOSThread()
 	i18nInit()
 	parseFlags()
 
