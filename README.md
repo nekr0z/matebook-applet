@@ -29,8 +29,6 @@ Join the [development](#development) (or just [buy me a coffee](https://www.buym
 ## Installation and setup
 The applet requires no installation as such. However, it has dependencies, its functionality may be limited without proper setup, and you may want to add it to autorun so that it gets started automatically when you load your DE. Read on for the details.
 
-However, it depends on GTK+ and `libappindicator` to be installed on your system, and it relies on underlying pieces of software to be installed so that it is user-accessible (more on that below).
-
 ### Debian
 Debian users can add this repo:
 ```
@@ -51,7 +49,7 @@ From there, the applet is just a `sudo apt install matebook-applet` away.
 Users report that this way also works on Debian derivatives such as Ubuntu or Linux Mint.
 
 ### Other Linux
-If you're running a Linux with relatively new kernel version, it already includes the required driver. Simply download (from the [releases page](https://github.com/nekr0z/matebook-applet/releases)) or [build](#compiling-matebook-applet) `matebook-applet`, and it should work *in read-only mode* right away.
+If you're running a Linux with relatively new kernel version, it already includes the required driver. Make sure your system has GTK+ and `libappindicator` installed, download (from the [releases page](https://github.com/nekr0z/matebook-applet/releases)) or [build](#compiling-matebook-applet) `matebook-applet`, and it should work *in read-only mode* right away.
 
 For pre-5.5 kernels you may need to update the [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI). The applet requres at least version 3.0 of the driver.
 
