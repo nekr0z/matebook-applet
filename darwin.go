@@ -22,13 +22,13 @@ import (
 )
 
 // TODO: systray crashes on OS X
-func main() {
-	systray.Run(onReady, onExit)
-}
-
 //func main() {
-//	doInit()
-//	if err := ui.Main(launchUI); err != nil {
-//		logError.Println(err)
-//	}
+//	systray.Run(onReady, onExit)
 //}
+
+func main() {
+	doInit()
+	if err := ui.Main(launchUI); err != nil {
+		logError.Println(err)
+	}
+}
