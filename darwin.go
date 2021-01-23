@@ -13,21 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along tihe this program. If not, see <https://www.gnu.org/licenses/>.
 
-// +build linux
+// +build darwin
 
 package main
 
 import (
-	"github.com/andlabs/ui"
 	"github.com/getlantern/systray"
 )
 
 func main() {
-	if config.windowed {
-		if err := ui.Main(launchUI); err != nil {
-			logError.Println(err)
-		}
-	} else {
-		systray.Run(onReady, onExit)
-	}
+	systray.Run(onReady, onExit)
 }
