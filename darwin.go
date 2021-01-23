@@ -21,6 +21,14 @@ import (
 	"github.com/getlantern/systray"
 )
 
+// TODO: systray crashes on OS X
+//func main() {
+//	systray.Run(onReady, onExit)
+//}
+
 func main() {
-	systray.Run(onReady, onExit)
+	doInit()
+	if err := ui.Main(launchUI); err != nil {
+		logError.Println(err)
+	}
 }
