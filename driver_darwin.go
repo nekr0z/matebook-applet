@@ -28,7 +28,7 @@ import (
 )
 
 func init() {
-	threshEndpoints = append(threshEndpoints, threshDriver{splitThreshEndpoint{ioioGetter{}, errSetter}}, threshDriver{splitThreshEndpoint{zeroGetter{}, errSetter{}}})
+	threshEndpoints = append(threshEndpoints, threshDriver{splitThreshEndpoint{ioioGetter{}, errSetter{}}}, threshDriver{splitThreshEndpoint{zeroGetter{}, errSetter{}}})
 }
 
 // splitThreshEndpoint is a wmiDriver that has really differing
@@ -79,7 +79,7 @@ func (_ ioioGetter) get() (min, max int, err error) {
 	cmdLog.Stdout = &out
 	cmdIoio := exec.Command("ioio", "-s", "org_rehabman_ACPIDebug", "dbg4", "0")
 
-	err := cmdLog.Start()
+	err = cmdLog.Start()
 	if err != nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryIoio", Other: "Failed to get battery protection status from the system"}}))
 		return
