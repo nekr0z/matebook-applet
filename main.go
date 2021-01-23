@@ -25,12 +25,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/BurntSushi/toml"
-	"github.com/andlabs/ui"
 	"github.com/cloudfoundry/jibber_jabber"
-	"github.com/getlantern/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 )
@@ -82,17 +79,6 @@ func init() {
 	if config.thresh == nil && config.fnlock == nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "NothingToWorkWith", Other: "Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions"}}))
 		os.Exit(0)
-	}
-}
-
-func main() {
-	runtime.LockOSThread()
-	if config.windowed {
-		if err := ui.Main(launchUI); err != nil {
-			logError.Println(err)
-		}
-	} else {
-		systray.Run(onReady, onExit)
 	}
 }
 
