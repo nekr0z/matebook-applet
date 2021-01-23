@@ -16,7 +16,7 @@ It can be used as a system tray applet (above) or as a windowed app (below).
   * [Debian and derivatives](#debian)
   * [Other Linux](#other-linux) - kernel 5.0 and newer
   * [Old Linux](#old-linux) - for those with pre-5.0 kernel
-  * [Compiling](#compiling-matebook-applet)
+  * [Compiling](#compiling-matebook-applet) by yourself
 * [Usage](#usage)
   * [Gnome](#gnome)
 * [Development](#development)
@@ -51,7 +51,7 @@ From there, the applet is just a `sudo apt install matebook-applet` away.
 Users report that this way also works on Debian derivatives such as Ubuntu or Linux Mint.
 
 ### Other Linux
-If you're running a Linux with relatively new kernel version, it already includes the required driver. Simply download (from the releases page) or build `matebook-applet`, and it should work *in read-only* mode right away.
+If you're running a Linux with relatively new kernel version, it already includes the required driver. Simply download (from the [releases page](https://github.com/nekr0z/matebook-applet/releases)) or [build](#compiling-matebook-applet) `matebook-applet`, and it should work *in read-only mode* right away.
 
 For pre-5.5 kernels you may need to update the [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI). The applet requres at least version 3.0 of the driver.
 
