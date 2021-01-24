@@ -25,9 +25,12 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/BurntSushi/toml"
+	"github.com/andlabs/ui"
 	"github.com/cloudfoundry/jibber_jabber"
+	"github.com/getlantern/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 )
@@ -51,6 +54,18 @@ var (
 		windowed   bool
 	}
 )
+
+func main() {
+	runtime.LockOSThread()
+	doInit()
+	if config.windowed {
+		if err := ui.Main(launchUI); err != nil {
+			logError.Println(err)
+		}
+	} else {
+		systray.Run(onReady, onExit)
+	}
+}
 
 func doInit() {
 	i18nInit()

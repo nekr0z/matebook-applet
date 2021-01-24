@@ -19,7 +19,6 @@ import (
 	"github.com/getlantern/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"io/ioutil"
-	"runtime"
 )
 
 const (
@@ -31,9 +30,6 @@ var (
 )
 
 func onReady() {
-	if runtime.GOOS == "darwin" {
-		doInit()
-	}
 	logTrace.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "PreparingTray", Other: "Setting up menu..."}}))
 	systray.SetIcon(getIcon(iconPath, defaultIcon))
 	mStatus := systray.AddMenuItem("", "")
