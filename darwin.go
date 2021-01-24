@@ -18,18 +18,22 @@
 package main
 
 import (
-	"github.com/andlabs/ui"
-	//"github.com/getlantern/systray"
+	//	"github.com/andlabs/ui"
+	"github.com/getlantern/systray"
+	"runtime"
 )
 
 // TODO: systray crashes on OS X
-//func main() {
-//	systray.Run(onReady, onExit)
-//}
+func main() {
+	runtime.LockOSThread()
+	systray.Run(onReady, onExit)
+}
 
+/*
 func main() {
 	doInit()
 	if err := ui.Main(launchUI); err != nil {
 		logError.Println(err)
 	}
 }
+*/
