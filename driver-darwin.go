@@ -96,9 +96,10 @@ func (_ ioioGetter) get() (min, max int, err error) {
 	}
 	time.Sleep(500 * time.Millisecond)
 
-	logTrace.Printf("Read from the log: %s", out.String())
+	got := out.String()
+	logTrace.Printf("Read from the log: %s", got)
 
-	return 0, 100, nil
+	return getThreshFromLog(got)
 }
 
 // ioioSetter is a threshSetter that uses ioio
