@@ -129,7 +129,7 @@ Pull requests are always welcome!
 ### Contributing translations
 > In case you don't want to install any Go tools, the notion of having to use `git` scares you, and you don't feel like figuring out what a pull request is and how to make one, but you still feel like contributing a translation, just drop me an email, we'll figure something out. ;-)
 
-The intended way to go about contributing translations to the project is using [go-i18n](https://github.com/nicksyder/go-i18n) tool. Make sure you have it installed and available, clone the repository, and:
+The intended way to go about contributing translations to the project is using [go-i18n](https://github.com/nicksnyder/go-i18n) tool. Make sure you have it installed and available, clone the repository, and:
 ```
 $ cd assets/translations
 $ ls
