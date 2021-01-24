@@ -75,7 +75,7 @@ var (
 		{"LICENSE", "License/LICENSE.txt", 0644},
 		{"README.md", "README.md", 0644},
 		{"SOURCE.txt", "License/SOURCE.txt", 0644},
-		{"assets/matebook-applet.png", "Resources/matebook-applet.png", 0644},
+		{"assets-darwin/matebook-applet.icns", "Resources/matebook-applet.icns", 0644},
 		{"matebook-applet.1", "manpage/matebook-applet.1", 0644},
 	}
 	debDeps = []string{
@@ -168,11 +168,11 @@ func appBundle(version string) {
 		version,
 		appID,
 		fmt.Sprintf("MacOS/%s", appName),
-		"matebook-applet.png",
+		"matebook-applet.icns",
 		macOsMin,
 	}
 
-	t, err := template.ParseFiles("Info.plist")
+	t, err := template.ParseFiles("assets-darwin/Info.plist")
 	if err != nil {
 		fmt.Println(err)
 		return
