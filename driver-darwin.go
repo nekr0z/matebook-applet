@@ -107,19 +107,8 @@ func (_ ioioGetter) get() (min, max int, err error) {
 type ioioSetter struct{}
 
 func (_ ioioSetter) set(min, max int) error {
-	if min == 0 && max == 100 {
-		logTrace.Println("Using ioio to switch battery protection off...")
-		return ioioThreshOff()
-	}
-
 	logTrace.Printf("Using ioio to set battery thresholds to %d-%d", min, max)
 	return ioioThreshSet(min, max)
-}
-
-func ioioThreshOff() error {
-	cmd := exec.Command("ioio", "-s", "org_rehabman_ACPIDebug", "dbg0", "5")
-	err := cmd.Run()
-	return err
 }
 
 func ioioThreshSet(min, max int) error {
