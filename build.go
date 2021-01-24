@@ -29,10 +29,12 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
+	"text/template"
 	"time"
 )
 
@@ -48,9 +50,13 @@ type distFile struct {
 }
 
 var (
-	filename  string
-	keyID     string = "F25E85CB21A79726"
-	packFiles        = []packFile{
+	appName  string = "matebook-applet"
+	appID    string = "nekr0z.matebook-applet"
+	filename string
+	keyID    string = "F25E85CB21A79726"
+	macOsMin string = "10.8.0"
+
+	packFiles = []packFile{
 		{src: "LICENSE", dst: "LICENSE", mod: 0644},
 		{src: "README.md", dst: "README.md", mod: 0644},
 		{src: "SOURCE.txt", dst: "SOURCE.txt", mod: 0644},
@@ -64,6 +70,13 @@ var (
 		{src: "matebook-applet.1", dst: "/usr/share/man/man1/"},
 		{src: "matebook-applet.desktop", dst: "/usr/share/applications/"},
 		{src: "assets/matebook-applet.png", dst: "/usr/share/icons/hicolor/512x512/apps/"},
+	}
+	bundleFiles = []packFile{
+		{"LICENSE", "License/LICENSE.txt", 0644},
+		{"README.md", "README.md", 0644},
+		{"SOURCE.txt", "License/SOURCE.txt", 0644},
+		{"assets-darwin/matebook-applet.icns", "Resources/matebook-applet.icns", 0644},
+		{"matebook-applet.1", "manpage/matebook-applet.1", 0644},
 	}
 	debDeps = []string{
 		"libappindicator3-1",
@@ -79,6 +92,7 @@ func main() {
 	sign := flag.Bool("s", false, "sign binary")
 	tar := flag.Bool("t", false, "generate tar.gz")
 	deb := flag.Bool("d", false, "build .deb")
+	mac := flag.Bool("m", false, "generate MacOS App Bundle")
 	flag.Parse()
 	version := getVersion()
 	btime := buildTime()
@@ -104,6 +118,10 @@ func main() {
 	if *deb {
 		buildDeb(version)
 	}
+
+	if *mac {
+		appBundle(version)
+	}
 }
 
 func buildBinary(version string, t int64) {
@@ -111,7 +129,7 @@ func buildBinary(version string, t int64) {
 	cmd := exec.Command("bash", "-c", cmdline)
 	if runtime.GOOS == "darwin" {
 		fmt.Println("Building for darwin, adding necessary flags...")
-		cmd.Env = append(os.Environ(), "CGO_CFLAGS=-mmacosx-version-min=10.8")
+		cmd.Env = append(os.Environ(), fmt.Sprintf("CGO_CFLAGS=-mmacosx-version-min=%s", macOsMin))
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
@@ -121,6 +139,7 @@ func buildBinary(version string, t int64) {
 	setFileTime("matebook-applet", t)
 	packFiles = append(packFiles, packFile{"matebook-applet", "matebook-applet", 0755})
 	distFiles = append(distFiles, distFile{"matebook-applet", "/usr/bin/"})
+	bundleFiles = append(bundleFiles, packFile{appName, filepath.Join("MacOS", appName), 0755})
 }
 
 func buildAssets(t int64) {
@@ -129,6 +148,52 @@ func buildAssets(t int64) {
 		log.Fatalln("failed to rebuild assets")
 	}
 	setFileTime("assets.go", t)
+}
+
+func appBundle(version string) {
+	cPath := filepath.Join(fmt.Sprintf("%s.app", appName), "Contents")
+	if err := os.MkdirAll(cPath, 0777); err != nil {
+		fmt.Println(err)
+		return
+	}
+	info := struct {
+		AppName string
+		Version string
+		ID      string
+		Exec    string
+		Icon    string
+		OSver   string
+	}{
+		appName,
+		version,
+		appID,
+		fmt.Sprintf("MacOS/%s", appName),
+		"matebook-applet.icns",
+		macOsMin,
+	}
+
+	t, err := template.ParseFiles("assets-darwin/Info.plist")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	plist, err := os.Create(filepath.Join(cPath, "Info.plist"))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer plist.Close()
+	if err := t.Execute(plist, info); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	for _, f := range bundleFiles {
+		f.dst = filepath.Join(cPath, f.dst)
+		if err := copyFile(f); err != nil {
+			fmt.Println(err)
+		}
+	}
 }
 
 func buildDeb(ver string) {
@@ -194,7 +259,7 @@ func buildDeb(ver string) {
 		"-f",
 		"-t", "deb",
 		"-s", "dir",
-		"-n", "matebook-applet",
+		"-n", appName,
 		"-v", ver,
 		"-m", fmt.Sprintf("%s <%s>", maintainer.Name, maintainer.Email),
 		"--vendor", fmt.Sprintf("%s <%s>", maintainer.Name, maintainer.Email),
@@ -276,6 +341,29 @@ func buildTar() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func copyFile(f packFile) (err error) {
+	src, err := os.Open(f.src)
+	if err != nil {
+		return
+	}
+	defer src.Close()
+
+	if err = os.MkdirAll(filepath.Dir(f.dst), 0777); err != nil {
+		return
+	}
+	dst, e := os.Create(f.dst)
+	if e != nil {
+		return e
+	}
+	defer dst.Close()
+
+	if _, err = io.Copy(dst, src); err != nil {
+		return
+	}
+
+	return dst.Chmod(f.mod)
 }
 
 func setFileTime(f string, t int64) {
