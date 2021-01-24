@@ -118,6 +118,7 @@ func (_ ioioSetter) set(min, max int) error {
 func ioioThreshOff() error {
 	cmd := exec.Command("ioio", "-s", "org_rehabman_ACPIDebug", "dbg0", "5")
 	err := cmd.Run()
+	time.Sleep(500 * time.Millisecond)
 	return err
 }
 
@@ -125,6 +126,7 @@ func ioioThreshSet(min, max int) error {
 	arg := threshToHexArg(min, max)
 	cmd := exec.Command("ioio", "-s", "org_rehabman_ACPIDebug", "dbg5", arg)
 	err := cmd.Run()
+	time.Sleep(500 * time.Millisecond)
 	return err
 }
 
