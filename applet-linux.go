@@ -18,6 +18,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/andlabs/ui"
 	"github.com/getlantern/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -55,4 +57,5 @@ func guiThread(mQuit, mCustom, mStatus *systray.MenuItem) {
 		logError.Println(err)
 	}
 	logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "AppletExit", Other: "Exiting the applet..."}}))
+	os.Exit(0)
 }
