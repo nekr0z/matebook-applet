@@ -20,11 +20,12 @@ package main
 import (
 	"github.com/andlabs/ui"
 	"github.com/getlantern/systray"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 func guiThread(mQuit, mCustom, mStatus *systray.MenuItem) {
 	logTrace.Println("Setting up GUI thread...")
-	if err := ui.Main(func() {
+	if err := ui.Main(func() { // this blocks until exit
 		ui.OnShouldQuit(func() bool {
 			customWindow.Destroy()
 			logTrace.Println("ready to quit GUI thread")
@@ -53,4 +54,5 @@ func guiThread(mQuit, mCustom, mStatus *systray.MenuItem) {
 	}); err != nil {
 		logError.Println(err)
 	}
+	logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "AppletExit", Other: "Exiting the applet..."}}))
 }

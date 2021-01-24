@@ -19,6 +19,7 @@ package main
 
 import (
 	"github.com/getlantern/systray"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 func guiThread(mQuit, mCustom, mStatus *systray.MenuItem) {
@@ -27,6 +28,7 @@ func guiThread(mQuit, mCustom, mStatus *systray.MenuItem) {
 	go func() {
 		<-mQuit.ClickedCh
 		logTrace.Println("Got a click on Quit")
+		logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "AppletExit", Other: "Exiting the applet..."}}))
 		close(appQuit)
 	}()
 }
