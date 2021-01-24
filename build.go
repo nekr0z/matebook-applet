@@ -54,6 +54,7 @@ var (
 	appID    string = "nekr0z.matebook-applet"
 	filename string
 	keyID    string = "F25E85CB21A79726"
+	macOsMin string = "10.8.0"
 
 	packFiles = []packFile{
 		{src: "LICENSE", dst: "LICENSE", mod: 0644},
@@ -128,7 +129,7 @@ func buildBinary(version string, t int64) {
 	cmd := exec.Command("bash", "-c", cmdline)
 	if runtime.GOOS == "darwin" {
 		fmt.Println("Building for darwin, adding necessary flags...")
-		cmd.Env = append(os.Environ(), "CGO_CFLAGS=-mmacosx-version-min=10.8")
+		cmd.Env = append(os.Environ(), fmt.Sprintf("CGO_CFLAGS=-mmacosx-version-min=%s", macOsMin))
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
@@ -161,12 +162,14 @@ func appBundle(version string) {
 		ID      string
 		Exec    string
 		Icon    string
+		OSver   string
 	}{
 		appName,
 		version,
 		appID,
 		fmt.Sprintf("MacOS/%s", appName),
-		"Resources/matebook-applet.png",
+		"matebook-applet.png",
+		macOsMin,
 	}
 
 	t, err := template.ParseFiles("Info.plist")
