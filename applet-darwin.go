@@ -24,6 +24,7 @@ import (
 
 func guiThread(mQuit, mCustom, mStatus *systray.MenuItem) {
 	logTrace.Println("GUI thread not implemented")
+	mCustom.Hide()
 
 	go func() {
 		<-mQuit.ClickedCh
