@@ -87,7 +87,7 @@ func (_ ioioGetter) get() (min, max int, err error) {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantRunLog", Other: "Failed to run the \"log\" command. Is \"log\" binary not in PATH?"}}))
 		return
 	}
-	defer cmdLog.Process.Signal(os.Kill)
+	defer func() { _ = cmdLog.Process.Signal(os.Kill) }()
 	defer logTrace.Println("Killing the log output process...")
 	time.Sleep(200 * time.Millisecond)
 	err = cmdIoio.Run()

@@ -18,8 +18,27 @@
 package main
 
 import (
+	"bytes"
+	"io/ioutil"
+	"os"
 	"os/exec"
+	"regexp"
 	"strconv"
+	"strings"
+
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+)
+
+const (
+	fnlockDriverEndpoint = "/sys/devices/platform/huawei-wmi/fn_lock_state"
+	threshKernelPath     = "/sys/class/power_supply/BAT"
+	threshKernelMin      = "/charge_control_start_threshold"
+	threshKernelMax      = "/charge_control_end_threshold"
+)
+
+var (
+	threshDriver1 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
+	threshDriver2 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
 )
 
 func initEndpoints() {
@@ -46,4 +65,181 @@ func initEndpoints() {
 		}
 		threshEndpoints = append(threshEndpoints, batpro)
 	}
+}
+
+// fnlockScript is a command-based fnlockEndpoint
+type fnlockScript struct {
+	getCmd    *exec.Cmd
+	toggleCmd *exec.Cmd
+}
+
+func (scr fnlockScript) toggle() {
+	cmd := scr.toggleCmd
+	if err := cmd.Run(); err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantToggleFnlock", Other: "Failed to toggle Fn-Lock"}}))
+	}
+}
+
+func (scr fnlockScript) get() (bool, error) {
+	cmd := scr.getCmd
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadFnlockScript", Other: "Failed to get fnlock status from script"}}))
+	}
+	state := parseOnOffStatus(out.String())
+	if state == "on" {
+		return true, err
+	}
+	return false, err
+}
+
+func (scr fnlockScript) isWritable() bool {
+	return true
+}
+
+// threshDriverMinMax is a wmiDriver that is two separate endpoints for min and max
+type threshDriverMinMax struct {
+	pathMin string
+	pathMax string
+}
+
+func (drv threshDriverMinMax) write(min, max int) error {
+	err := drv.writeDo(0, 100)
+	if err != nil {
+		return err
+	}
+	err = drv.writeDo(min, max)
+	if err == nil {
+		logTrace.Println("successful write to driver interface")
+	}
+	return err
+}
+
+func (drv threshDriverMinMax) get() (min, max int, err error) {
+	if _, err = os.Stat(drv.pathMin); err != nil {
+		logTrace.Printf("Couldn't access %q.", drv.pathMin)
+		return
+	}
+
+	var values [2]string
+	val, err := ioutil.ReadFile(drv.pathMin)
+	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryMin", Other: "Failed to get min threshold from driver interface"}}))
+		logTrace.Println(err)
+		return
+	}
+	values[0] = string(val)
+	val, err = ioutil.ReadFile(drv.pathMax)
+	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryMax", Other: "Failed to get max threshold from driver interface"}}))
+		logTrace.Println(err)
+		return
+	}
+	values[1] = string(val)
+	for i := 0; i < 2; i++ {
+		values[i] = strings.TrimSuffix(values[i], "\n")
+	}
+
+	min, max, err = valuesAtoi(values[0], values[1])
+	return
+
+}
+
+func (drv threshDriverMinMax) writeDo(min, max int) error {
+	if err := ioutil.WriteFile(drv.pathMin, []byte(strconv.Itoa(min)), 0664); err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantSetBatteryMin", Other: "Failed to set min threshold"}}))
+		return err
+	}
+	if err := ioutil.WriteFile(drv.pathMax, []byte(strconv.Itoa(max)), 0664); err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantSetBatteryMax", Other: "Failed to set max threshold"}}))
+		return err
+	}
+	return nil
+}
+
+// threshScript is a command-based threshEndpoint
+type threshScript struct {
+	getCmd *exec.Cmd
+	setCmd *exec.Cmd
+	offCmd *exec.Cmd
+}
+
+func (scr threshScript) set(min, max int) {
+	var cmd *exec.Cmd
+	if min == 0 && max == 100 {
+		cmd = scr.offCmd
+	} else {
+		cmd = scr.setCmd
+		cmd.Args = append(cmd.Args, strconv.Itoa(min), strconv.Itoa(max))
+	}
+	if err := cmd.Run(); err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantSetBattery"}))
+	}
+}
+
+func (scr threshScript) get() (min, max int, err error) {
+	cmd := scr.getCmd
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err = cmd.Run()
+	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryScript", Other: "Failed to get battery protection status from script"}}))
+		return
+	}
+	state, min, max := parseStatus(out.String())
+	if state == "on" {
+		min = 0
+		max = 100
+	}
+	return
+}
+
+func (scr threshScript) isWritable() bool {
+	return true
+}
+
+func parseStatus(s string) (string, int, int) {
+	stateRe := regexp.MustCompile(`^battery protection is o[a-z]{1,}`)
+	minRe := regexp.MustCompile(`^minimum \d* %$`)
+	maxRe := regexp.MustCompile(`^maximum \d* %$`)
+	lines := strings.Split(s, "\n")
+	state := ""
+	min := 0
+	max := 0
+	for _, line := range lines {
+		if stateRe.MatchString(line) {
+			state = (strings.TrimPrefix(line, "battery protection is "))
+		}
+		if minRe.MatchString(line) {
+			val, err := strconv.Atoi((strings.TrimPrefix(strings.TrimSuffix(line, " %"), "minimum ")))
+			if err != nil {
+				min = 0
+			} else {
+				min = val
+			}
+		}
+		if maxRe.MatchString(line) {
+			val, err := strconv.Atoi((strings.TrimPrefix(strings.TrimSuffix(line, " %"), "maximum ")))
+			if err != nil {
+				max = 0
+			} else {
+				max = val
+			}
+		}
+	}
+	return state, min, max
+}
+
+func parseOnOffStatus(s string) string {
+	stateRe := regexp.MustCompile(`^o(n|ff)$`)
+	lines := strings.Split(s, "\n")
+	state := ""
+	for _, line := range lines {
+		if stateRe.MatchString(line) {
+			state = line
+		}
+	}
+	return state
 }
