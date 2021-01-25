@@ -31,13 +31,25 @@ func TestThreshToHexArg(t *testing.T) {
 }
 
 func TestGetThreshFromLog(t *testing.T) {
-	logInit(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
-	log := "Read from the log: Filtering the log data using \"senderImagePath CONTAINS \"ACPIDebug\"\"\nTimestamp                       Thread     Type        Activity             PID    TTL  \n2021-01-23 18:25:38.021007+0100 0x88f      Default     0x0                  0      0    kernel: (ACPIDebug) ACPIDebug: \"View Thresholds\"\n2021-01-23 18:25:38.025894+0100 0x88f      Default     0x0                  0      0    kernel: (ACPIDebug) ACPIDebug: { \"Reading (hexadecimal values):\", 0x28, 0x3c, }"
-	min, max, err := getThreshFromLog(log)
-	if err != nil {
-		t.Fatal(err)
+	tests := map[string]struct {
+		log string
+		min int
+		max int
+		err error
+	}{
+		"40-60":   {"Read from the log: Filtering the log data using \"senderImagePath CONTAINS \"ACPIDebug\"\"\nTimestamp                       Thread     Type        Activity             PID    TTL  \n2021-01-23 18:25:38.021007+0100 0x88f      Default     0x0                  0      0    kernel: (ACPIDebug) ACPIDebug: \"View Thresholds\"\n2021-01-23 18:25:38.025894+0100 0x88f      Default     0x0                  0      0    kernel: (ACPIDebug) ACPIDebug: { \"Reading (hexadecimal values):\", 0x28, 0x3c, }", 40, 60, nil},
+		"strange": {"kernel: (ACPIDebug) ACPIDebug: { \"Reading (hexadecimal values):\", 0x40, 0x6, }", 64, 6, nil},
 	}
-	if min != 40 || max != 60 {
-		t.Fatalf("got %d-%d, want 40-60", min, max)
+	logInit(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			min, max, err := getThreshFromLog(tc.log)
+			if err != tc.err {
+				t.Fatalf("want: %s, got: %s", tc.err, err)
+			}
+			if min != tc.min || max != tc.max {
+				t.Fatalf("got %d-%d, want %d-%d", min, max, tc.min, tc.max)
+			}
+		})
 	}
 }

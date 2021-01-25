@@ -149,7 +149,7 @@ func getThreshFromLog(log string) (min, max int, err error) {
 		if i == -1 {
 			continue
 		}
-		if len(s) != i+3 {
+		if len(s) < i+2 {
 			err = fail
 			return
 		}
