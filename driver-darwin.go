@@ -119,18 +119,12 @@ func ioioThreshSet(min, max int) error {
 }
 
 func threshToHexArg(min, max int) string {
-	minHex := decToHex(min)
-	maxHex := decToHex(max)
-	argHex := fmt.Sprintf("%s%s0000", maxHex, minHex)
+	argHex := fmt.Sprintf("%02x%02x0000", max, min)
 	arg, err := strconv.ParseInt(argHex, 16, 32)
 	if err != nil {
 		return "0"
 	}
 	return strconv.FormatInt(arg, 10)
-}
-
-func decToHex(i int) string {
-	return fmt.Sprintf("%02x", i)
 }
 
 func getThreshFromLog(log string) (min, max int, err error) {
