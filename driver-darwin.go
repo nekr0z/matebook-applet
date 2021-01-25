@@ -130,7 +130,7 @@ func threshToHexArg(min, max int) string {
 }
 
 func decToHex(i int) string {
-	return strconv.FormatInt(int64(i), 16)
+	return fmt.Sprintf("%02x", i)
 }
 
 func getThreshFromLog(log string) (min, max int, err error) {

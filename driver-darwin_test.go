@@ -23,10 +23,23 @@ import (
 )
 
 func TestThreshToHexArg(t *testing.T) {
-	got := threshToHexArg(60, 80)
-	want := "1346109440"
-	if got != want {
-		t.Fatalf("got %s, want %s", got, want)
+	tests := map[string]struct {
+		min  int
+		max  int
+		want string
+	}{
+		"60-80": {60, 80, "1346109440"},
+		"0-100": {0, 100, "1677721600"},
+		"10-15": {10, 15, "252313600"},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			got := threshToHexArg(tc.min, tc.max)
+			if got != tc.want {
+				t.Fatalf("got %s, want %s", got, tc.want)
+			}
+		})
 	}
 }
 
