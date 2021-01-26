@@ -27,6 +27,7 @@ import (
 	"os/exec"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -65,6 +66,10 @@ func main() {
 
 func process(version string) {
 	gitVersion := version
+
+	if runtime.GOOS == "darwin" {
+		return
+	}
 
 	release := true
 	// check if corresponding tag even exists
@@ -166,6 +171,9 @@ func publishRepo(repo string) {
 }
 
 func cleanRepo(repo string) bool {
+	if runtime.GOOS != linux {
+		return false
+	}
 	repoContents := readRepo(repo)
 	done := false
 
