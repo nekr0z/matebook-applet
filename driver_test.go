@@ -21,25 +21,6 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
-func TestBtobb(t *testing.T) {
-	type testval struct {
-		b bool
-		s string
-	}
-
-	var tests = []testval{
-		{true, "1"},
-		{false, "0"},
-	}
-
-	for _, test := range tests {
-		result := string(btobb(test.b))
-		if result != test.s {
-			t.Error("For", test.b, "expected", test.s, "got", result)
-		}
-	}
-}
-
 func TestGetStatus(t *testing.T) {
 	bundle := i18nPrepare()
 	localizer = i18n.NewLocalizer(bundle, "en-US")

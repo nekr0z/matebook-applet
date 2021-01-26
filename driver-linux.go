@@ -19,6 +19,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -65,6 +66,72 @@ func initEndpoints() {
 		}
 		threshEndpoints = append(threshEndpoints, batpro)
 	}
+}
+
+// fnlockDriver is Huawei-WMI-style fnlockEndpoint
+type fnlockDriver struct {
+	path string
+}
+
+func (drv fnlockDriver) toggle() {
+	val, err := drv.get()
+	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadFnlock"}))
+		logTrace.Println(err)
+		return
+	}
+	value := btobb(!val)
+	err = ioutil.WriteFile(drv.path, value, 0644)
+	if err != nil {
+		logTrace.Println(err)
+		logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantSetFnlockDriver", Other: "Could not set Fn-Lock status through driver interface"}}))
+		return
+	}
+	logTrace.Println("successful write to driver interface")
+}
+
+func (drv fnlockDriver) get() (bool, error) {
+	if _, err := os.Stat(drv.path); err != nil {
+		logTrace.Printf("Couldn't access %q.", drv.path)
+		return false, err
+	}
+
+	val, err := ioutil.ReadFile(drv.path)
+	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadFnlock"}))
+		logTrace.Println(err)
+	}
+	value := strings.TrimSpace(string(val))
+	switch value {
+	case "0":
+		logTrace.Println("Fn-lock is OFF")
+		return false, err
+	case "1":
+		logTrace.Println("Fn-lock is ON")
+		return true, err
+	default:
+		logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "StrangeFnlock", Other: "Fn-lock state reported by driver doesn't make sense"}}))
+		return false, errors.New("state is reported as " + value)
+	}
+}
+
+func (drv fnlockDriver) isWritable() bool {
+	logTrace.Println("Checking if the fnlock endpoint is writable...")
+	return drv.checkWritable()
+}
+
+func (drv fnlockDriver) checkWritable() bool {
+	val, err := drv.get()
+	if err == nil {
+		err = ioutil.WriteFile(drv.path, btobb(val), 0664)
+		if err == nil {
+			logTrace.Println("successful write to driver interface")
+			return true
+		}
+	}
+	logTrace.Println(err)
+	logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "ReadOnlyDriver", Other: "Driver interface is readable but not writeable."}}))
+	return false
 }
 
 // fnlockScript is a command-based fnlockEndpoint
@@ -242,4 +309,14 @@ func parseOnOffStatus(s string) string {
 		}
 	}
 	return state
+}
+
+func btobb(b bool) []byte {
+	var s string
+	if b {
+		s = "1"
+	} else {
+		s = "0"
+	}
+	return []byte(s)
 }
