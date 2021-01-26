@@ -23,6 +23,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"log/syslog"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -146,6 +147,16 @@ func parseFlags() {
 		logInit(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
 	default:
 		logInit(ioutil.Discard, ioutil.Discard, os.Stdout, os.Stderr)
+	}
+
+	// syslog for debugging
+	// TODO: will be the default log facility in v3
+	sys, err := syslog.New(syslog.LOG_NOTICE, "matebook-applet")
+	if err == nil {
+		logInit(sys, sys, sys, sys)
+	}
+	for _, val := range os.Environ() {
+		logTrace.Println(val)
 	}
 }
 
