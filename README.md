@@ -43,10 +43,15 @@ From there, the applet is just a `sudo apt install matebook-applet` away.
 
 Users report that this way also works on Debian derivatives such as Ubuntu or Linux Mint.
 
-> The repository used to be signed by another public key, so if you installed matebook-applet `.deb` package via this repository in 2019, you may still have the old key in your APT trusted keyring. This poses no security issue as such (because the key in question was never used to sign any packages except for matebook-applet, and will not be used to sign packages in future), but you may still want to remove that key from your system just to be sure:
-> ```
-> sudo apt-key del 0BA9571368CD3C34EFCA7D40466F4F38E60211B0
-> ```
+<details>
+<summary><b>note to pre-2020 users</b></summary>
+
+The repository used to be signed by another public key, so if you installed matebook-applet `.deb` package via this repository in 2019, you may still have the old key in your APT trusted keyring. This poses no security issue as such (because the key in question was never used to sign any packages except for matebook-applet, and will not be used to sign packages in future), but you may still want to remove that key from your system just to be sure:
+```
+sudo apt-key del 0BA9571368CD3C34EFCA7D40466F4F38E60211B0
+```
+
+</details>
 
 ### Other Linux
 If you're running a Linux with relatively new kernel version, it already includes the required driver. Make sure your system has GTK+ and `libappindicator` installed, download (from the [releases page](https://github.com/nekr0z/matebook-applet/releases)) or [build](#compiling-matebook-applet) `matebook-applet`, and it should work *in read-only mode* right away.
@@ -63,7 +68,12 @@ You may need to re-login for adding your user to group to take effect.
 
 ### Old Linux
 
-On Linux kernels earlier than 5.0 you can make this matebook-applet work using the two scripts as explained below. Any one of them is enough, but you need both for full functionality. You may download them both in one archive [here](https://github.com/nekr0z/linux-on-huawei-matebook-13-2019/releases). Please note that these scripts are for MateBook 13 and will not work on other MateBooks (you can still get them to work by changing them to address EC registers proper for your particular model, but make sure you know exactly what you're doing, you've been warned).
+On Linux kernels earlier than 5.0 the Huawei-WMI driver is not available.
+
+<details>
+<summary><b>details</b></summary>
+
+You can make `matebook-applet` work using the two scripts as explained below. Any one of them is enough, but you need both for full functionality. You may download them both in one archive [here](https://github.com/nekr0z/linux-on-huawei-matebook-13-2019/releases). Please note that these scripts are for MateBook 13 and will not work on other MateBooks (you can still get them to work by changing them to address EC registers proper for your particular model, but make sure you know exactly what you're doing, you've been warned).
 
 Both scripts depend on [ioport](https://people.redhat.com/~rjones/ioport/) to work, so make sure to install it first. Debian packages are available in main repository, and there is [a way](https://github.com/nekr0z/matebook-applet/issues/5) to get it on Arch, too.
 
@@ -96,6 +106,8 @@ Both scripts depend on [ioport](https://people.redhat.com/~rjones/ioport/) to wo
     3. Double check that you can successfully run the script without providing additional authentication (i.e. password):
 
             $ sudo fnlock status
+
+</details>
 
 ### Compiling matebook-applet
 You can always download precompiled amd64 binary from the [releases page](https://github.com/nekr0z/matebook-applet/releases), but it's also perfectly OK to compile matebook-applet yourself. Provided that you have the dependencies (GTK+ and libappindicator) installed (on Debian you can `sudo apt install libgtk-3-dev libappindicator3-dev`), all you need to do is:
