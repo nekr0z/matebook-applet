@@ -234,12 +234,14 @@ func getThreshFromLog(log string) (min, max int, err error) {
 	l := strings.Split(log, "Reading (hexadecimal values):")
 	if len(l) < 2 {
 		err = fail
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadBatteryDriver"}))
 		return
 	}
 	l = strings.Split(l[1], ",")
 
 	val, err := getHexValues(l, 2)
 	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadBatteryDriver"}))
 		return
 	}
 	return val[0], val[1], nil
@@ -280,11 +282,13 @@ func getFnlockFromLog(log string) (state bool, err error) {
 	l := strings.Split(log, "Reading Fn-Lock state")
 	if len(l) < 2 {
 		err = fail
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadFnlock"}))
 		return
 	}
 	l = strings.Split(l[1], ",")
 	val, err := getHexValues(l, 1)
 	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadFnlock"}))
 		return
 	}
 	return val[0] != 0, nil
