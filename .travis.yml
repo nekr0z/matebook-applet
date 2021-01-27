@@ -63,6 +63,10 @@ deploy:
       tags: true
     skip_cleanup: true
   - provider: script
+    script: bash -c 'go run build.go -m && zip -r release/matebook-applet-osx-$(git describe --always --dirty).zip matebook-applet.app && ls release && unzip -l release/*.zip'
+    on:
+      os: osx
+  - provider: script
     script: go run release.go -c
     on:
       condition: $TRAVIS_EVENT_TYPE = cron
