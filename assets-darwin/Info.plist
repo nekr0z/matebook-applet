@@ -20,5 +20,10 @@
 	<true/>
 	<key>LSUIElement</key>
 	<true/>
+	<key>LSEnvironment</key>
+	<dict>
+		<key>PATH</key>
+		<string>/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin</string>
+	</dict>
 	</dict>
 </plist>
