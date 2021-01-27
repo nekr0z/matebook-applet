@@ -30,6 +30,11 @@ import (
 )
 
 func initEndpoints() {
+	for _, val := range os.Environ() {
+		if strings.HasPrefix(val, "PATH") {
+			logTrace.Println(val)
+		}
+	}
 	threshEndpoints = append(threshEndpoints, threshDriver{splitThreshEndpoint{ioioGetter{}, ioioSetter{}}}, threshDriver{splitThreshEndpoint{zeroGetter{}, errSetter{}}})
 	fnlockEndpoints = append(fnlockEndpoints, splitFnlockEndpoint{ioioFnGetter{}, ioioFnSetter{}})
 	config.wait = true

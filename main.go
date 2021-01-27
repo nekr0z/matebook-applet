@@ -150,13 +150,9 @@ func parseFlags() {
 	}
 
 	// syslog for debugging
-	// TODO: will be the default log facility in v3
 	sys, err := syslog.New(syslog.LOG_NOTICE, "matebook-applet")
 	if err == nil {
 		logInit(sys, sys, sys, sys)
-	}
-	for _, val := range os.Environ() {
-		logTrace.Println(val)
 	}
 }
 
