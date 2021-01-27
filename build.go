@@ -54,7 +54,7 @@ var (
 	appID    string = "nekr0z.matebook-applet"
 	filename string
 	keyID    string = "F25E85CB21A79726"
-	macOsMin string = "10.8.0"
+	macOsMin string = "10.12.0"
 
 	packFiles = []packFile{
 		{src: "LICENSE", dst: "LICENSE", mod: 0644},
