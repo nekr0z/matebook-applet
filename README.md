@@ -15,6 +15,7 @@ It can be used as a system tray applet (above) or as a windowed app (below).
 * [Installation and setup](#installation-and-setup)
   * [Huawei-WMI driver](#huawei-wmi-driver) - for those running Linux kernel 5.0 or later
   * [EC scripts](#embedded-controller-scripts) - for those with older kernel
+  * [macOS](#macos)
   * [Compiling](#compiling-matebook-applet)
 * [Usage](#usage)
 * [Development](#development)
@@ -92,6 +93,76 @@ Both scripts depend on [ioport](https://people.redhat.com/~rjones/ioport/) to wo
 
             $ sudo fnlock status
 
+### macOS
+Apple hardware doesn't have the same ACPI methods that are found on Matebooks. If somehow you ended up having a MateBook-compatible ACPI on a laptop running macOS, you can use the applet, too.
+
+<details>
+<summary><b>details</b></summary>
+
+On macOS, `matebook-applet` relies on [ACPIDebug](https://github.com/RehabMan/OS-X-ACPI-Debug) to talk to ACPI using the [ioio](https://github.com/RehabMan/OS-X-ioio) tool. The `SSDT-RMDT` should have the following methods:
+
+1. `DBG4`: output 'Reading (hexadecimal values): min, max' (where `min` and `max` are battery thresholds) to system log. Example for Matebook X Pro 2018 (if it hypothetically were to run macOS somehow) would look like:
+```
+        Method (DBG4, 1, Serialized)
+        {
+            \RMDT.P1 ("View Thresholds")
+            Local1 = \_SB.PCI0.LPCB.EC0.RRAM (0x03E4)
+            Local2 = \_SB.PCI0.LPCB.EC0.RRAM (0x03E5)
+            \RMDT.P3 ("Reading (hexadecimal values):", Local1, Local2)
+        }
+```
+
+2. `DBG5`: set the battery thresholds passed as `0xMXMN0000` (where `MX` is upper, `MN` is lower threshold). Example for Matebook X Pro 2018:
+```
+        Method (DBG5, 1, Serialized)
+        {
+            Local0 = Arg0
+            \RMDT.P2 ("Value : ", Local0)
+            If ((Local0 == 0x64000000))
+            {
+                \RMDT.P1 ("Manually setting thresholds to 0-100")
+                \_SB.PCI0.LPCB.EC0.ECXT (0xC7, One, Zero, 0x64, Zero, Zero)
+            }
+            Else
+            {
+                \SBTT (Local0)
+            }
+
+            \RMDT.P1 ("Set")
+        }
+```
+
+3. `DBG6`: same as DBG4, but for FnLock state, with "Reading Fn-Lock state" phrase:
+```
+        Method (DBG6, 1, Serialized)
+        {
+            Local0 = \_SB.PCI0.LPCB.EC0.RRAM (0x03E6)
+            \RMDT.P2 ("Reading Fn-Lock state :", Local0)
+        }
+```
+
+4. `DBG7`: set the FnLock state:
+```
+        Method (DBG7, 1, Serialized)
+        {
+            Local0 = Arg0
+            \RMDT.P2 ("Value : ", Local0)
+            \SFRS (Local0)
+            \RMDT.P1 ("Fn-Lock state set")
+        }
+```
+
+An example of complete `SSDT-RMDT` patch by [@ldan93](https://github.com/ldan93) with the methods above can be found [here](https://github.com/nekr0z/matebook-applet/blob/master/assets-darwin/SSDT-RMDT.aml).
+
+For `matebook-applet` to work on macOS you need:
+
+* `ACPIDebug.kext` properly loaded
+* `SSDT-RMDT.aml` properly loaded
+* `ioio` located in `/usr/local/bin/` and having proper executable permissions
+
+Unfortunately, setting custom battery thresholds is not possible in applet mode on macOS. You can find the `matebook-applet` binary inside the app bundle (`matebook-applet.app/Contents/MacOS/matebook-applet`) and run it in Terminal with `-w` option to set custom battery thresholds in windowed mode.
+</details>
+
 ### Compiling matebook-applet
 You can always download precompiled amd64 binary from [releases page](https://github.com/nekr0z/matebook-applet/releases), but it's also perfectly OK to compile matebook-applet yourself. Provided that you have the dependencies (GTK+ and libappindicator) installed (on Debian you can `sudo apt install libgtk-3-dev libappindicator3-dev`), all you need to do is:
 
@@ -159,4 +230,6 @@ Packages are built using [fpm](https://github.com/jordansissel/fpm) and [nekr0z/
 
 Big **THANK YOU** to [Ayman Bagabas](https://github.com/aymanbagabas) for all his work and support. Without him, there would be no matebook-applet.
 
-Kudos to [Rouven Spreckels](https://github.com/n3vu0r) for sorting out `udev` and `systemd`.
+Kudos to:
+* [Rouven Spreckels](https://github.com/n3vu0r) for sorting out `udev` and `systemd`,
+* [@ldan93](https://github.com/ldan93) for testing and debugging on macOS.
