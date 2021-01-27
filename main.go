@@ -177,7 +177,6 @@ func i18nInit() {
 	lang, err := jibber_jabber.DetectIETF()
 	if err != nil {
 		fmt.Println("could not detect locale")
-		lang = "en"
 	}
 	fmt.Println(lang)
 
