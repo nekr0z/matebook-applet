@@ -171,7 +171,7 @@ func publishRepo(repo string) {
 }
 
 func cleanRepo(repo string) bool {
-	if runtime.GOOS != linux {
+	if runtime.GOOS != "linux" {
 		return false
 	}
 	repoContents := readRepo(repo)
