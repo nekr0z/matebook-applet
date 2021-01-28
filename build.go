@@ -319,15 +319,15 @@ func parseVersion(desc, branch string) string {
 	}
 
 	if (after != "" || dirty != "") && branch != "master" && branch != "" {
-		ver = fmt.Sprintf("%s.%s", ver, branch)
+		ver = fmt.Sprintf("%s-%s", ver, branch)
 	}
 
 	if after != "" {
-		ver = fmt.Sprintf("%s.%s", ver, after)
+		ver = fmt.Sprintf("%s-%s", ver, after)
 	}
 
 	if dirty != "" {
-		ver = fmt.Sprintf("%s.%s", ver, "dirty")
+		ver = fmt.Sprintf("%s-%s", ver, "dirty")
 	}
 
 	if commit != "" {
