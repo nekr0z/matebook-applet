@@ -107,7 +107,7 @@ func process(version string) {
 	}
 
 	// update debian repo
-	if release {
+	if release && !(strings.Contains(version, "-")) {
 		updateRepo(debFilenames)
 	}
 }
