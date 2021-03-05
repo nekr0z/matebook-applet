@@ -160,7 +160,7 @@ func publishRepo(repo string) {
 		log.Fatalln(err)
 	}
 	local := filepath.Join(usr.HomeDir, ".aptly/public/")
-	if err := runWithOutput("rsync", "-r", "-v", "--del", local+"/", "nekr0z@evgenykuznetsov.org:~/repository/"); err != nil {
+	if err := runWithOutput("rsync", "-r", "-v", "--del", local+"/", "evgeny@evgenykuznetsov.org:~/repository/"); err != nil {
 		fmt.Printf("failed to rsync to evgenykuznetsov.org: %s", err)
 	}
 }
