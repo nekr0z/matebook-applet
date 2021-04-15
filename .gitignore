@@ -8,4 +8,5 @@ assets.go
 debian.changelog
 secrets.tar
 coverage.txt
+id_rsa
 /release/

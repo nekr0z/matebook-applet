@@ -31,7 +31,7 @@ import (
 )
 
 const (
-	keyID      string = "F25E85CB21A79726"
+	keyID      string = "FA32B7DDA1A3AC2C"
 	githubRepo string = "matebook-applet"
 	maxKeep           = 10
 )

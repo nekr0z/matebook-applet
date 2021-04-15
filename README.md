@@ -3,6 +3,18 @@ System tray applet/control app for Huawei Matebook
 
 [![Build Status](https://travis-ci.com/nekr0z/matebook-applet.svg?branch=master)](https://travis-ci.com/nekr0z/matebook-applet) [![codecov](https://codecov.io/gh/nekr0z/matebook-applet/branch/master/graph/badge.svg)](https://codecov.io/gh/nekr0z/matebook-applet) [![Go Report Card](https://goreportcard.com/badge/github.com/nekr0z/matebook-applet)](https://goreportcard.com/report/github.com/nekr0z/matebook-applet)
 
+---
+
+## WARNING
+
+Due to [a recent Codecov security problem](https://about.codecov.io/security-update/) the PGP key that was used to sign binaries and the Debian repository could have been compromised. It is stronly recommended to remove the old key from your trusted `apt` keyring since it can no longer really be trusted:
+```
+sudo apt-key del F25E85CB21A79726
+```
+The repository uses a new key now, you can add it [by usual means](#debian).
+
+---
+
 This simple applet is designed to make some of the proprietary Huawei PC Manager's functionality available via GUI on Linux.
  
 ![Applet screenshot](screenshot-applet.png?raw=true "matebook-applet")
