@@ -87,6 +87,8 @@ after_script:
       export GPG_PASSPHRASE="";
       export encrypted_3b9f0b9d36d1_key="";
       export encrypted_3b9f0b9d36d1_iv="";
-      $HOME/.ssh/id_rsa;
+      rm $HOME/.ssh/id_rsa;
+      rm gpgsecret.asc;
+      rm secrets.tar;
       bash <(curl -s https://codecov.io/bash);
     fi
