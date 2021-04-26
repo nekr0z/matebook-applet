@@ -78,9 +78,15 @@ cache:
     - $HOME/gopath/pkg/mod
 
 after_success:
-  - export GITHUB_TOKEN=""
-  - export GPG_PASSPHRASE=""
-  - export encrypted_3b9f0b9d36d1_key=""
-  - export encrypted_3b9f0b9d36d1_iv=""
-  - rm $HOME/.ssh/id_rsa
-  - bash <(curl -s https://codecov.io/bash)
+  - export CODECOV_NEEDED=1
+
+after_script:
+  - >
+    if [ "$CODECOV_NEEDED" ]; then
+      export GITHUB_TOKEN="";
+      export GPG_PASSPHRASE="";
+      export encrypted_3b9f0b9d36d1_key="";
+      export encrypted_3b9f0b9d36d1_iv="";
+      $HOME/.ssh/id_rsa;
+      bash <(curl -s https://codecov.io/bash);
+    fi
