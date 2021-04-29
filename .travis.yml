@@ -91,3 +91,7 @@ after_script:
       rm secrets.tar;
       bash <(curl -s https://codecov.io/bash);
     fi
+
+branches:
+  except:
+    - /^dependabot\/.*$/
