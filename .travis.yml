@@ -22,6 +22,7 @@ env:
 before_install:
 
 install:
+  - echo "not using Travis's builtin logic to install Go dependencies, it's broken"
 
 before_script:
   - go generate
