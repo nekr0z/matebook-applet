@@ -1,5 +1,0 @@
-service:
-  prepare:
-    - apt-get update && apt-get install -y libgtk-3-dev libappindicator3-dev
-    - GO111MODULE=on go mod vendor
-    - GO111MODULE=on go generate
