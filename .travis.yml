@@ -22,12 +22,10 @@ env:
 before_install:
 
 install:
-  - bash <(curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.39.0)
 
 before_script:
   - go generate
   - go vet ./...
-  - GITHUB_TOKEN="" GPG_PASSPHRASE="" encrypted_3b9f0b9d36d1_key="" encrypted_3b9f0b9d36d1_iv="" golangci-lint run
   - git reset --hard
 
 script:
