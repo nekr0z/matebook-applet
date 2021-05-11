@@ -60,7 +60,7 @@ Users report that this way also works on Debian derivatives such as Ubuntu or Li
 
 The repository used to be signed by other public keys, and this README used to recommend adding the key to the system-wide trusted keyring. This practice is no longer recommended by Debian because the key is then trusted by the system to sign any known repository, which is a security weakness. If you installed matebook-applet `.deb` package via this repository before June 2021, you may still have the old keys in your system-wide trusted keyring, and it's a good idea to remove them:
 ```
-sudo apt-key del 0BA9571368CD3C34EFCA7D40466F4F38E60211B0
+sudo apt-key del 466F4F38E60211B0
 sudo apt-key del F25E85CB21A79726
 sudo apt-key del FA32B7DDA1A3AC2C
 ```
