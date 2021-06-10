@@ -17,7 +17,7 @@ package main
 
 import (
 	"github.com/andlabs/ui"
-	"github.com/getlantern/systray"
+	"github.com/nekr0z/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"io/ioutil"
 	"os"

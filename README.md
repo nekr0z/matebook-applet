@@ -68,7 +68,7 @@ sudo apt-key del FA32B7DDA1A3AC2C
 </details>
 
 ### Other Linux
-If you're running a Linux with relatively new kernel version, it already includes the required driver. Make sure your system has GTK+ and `libappindicator` installed, download (from the [releases page](https://github.com/nekr0z/matebook-applet/releases)) or [build](#compiling-matebook-applet) `matebook-applet`, and it should work *in read-only mode* right away.
+If you're running a Linux with relatively new kernel version, it already includes the required driver. Make sure your system has GTK+ and `libayatana-appindicator` installed, download (from the [releases page](https://github.com/nekr0z/matebook-applet/releases)) or [build](#compiling-matebook-applet) `matebook-applet`, and it should work *in read-only mode* right away.
 
 For pre-5.5 kernels you may need to update the [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI). The applet requres at least version 3.0 of the driver.
 
@@ -124,7 +124,7 @@ Both scripts depend on [ioport](https://people.redhat.com/~rjones/ioport/) to wo
 </details>
 
 ### Compiling matebook-applet
-You can always download precompiled amd64 binary from the [releases page](https://github.com/nekr0z/matebook-applet/releases), but it's also perfectly OK to compile matebook-applet yourself. Provided that you have the dependencies (GTK+ and libappindicator) installed (on Debian you can `sudo apt install libgtk-3-dev libappindicator3-dev`), all you need to do is:
+You can always download precompiled amd64 binary from the [releases page](https://github.com/nekr0z/matebook-applet/releases), but it's also perfectly OK to compile matebook-applet yourself. Provided that you have the dependencies (GTK+ and libayatana-appindicator) installed (on Debian you can `sudo apt install libgtk-3-dev libayatana-appindicator3-dev`), all you need to do is:
 
         $ git clone https://github.com/nekr0z/matebook-applet.git
         $ cd matebook-applet

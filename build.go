@@ -65,7 +65,7 @@ var (
 		{src: "assets/matebook-applet.png", dst: "/usr/share/icons/hicolor/512x512/apps/"},
 	}
 	debDeps = []string{
-		"libappindicator3-1",
+		"libayatana-appindicator3-1",
 		"libc6",
 		"libgtk-3-0 >= 3.10",
 	}

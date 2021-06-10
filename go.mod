@@ -7,6 +7,7 @@ require (
 	github.com/getlantern/golog v0.0.0-20190830074920-4ef2e798c2d7 // indirect
 	github.com/getlantern/systray v0.0.0-20191102120558-baeca33b8639
 	github.com/kr/pretty v0.2.1 // indirect
+	github.com/nekr0z/systray v1.1.1-0.20210610115307-891b38719d73
 	github.com/nicksnyder/go-i18n/v2 v2.1.2
 	github.com/onsi/ginkgo v1.16.1 // indirect
 	github.com/onsi/gomega v1.11.0 // indirect

@@ -29,7 +29,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/andlabs/ui"
 	"github.com/cloudfoundry/jibber_jabber"
-	"github.com/getlantern/systray"
+	"github.com/nekr0z/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 )
