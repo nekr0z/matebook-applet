@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.0.0] - 2021-06-10
 ### Changed
 - use `libayatana-appindicator` instead of the deprecaded `libappindicator`
 - scripts are not attempted by default (i.e. `-r` is false by default)
@@ -192,7 +194,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - setting battery protection thresholds
 - checks for scripts availability
 
-[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/2.5.0...HEAD
+[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/3.0.0...HEAD
+[3.0.0]: https://github.com/nekr0z/matebook-applet/compare/2.5.0...3.0.0
 [2.5.0]: https://github.com/nekr0z/matebook-applet/compare/2.4.8...2.5.0
 [2.4.8]: https://github.com/nekr0z/matebook-applet/compare/2.4.7...2.4.8
 [2.4.7]: https://github.com/nekr0z/matebook-applet/compare/2.4.6...2.4.7
