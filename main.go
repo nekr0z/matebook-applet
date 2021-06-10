@@ -127,9 +127,8 @@ func parseFlags() {
 	verboseMore := flag.Bool("vv", false, localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FlagVV", Other: "be very verbose"}}))
 	flag.StringVar(&iconPath, "icon", "", localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FlagIcon", Other: "path of a custom icon to use"}}))
 	flag.BoolVar(&config.wait, "wait", false, localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FlagWait", Other: "wait for driver to set battery thresholds (obsolete)"}}))
-	flag.BoolVar(&saveValues, "s", false, localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FlagS", Other: "save values for persistence (deprecated)"}})) // TODO: remove in v3
 	flag.BoolVar(&noSaveValues, "n", false, localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FlagN", Other: "do not save values"}}))
-	flag.BoolVar(&config.useScripts, "r", true, localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FlagR", Other: "use fnlock and batpro scripts if all else fails"}})) // TODO: default to false in v3
+	flag.BoolVar(&config.useScripts, "r", false, localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FlagR", Other: "use fnlock and batpro scripts if all else fails"}}))
 	flag.BoolVar(&config.windowed, "w", false, localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FlagW", Other: "windowed mode"}}))
 	flag.Parse()
 
