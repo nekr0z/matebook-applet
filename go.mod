@@ -4,8 +4,6 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/andlabs/ui v0.0.0-20180902183112-867a9e5a498d
 	github.com/cloudfoundry/jibber_jabber v0.0.0-20151120183258-bcc4c8345a21
-	github.com/getlantern/golog v0.0.0-20190830074920-4ef2e798c2d7 // indirect
-	github.com/getlantern/systray v0.0.0-20191102120558-baeca33b8639
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/nekr0z/systray v1.1.1-0.20210610115307-891b38719d73
 	github.com/nicksnyder/go-i18n/v2 v2.1.2
