@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - use `libayatana-appindicator` instead of the deprecaded `libappindicator`
-- the long-deprecated `-s` flag is removed completely
 - scripts are not attempted by default (i.e. `-r` is false by default)
+### Removed
+- the long-deprecated `-s` flag
 
 ## [2.5.0] - 2020-12-19
 ### Added
