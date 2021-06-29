@@ -13,12 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-// +build !legacyappindicator
+// +build legacyappindicator
 
 package main
 
 import (
-	"github.com/nekr0z/systray"
+	"github.com/getlantern/systray"
 )
 
 func systrayAddMenuItem(t, tt string) *systray.MenuItem {
