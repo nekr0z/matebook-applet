@@ -17,7 +17,6 @@ package main
 
 import (
 	"github.com/andlabs/ui"
-	"github.com/nekr0z/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"io/ioutil"
 	"os"
@@ -33,18 +32,18 @@ var (
 
 func onReady() {
 	logTrace.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "PreparingTray", Other: "Setting up menu..."}}))
-	systray.SetIcon(getIcon(iconPath, defaultIcon))
-	mStatus := systray.AddMenuItem("", "")
-	systray.AddSeparator()
-	mOff := systray.AddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusOff"}), "Switch off battery protection")
-	mTravel := systray.AddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DoTravel", Other: "TRAVEL (95%-100%)"}}), "Set battery protection to TRAVEL")
-	mOffice := systray.AddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DoOffice", Other: "OFFICE (70%-90%)"}}), "Set battery protection to OFFICE")
-	mHome := systray.AddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DoHome", Other: "HOME (40%-70%)"}}), "Set battery protection to HOME")
-	mCustom := systray.AddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DoCustom", Other: "CUSTOM"}}), "Set custom battery protection thresholds")
-	systray.AddSeparator()
-	mFnlock := systray.AddMenuItem("", "")
-	systray.AddSeparator()
-	mQuit := systray.AddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "Quit", Other: "Quit"}}), "Quit the applet")
+	systraySetIcon(getIcon(iconPath, defaultIcon))
+	mStatus := systrayAddMenuItem("", "")
+	systrayAddSeparator()
+	mOff := systrayAddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusOff"}), "Switch off battery protection")
+	mTravel := systrayAddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DoTravel", Other: "TRAVEL (95%-100%)"}}), "Set battery protection to TRAVEL")
+	mOffice := systrayAddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DoOffice", Other: "OFFICE (70%-90%)"}}), "Set battery protection to OFFICE")
+	mHome := systrayAddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DoHome", Other: "HOME (40%-70%)"}}), "Set battery protection to HOME")
+	mCustom := systrayAddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "DoCustom", Other: "CUSTOM"}}), "Set custom battery protection thresholds")
+	systrayAddSeparator()
+	mFnlock := systrayAddMenuItem("", "")
+	systrayAddSeparator()
+	mQuit := systrayAddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "Quit", Other: "Quit"}}), "Quit the applet")
 	if config.thresh == nil {
 		mStatus.Hide()
 		logTrace.Println("no access to BP information, not showing it")
@@ -95,7 +94,7 @@ func onReady() {
 				mFnlock.SetTitle(getFnlockStatus())
 			case <-appQuit:
 				logTrace.Println("Shutting down systray applet")
-				systray.Quit()
+				systrayQuit()
 				return
 			}
 		}
