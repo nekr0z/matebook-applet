@@ -81,6 +81,9 @@ func process(version string) {
 	if err := runWithOutput("go", "run", "build.go", "-t", "-d"); err != nil {
 		log.Fatalln(err)
 	}
+	if err := runWithOutput("go", "run", "build.go", "-t", "-l"); err != nil {
+		log.Fatalln(err)
+	}
 
 	debFilenames, err := filepath.Glob("./*.deb")
 	if err != nil {
@@ -91,6 +94,7 @@ func process(version string) {
 		// release packages
 		fileNames := []string{
 			"matebook-applet-amd64-" + gitVersion + ".tar.gz",
+			"matebook-applet-amd64-" + gitVersion + "-legacy.tar.gz",
 		}
 		fileNames = append(fileNames, debFilenames...)
 		for _, fileName := range fileNames {

@@ -78,8 +78,12 @@ func main() {
 	sign := flag.Bool("s", false, "sign binary")
 	tar := flag.Bool("t", false, "generate tar.gz")
 	deb := flag.Bool("d", false, "build .deb")
+	legacy := flag.Bool("l", false, "build against libappindicator")
 	flag.Parse()
 	version := getVersion()
+	if *legacy {
+		version = version + "-legacy"
+	}
 	btime := buildTime()
 	if *tar {
 		*sign = true
@@ -107,6 +111,9 @@ func main() {
 
 func buildBinary(version string, t int64) {
 	cmdline := fmt.Sprintf("go build -buildmode=pie -trimpath -ldflags=\"-buildid= -X main.version=%s\"", version)
+	if strings.HasSuffix(version, "-legacy") {
+		cmdline = cmdline + " -tags legacyappindicator"
+	}
 	cmd := exec.Command("bash", "-c", cmdline)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stdout
