@@ -70,6 +70,8 @@ sudo apt-key del FA32B7DDA1A3AC2C
 ### Other Linux
 If you're running a Linux with relatively new kernel version, it already includes the required driver. Make sure your system has GTK+ and `libayatana-appindicator` installed, download (from the [releases page](https://github.com/nekr0z/matebook-applet/releases)) or [build](#compiling-matebook-applet) `matebook-applet`, and it should work *in read-only mode* right away.
 
+If your system doesn't have `libayatana-appindicator`, you can use a legacy build that depends on `libappindicator` instead.
+
 For pre-5.5 kernels you may need to update the [Huawei-WMI driver](https://github.com/aymanbagabas/Huawei-WMI). The applet requres at least version 3.0 of the driver.
 
 To be able *to change settings* as opposed to simply displaying them, you either need to run the applet as root (absolutely not recommended), or make sure all the necessary files (the hooks in `/sys/devices/platform/huawei-wmi` as well as `/etc/default/huawei-wmi/` directory) are user-writable. A good way to set everything up is to make use of [Rouven Spreckels](https://github.com/n3vu0r)' awesome [project](https://github.com/qu1x/huawei-wmi):
@@ -129,6 +131,8 @@ You can always download precompiled amd64 binary from the [releases page](https:
         $ git clone https://github.com/nekr0z/matebook-applet.git
         $ cd matebook-applet
         $ go run build.go
+
+To build against `libappindicator` instead, append the last command with the `-l` switch.
 
 ## Usage
 The user interface is intentionally as simple as they get. You get an icon in system tray that you can click and get a menu. The menu consists of current status, options to change it, and an option to quit the applet. Please be aware that the applet does not probe for current status on its own (this is intentional), so if you change your battery protection settings by other means it will not reflect the change. Clicking on the status line (top of the menu) updates it.
