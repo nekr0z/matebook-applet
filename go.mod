@@ -10,7 +10,7 @@ require (
 	github.com/nicksnyder/go-i18n/v2 v2.1.2
 	github.com/onsi/ginkgo v1.16.1 // indirect
 	github.com/onsi/gomega v1.11.0 // indirect
-	golang.org/x/text v0.3.6
+	golang.org/x/text v0.3.7
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 )
 
