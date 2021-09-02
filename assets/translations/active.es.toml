@@ -1,0 +1,247 @@
+[AppletExit]
+hash = "sha1-b51b59d3a52796e005059bc092355cd0c6cd9272"
+other = "Saliendo de la aplicación..."
+
+[AppletVersion]
+hash = "sha1-e6e5ae8775614e73320396887c93031d91678847"
+other = "matebook-applet versión {{.Version}}"
+
+[BatteryProtectionOff]
+hash = "sha1-b44e7fe2b25290213d2d5a76c085c5601bb1a7c6"
+other = "La protección de batería es: {{.Status}}"
+
+[BatteryProtectionStatus]
+hash = "sha1-94420ef3a2c1811a59992f42ceb44bfada924714"
+other = "El modo de protección de batería es: {{.Status}}"
+
+[BatteryProtectionStatusError]
+hash = "sha1-90978e300d12f1ea3a51d1465033209645827483"
+other = "ERROR: No se ha podido obtener el estado de protección de la batería!"
+
+[BatteryProtectionStatusStrange]
+hash = "sha1-e9846550ea495dfbd9d91ac96679bde70db00dfc"
+other = "{{.Status}}, pero los límites no tienen sentido."
+
+[CantReadBattery]
+hash = "sha1-0d00dfe4c8f6614f29ff1de976e9ffe918a81184"
+other = "Fallo al obtener los límites"
+
+[CantReadBatteryDriver]
+hash = "sha1-f2baabb7a67afeb64c1196391906a994f84445ae"
+other = "Fallo al obtener los límites del controlador de interfaz"
+
+[CantReadBatteryMax]
+hash = "sha1-c195481d4f6b6fedb6efc5be59574446f88d0ddb"
+other = "Fallo al obtener el límite superior (max) del controlador de interfaz"
+
+[CantReadBatteryMin]
+hash = "sha1-1af678745f204ff5831081ead720e39da70146fb"
+other = "Fallo al obtener el límite inferior (min) del controlador de interfaz"
+
+[CantReadBatteryScript]
+hash = "sha1-83ae9693098a53cb75883d10d898eda37c89cc54"
+other = "Fallo al obtener el estado de protección de la batería del script"
+
+[CantReadFnlock]
+hash = "sha1-155457e07003064e7cfb81d142039b1cc9b35519"
+other = "No se ha podido leer el estado de Fn-Lock del controlador de interfaz"
+
+[CantReadFnlockScript]
+hash = "sha1-23cca31c4addf21d2ef06866b68666696fcb06b0"
+other = "Fallo al obtener el estado de fnlock del script"
+
+[CantSetBattery]
+hash = "sha1-cdcecf2a0a77c2c00ad41a04304ae26fe92bf54a"
+other = "Fallo al establecer los límites"
+
+[CantSetBatteryMax]
+hash = "sha1-de7edeb10fa9b7632b33a7b37ed16e0b2cc0c663"
+other = "Fallo al establecer el límite superior (max)"
+
+[CantSetBatteryMin]
+hash = "sha1-ba1d770c21568d57cf48e892b3bda687cd287d1c"
+other = "Fallo al establecer el límite inferior (min)"
+
+[CantSetFnlockDriver]
+hash = "sha1-078c7d74e485c2a6e456eb5f6bcaac907c36f023"
+other = "No se ha podido establecer el estado de Fn-Lock mediante el controlador de interfaz"
+
+[CantToggleFnlock]
+hash = "sha1-e604129118f45b8985c1f828bc58d0835e3b0a86"
+other = "Fallo al alternar Fn-Lock"
+
+[CantUnderstandBattery]
+hash = "sha1-2969995b65bc6bc17ee2e06106f559361452963c"
+other = "No se le encuentra sendio al valor del controlador de interfaz {{.Value}}"
+
+[CustomWindowTitle]
+hash = "sha1-c285a1c9d64cd3f8f3f21f58d8cce93567cfa714"
+other = "Límites de carga"
+
+[DoCustom]
+hash = "sha1-63d55e50dde7ba12ca28578468e41d18d788a893"
+other = "PERSONALIZADO"
+
+[DoHome]
+hash = "sha1-4ab9691cb341277fd8ca187099cad573cfe67bef"
+other = "CASA (40%-70%)"
+
+[DoOffice]
+hash = "sha1-6b887fc4d882d724c9248822486ccc11cacaf3e0"
+other = "OFICINA (70%-90%)"
+
+[DoSet]
+hash = "sha1-448ab73ba1c21e671e218fb91f2644c834f0c16f"
+other = "Establecer"
+
+[DoToggle]
+hash = "sha1-d5e14b063514cb6630e55f0aeb0ad3b37897efca"
+other = "Alternar"
+
+[DoTravel]
+hash = "sha1-25bbe11089ea5bf1312b4a022e0e9106f5024792"
+other = "VIAJE (95%-100%)"
+
+[FlagIcon]
+hash = "sha1-51392cdeb0b59c3754746d3d3978268c126f22c0"
+other = "ruta a al icono personalizado a usar"
+
+[FlagN]
+hash = "sha1-ceda3041d90346fb29676e2f511a21c943582000"
+other = "no guardar los valores"
+
+[FlagR]
+hash = "sha1-bd5751eec8f9f6a154f9ff4eea1a37cd6b09b769"
+other = "usar los scripts fnlock and batpro si lo demás falla"
+
+[FlagS]
+hash = "sha1-0fe7cd0e5637039559540c37b9ff49035e7bdd63"
+other = "guarda los valores para su persistencia (obsoleto)"
+
+[FlagV]
+hash = "sha1-9b303e59d52316b804a030d6b89d5a99cc69c044"
+other = "detallado"
+
+[FlagVV]
+hash = "sha1-015fd2e1238daff957d32ba1f3d50368d72b5963"
+other = "muy detallado"
+
+[FlagW]
+hash = "sha1-af1fff6598a1e80d16ea9be4b935f89638df63db"
+other = "modo ventana"
+
+[FlagWait]
+hash = "sha1-7d3e183e08988040912d1dadf0e80ef5b0c7fc85"
+other = "espera al controlador para establecer los límites de la batería (obsoleto)"
+
+[FnlockStatus]
+hash = "sha1-0e54580a7825f89e05f2686be07e0de4fff2e9b6"
+other = "Fn-Lock es {{.Status}}"
+
+[FnlockStatusError]
+hash = "sha1-0b35e53521a39352dbf08e4325aab2c7c3b0cca5"
+other = "ERROR: estado de Fn-Lock desconocido"
+
+[FoundBattery]
+hash = "sha1-20d74c4968759d3fe6e71bf8ea98363f492ad80f"
+other = "Se han encontrado parámetros de los límites de batería editables, serán usados"
+
+[FoundBatteryPers]
+hash = "sha1-d65c7add0e2927bcec3933d22c766009aaefe543"
+other = "Valores persistentes de los límites han sido encontrados."
+
+[FoundFnlock]
+hash = "sha1-056676c11e2b7af1303427004a156d4378b60c3c"
+other = "Se han encontrado parámetros de fnlock editables, serán usados"
+
+[GotCustomIcon]
+hash = "sha1-a209c78b902dfab942c15fc98a3e2d75d94b1031"
+other = "Se ha cargado el icono personalizado correctamente de {{.Path}}"
+
+[LookingForBatteryPers]
+hash = "sha1-b60af6cc22f7957c7e74d597fea9205c4c3e9814"
+other = "buscando un parámtro para guardar los límites en..."
+
+[MaxThresholdExplain]
+hash = "sha1-e186d02d158abea20f7545379848e32aeb459f3d"
+other = "MAX: la batería no se cargará por encima de este valor"
+
+[MinThresholdExplain]
+hash = "sha1-6221a4781e7a1aad183ec63f149534264728c5da"
+other = "MIN: la batería no se cargará excepto si está por debajo de este valor al enchufar el cargador"
+
+[NoCustomIcon]
+hash = "sha1-9559357512b19ccd2d6c0ac6dc6265474e2675d6"
+other = "No se ha podido obtener un icono personalizado, establecido por defecto"
+
+[NothingToWorkWith]
+hash = "sha1-8d0c7ee99e7ec2f5b81a5ad0a761fb44a7124e3c"
+other = "La versión del Huawei-WME o alguno de los scripts requeridos no se encuentran instalados adecuadamente, consulta README.md#installation-and-setup para instrucciones"
+
+[OptionSDeprecated]
+hash = "sha1-20a5402420c6b1d8474d197544a84fbb2c9786ca"
+other = "la opción -s se encuentra obsoleta, la aplicación guarda por defecto los valores de forma persistente"
+
+[PreparingTray]
+hash = "sha1-88ee9b4868438ba349cd8377fe2a2644d812d128"
+other = "Menú de configuración..."
+
+[Quit]
+hash = "sha1-1a2285d8881f226e13430515a9dd2b9fb6294200"
+other = "Salir"
+
+[ReadOnlyDriver]
+hash = "sha1-1e01dbbc0e4fa8fba178f0008c4f138e82497a7f"
+other = "La interfaz del controlador se puede leer pero no establecer"
+
+[SetCustom]
+hash = "sha1-081ae3fdc403609cf6e760849ebb14117b7a50cb"
+other = "Personalizado"
+
+[SetHome]
+hash = "sha1-70f8bb9a8a5393ef080507a89e4b98d139000d65"
+other = "Casa"
+
+[SetOff]
+hash = "sha1-e3de5ab0ca4c69dbf00e86d2558843e8d806bb49"
+other = "Apagado"
+
+[SetOffice]
+hash = "sha1-6c3a72eaf6235dfa967f2bba4dfc3e431c3e1180"
+other = "Oficina"
+
+[SetTravel]
+hash = "sha1-22fb76e46f645ef6e6c964d6dd08c200b91bca31"
+other = "Viaje"
+
+[StatusCustom]
+hash = "sha1-3bd84615a6ebcfa7885b32b34b938fab187109ec"
+other = "PERSONALIZADO ({{.Min}}%-{{.Max}}%)"
+
+[StatusHome]
+hash = "sha1-7731962fb19e09fff22c1be46abc4b02e9ff78eb"
+other = "CASA"
+
+[StatusOff]
+hash = "sha1-ad50489054ddaae044be8b3054bf4d67480648d6"
+other = "APAGADO"
+
+[StatusOffice]
+hash = "sha1-ca80aeb8447fa1048e45429c65903b004e5ef023"
+other = "OFICINA"
+
+[StatusOn]
+hash = "sha1-387d7a59dbaaef002e0f9ac69ecd4443b9c5cef2"
+other = "ENCENDIDO"
+
+[StatusTravel]
+hash = "sha1-dd99db139f05d43ec01a5da2290030351f424984"
+other = "VIAJE"
+
+[StrangeFnlock]
+hash = "sha1-fc0f7d131e287a7cc8ef65fa37eb8cbf47a81fa2"
+other = "El estado de Fn-lock reportado por el controlador no tiene sentido"
+
+[StrangeThresholds]
+hash = "sha1-78c6ce6350b1637a19cfa3d886ba0c4b9f2ccdf5"
+other = "Los límites de la protección de batería no tienen sentido: min {{.Min}}%, max {{.Max}}%"
