@@ -189,6 +189,7 @@ This software includes the following software or parts thereof:
 Translations:
 * German - [Rouven "n3vu0r" Spreckles](https://github.com/n3vu0r)
 * Russian - [Evgeny "nekr0z" Kuznetsov](https://evgenykuznetsov.org)
+* Spanish - [ACV99](https://github.com/ACV99)
 
 Packages are built using [fpm](https://github.com/jordansissel/fpm) and [nekr0z/changelog](https://github.com/nekr0z/changelog).
 
