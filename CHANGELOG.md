@@ -202,7 +202,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - setting battery protection thresholds
 - checks for scripts availability
 
-[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/3.0.1...HEAD
+[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/3.0.2...HEAD
+[3.0.2]: https://github.com/nekr0z/matebook-applet/compare/3.0.1...3.0.2
 [3.0.1]: https://github.com/nekr0z/matebook-applet/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/nekr0z/matebook-applet/compare/2.5.0...3.0.0
 [2.5.0]: https://github.com/nekr0z/matebook-applet/compare/2.4.8...2.5.0
