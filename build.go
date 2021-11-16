@@ -24,7 +24,6 @@ import (
 	"compress/gzip"
 	"flag"
 	"fmt"
-	"github.com/nekr0z/changelog"
 	"io"
 	"log"
 	"os"
@@ -33,6 +32,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/nekr0z/changelog"
 )
 
 type packFile struct {
@@ -110,7 +111,7 @@ func main() {
 }
 
 func buildBinary(version string, t int64) {
-	cmdline := fmt.Sprintf("go build -buildmode=pie -trimpath -ldflags=\"-buildid= -X main.version=%s\"", version)
+	cmdline := fmt.Sprintf("go build -buildmode=pie -trimpath -ldflags=\"-s -w -buildid= -X main.version=%s\"", version)
 	if strings.HasSuffix(version, "-legacy") {
 		cmdline = cmdline + " -tags legacyappindicator"
 	}
