@@ -7,7 +7,7 @@ System tray applet/control app for Huawei Matebook
 
 ## WARNING
 
-Due to [a recent Codecov security problem](https://about.codecov.io/security-update/) the PGP key that was used to sign binaries and the Debian repository could have been compromised. It is stronly recommended to remove the old key from your trusted `apt` keyring since it can no longer really be trusted:
+Due to [a recent Codecov security problem](https://about.codecov.io/security-update/) the PGP key that was used to sign binaries and the Debian repository could have been compromised. It is strongly recommended to remove the old key from your trusted `apt` keyring since it can no longer really be trusted:
 ```
 sudo apt-key del F25E85CB21A79726
 ```
