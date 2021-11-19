@@ -44,7 +44,7 @@ The applet requires no installation as such. However, it has dependencies, its f
 ### Debian
 Debian users can add this repo:
 ```
-deb [signed-by=/usr/share/keyrings/matebook-applet.key] http://evgenykuznetsov.org/repo/ buster main
+deb [signed-by=/usr/share/keyrings/matebook-applet.key] http://evgenykuznetsov.org/repo/ stable main
 ```
 to their `/etc/apt/sources.list` and add the public key:
 ```
