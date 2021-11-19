@@ -1,7 +1,7 @@
 # matebook-applet
 System tray applet/control app for Huawei Matebook
 
-[![Build Status](https://travis-ci.com/nekr0z/matebook-applet.svg?branch=master)](https://travis-ci.com/nekr0z/matebook-applet) [![codecov](https://codecov.io/gh/nekr0z/matebook-applet/branch/master/graph/badge.svg)](https://codecov.io/gh/nekr0z/matebook-applet) [![Go Report Card](https://goreportcard.com/badge/github.com/nekr0z/matebook-applet)](https://goreportcard.com/report/github.com/nekr0z/matebook-applet)
+[![Build Status](https://travis-ci.com/nekr0z/matebook-applet.svg?branch=master)](https://travis-ci.com/nekr0z/matebook-applet) [![codecov](https://codecov.io/gh/nekr0z/matebook-applet/branch/master/graph/badge.svg)](https://codecov.io/gh/nekr0z/matebook-applet) [![Go Report Card](https://goreportcard.com/badge/evgenykuznetsov.org/go/matebook-applet)](https://goreportcard.com/report/evgenykuznetsov.org/go/matebook-applet)
 
 ---
 
@@ -191,7 +191,7 @@ Translations:
 * Russian - [Evgeny "nekr0z" Kuznetsov](https://evgenykuznetsov.org)
 * Spanish - [ACV99](https://github.com/ACV99)
 
-Packages are built using [fpm](https://github.com/jordansissel/fpm) and [nekr0z/changelog](https://github.com/nekr0z/changelog).
+Packages are built using [fpm](https://github.com/jordansissel/fpm) and [changelog](https://evgenykuznetsov.org/go/changelog).
 
 Big **THANK YOU** to [Ayman Bagabas](https://github.com/aymanbagabas) for all his work and support. Without him, there would be no matebook-applet.
 

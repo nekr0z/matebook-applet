@@ -1,4 +1,4 @@
-module github.com/nekr0z/matebook-applet
+module evgenykuznetsov.org/go/matebook-applet
 
 require (
 	github.com/BurntSushi/toml v0.4.1
