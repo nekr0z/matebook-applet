@@ -1,7 +1,7 @@
 # matebook-applet
 System tray applet/control app for Huawei Matebook
 
-[![Build Status](https://travis-ci.com/nekr0z/matebook-applet.svg?branch=master)](https://travis-ci.com/nekr0z/matebook-applet) [![codecov](https://codecov.io/gh/nekr0z/matebook-applet/branch/master/graph/badge.svg)](https://codecov.io/gh/nekr0z/matebook-applet) [![Go Report Card](https://goreportcard.com/badge/evgenykuznetsov.org/go/matebook-applet)](https://goreportcard.com/report/evgenykuznetsov.org/go/matebook-applet)
+![Build Status](https://github.com/nekr0z/matebook-applet/actions/workflows/build.yml/badge.svg) [![codecov](https://codecov.io/gh/nekr0z/matebook-applet/branch/master/graph/badge.svg)](https://codecov.io/gh/nekr0z/matebook-applet) [![Go Report Card](https://goreportcard.com/badge/evgenykuznetsov.org/go/matebook-applet)](https://goreportcard.com/report/evgenykuznetsov.org/go/matebook-applet)
 
 ---
 
@@ -130,9 +130,10 @@ You can always download precompiled amd64 binary from the [releases page](https:
 
         $ git clone https://github.com/nekr0z/matebook-applet.git
         $ cd matebook-applet
-        $ go run build.go
+        $ go generate
+	$ go build
 
-To build against `libappindicator` instead, append the last command with the `-l` switch.
+To build against `libappindicator` instead, append the last command with `-tags legacyappindicator`.
 
 ## Usage
 The user interface is intentionally as simple as they get. You get an icon in system tray that you can click and get a menu. The menu consists of current status, options to change it, and an option to quit the applet. Please be aware that the applet does not probe for current status on its own (this is intentional), so if you change your battery protection settings by other means it will not reflect the change. Clicking on the status line (top of the menu) updates it.

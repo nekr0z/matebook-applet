@@ -1,12 +1,8 @@
 matebook-applet
-*.asc
-*.sig
 .*.swp
 *.tar.gz
 *.deb
 assets.go
 debian.changelog
-secrets.tar
 coverage.txt
-id_rsa
 /release/

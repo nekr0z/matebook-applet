@@ -1,0 +1,38 @@
+name: codecov
+on: [push]
+jobs:
+  codecov:
+    name: codecov
+    runs-on: ubuntu-latest
+    env:
+      GOPROXY: direct
+    steps:
+      - name: install packages
+        run: |
+          sudo apt update
+          sudo apt -y install libayatana-appindicator3-dev libappindicator3-dev libgtk-3-dev
+      - uses: actions/checkout@v2.4.0
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+      - name: cache
+        uses: actions/cache@v2.1.6
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: |
+            ${{ runner.os }}-build-${{ hashFiles('**/go.mod') }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ hashFiles('**/go.mod') }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: vet
+        run: |
+          go generate
+          go vet ./...
+      - name: generate report
+        run: |
+          go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+      - name: upload coverage report
+        uses: codecov/codecov-action@v2.1.0

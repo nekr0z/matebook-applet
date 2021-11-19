@@ -1,0 +1,84 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GOPROXY: direct
+    steps:
+      - name: install packages
+        run: |
+          sudo apt update
+          sudo apt -y install libayatana-appindicator3-dev libappindicator3-dev libgtk-3-dev
+      - uses: actions/checkout@v2.4.0
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: install changelog
+        run: |
+          go install evgenykuznetsov.org/go/changelog/cmd/changelog@latest
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+
+      - name: install fpm
+        run: gem install fpm
+
+      - name: build packages
+        run: |
+          git fetch --tags --force
+          mkdir release
+          changelog -n "Evgeny Kuznetsov" -e "evgeny@kuznetsov.md" -p "matebook-applet" CHANGELOG.md
+          go generate
+          VER=$(go run version_generate.go)
+          go build -buildmode=pie -trimpath -ldflags "-s -w -buildid= -X main.version=$VER" -tags legacyappindicator
+          tar -czf release/matebook-applet-amd64-$VER-legacy.tar.gz matebook-applet LICENSE README.md CHANGELOG.md SOURCE.txt
+          go build -buildmode=pie -trimpath -ldflags "-s -w -buildid= -X main.version=$VER"
+          tar -czf release/matebook-applet-amd64-$VER.tar.gz matebook-applet LICENSE README.md CHANGELOG.md SOURCE.txt
+          fpm -t deb -s dir \
+              -d libayatana-appindicator3-1 \
+              -d libc6 \
+              -d "libgtk-3-0 >= 3.10" \
+              --deb-recommends huawei-wmi \
+              -a amd64 \
+              -n matebook-applet -v $VER \
+              -m "Evgeny Kuznetsov <evgeny@kuznetsov.md>" \
+              --deb-changelog debian.changelog \
+              --license GPL-3 \
+              --deb-priority optional \
+              --url https://evgenykuznetsov.org/go/matebook-applet \
+              --category misc \
+              --vendor "Evgeny Kuznetsov <evgeny@kuznetsov.md>" \
+              --description "System tray applet for Huawei MateBook\nAllows one to control Huawei MateBook features,\nlike Fn-Lock and Battery Protection settings, via GUI." \
+              LICENSE=/usr/share/doc/matebook-applet/ \
+              README.md=/usr/share/doc/matebook-applet/ \
+              SOURCE.txt=/usr/share/doc/matebook-applet \
+              matebook-applet=/usr/bin/ \
+              matebook-applet.1=/usr/share/man/man1/ \
+              assets/matebook-applet.png=/usr/share/icons/hicolor/512x512/apps/ \
+              matebook-applet.desktop=/usr/share/applications/
+          mv *.deb release/
+      - name: release
+        uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: "release/*"
+
+      - name: trigger repository update
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: matebook-applet
