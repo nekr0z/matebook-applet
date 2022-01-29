@@ -154,6 +154,8 @@ $ man matebook-applet
 ### Gnome
 As of Gnome 3.26 [the "legacy tray" is removed](https://bugzilla.gnome.org/show_bug.cgi?id=785956). Launching the applet in windowed (app) mode still works. An extension is needed for the system tray icon to show up, for example [AppIndicator](https://github.com/ubuntu/gnome-shell-extension-appindicator). 
 
+Also, there is a separate native extension by another developer: [Huawei WMI Controls](https://extensions.gnome.org/extension/4580/huawei-wmi-controls), which provides an interface similar to `matebook-applet`.
+
 ## Development
 Pull requests are always welcome!
 
