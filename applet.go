@@ -16,14 +16,17 @@
 package main
 
 import (
-	"github.com/andlabs/ui"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"io/ioutil"
 	"os"
+
+	"github.com/andlabs/ui"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+
+	_ "embed"
 )
 
 const (
-	defaultIcon = "/matebook-applet.png"
+	defaultIcon = "assets/matebook-applet.png"
 )
 
 var (

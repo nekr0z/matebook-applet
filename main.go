@@ -13,11 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-//go:generate go run assets_generate.go
-
 package main
 
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"io"
@@ -52,6 +51,9 @@ var (
 		windowed   bool
 	}
 )
+
+//go:embed assets/*
+var assets embed.FS
 
 func main() {
 	i18nInit()
@@ -179,25 +181,22 @@ func i18nPrepare() *i18n.Bundle {
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	bundle.MustAddMessages(language.English, messages...)
-	if tr, err := assets.Open("/translations"); err == nil {
-		if files, err := tr.Readdir(-1); err == nil {
-			for _, file := range files {
-				if ok, err := filepath.Match("active.*.toml", file.Name()); ok && err == nil {
-					f, err := assets.Open(filepath.Join("/translations", file.Name()))
+	if files, err := assets.ReadDir("assets/translations"); err == nil {
+		for _, file := range files {
+			if ok, err := filepath.Match("active.*.toml", file.Name()); ok && err == nil {
+				f, err := assets.Open(filepath.Join("assets/translations", file.Name()))
+				if err == nil {
+					b, err := ioutil.ReadAll(f)
 					if err == nil {
-						b, err := ioutil.ReadAll(f)
-						if err == nil {
-							_, err := bundle.ParseMessageFileBytes(b, file.Name())
-							if err != nil {
-								fmt.Printf("error reading translation file %s: %s", file.Name(), err)
-							}
+						_, err := bundle.ParseMessageFileBytes(b, file.Name())
+						if err != nil {
+							fmt.Printf("error reading translation file %s: %s", file.Name(), err)
 						}
-						f.Close()
 					}
+					f.Close()
 				}
 			}
 		}
-		tr.Close()
 	}
 	return bundle
 }

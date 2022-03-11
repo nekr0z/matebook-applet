@@ -182,7 +182,6 @@ Now all you've translated is in `active.xx.toml` and you can make a pull request
 This software includes the following software or parts thereof:
 * [getlantern/systray](https://github.com/getlantern/systray) Copyright © 2014 Brave New Software Project, Inc.
 * [andlabs/ui](https://github.com/andlabs/ui) Copyright © 2014 Pietro Gagliardi
-* [shurcooL/vfsgen](https://github.com/shurcooL/vfsgen) Copyright © 2015 Dmitri Shuralyov
 * [BurntSushi/toml](https://github.com/BurntSushi/toml) Copyright © 2013 TOML authors
 * [Jibber Jabber](https://github.com/cloudfoundry/jibber_jabber) Copyright © 2014 Pivotal
 * [go-i18n](https://github.com/nicksnyder/go-i18n) Copyright © 2014 [Nick Snyder](https://github.com/nicksnyder)

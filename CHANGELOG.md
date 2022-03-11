@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - use Go 1.16
+- remove vfsgen dependency (use standard-library embed)
 
 ## [3.0.2] - 2021-09-03
 ### Translations
