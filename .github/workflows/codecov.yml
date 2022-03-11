@@ -29,7 +29,6 @@ jobs:
             ${{ runner.os }}-
       - name: vet
         run: |
-          go generate
           go vet ./...
       - name: generate report
         run: |

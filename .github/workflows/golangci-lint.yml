@@ -15,8 +15,6 @@ jobs:
       - uses: actions/checkout@v3
       - name: install deps
         run: sudo apt update && sudo apt install libayatana-appindicator3-dev libgtk-3-dev
-      - name: go generate
-        run: go generate
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:

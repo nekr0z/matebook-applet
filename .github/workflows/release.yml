@@ -39,7 +39,6 @@ jobs:
           git fetch --tags --force
           mkdir release
           changelog -n "Evgeny Kuznetsov" -e "evgeny@kuznetsov.md" -p "matebook-applet" CHANGELOG.md
-          go generate
           VER=$(go run version_generate.go)
           go build -buildmode=pie -trimpath -ldflags "-s -w -buildid= -X main.version=$VER" -tags legacyappindicator
           tar -czf release/matebook-applet-amd64-$VER-legacy.tar.gz matebook-applet LICENSE README.md CHANGELOG.md SOURCE.txt
