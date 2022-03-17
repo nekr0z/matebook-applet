@@ -33,4 +33,4 @@ jobs:
         run: |
           VER=$(go run version_generate.go)
           go build -buildmode=pie -trimpath -ldflags "-s -w -buildid= -X main.version=$VER"
-          go build -buildmode=pie -trimpath -ldflags "-s -w -buildid= -X main.version=$VER" -tags legacyappindicator
+          go build -buildmode=pie -trimpath -ldflags "-s -w -buildid= -X main.version=$VER" -tags=legacy_appindicator

@@ -133,7 +133,7 @@ You can always download precompiled amd64 binary from the [releases page](https:
         $ go generate
 	$ go build
 
-To build against `libappindicator` instead, append the last command with `-tags legacyappindicator`.
+To build against `libappindicator` instead, append the last command with `-tags=legacy_appindicator`.
 
 ## Usage
 The user interface is intentionally as simple as they get. You get an icon in system tray that you can click and get a menu. The menu consists of current status, options to change it, and an option to quit the applet. Please be aware that the applet does not probe for current status on its own (this is intentional), so if you change your battery protection settings by other means it will not reflect the change. Clicking on the status line (top of the menu) updates it.
