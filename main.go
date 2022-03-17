@@ -28,6 +28,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/andlabs/ui"
 	"github.com/cloudfoundry/jibber_jabber"
+	"github.com/getlantern/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 )
@@ -86,7 +87,7 @@ func main() {
 				logError.Println(err)
 			}
 		} else {
-			systrayRun()
+			systray.Run(onReady, onExit)
 		}
 	} else {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "NothingToWorkWith", Other: "Neither a supported version of Huawei-WMI driver, nor any of the required scripts are properly installed, see README.md#installation-and-setup for instructions"}}))
