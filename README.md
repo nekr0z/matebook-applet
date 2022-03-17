@@ -128,10 +128,9 @@ Both scripts depend on [ioport](https://people.redhat.com/~rjones/ioport/) to wo
 ### Compiling matebook-applet
 You can always download precompiled amd64 binary from the [releases page](https://github.com/nekr0z/matebook-applet/releases), but it's also perfectly OK to compile matebook-applet yourself. Provided that you have the dependencies (GTK+ and libayatana-appindicator) installed (on Debian you can `sudo apt install libgtk-3-dev libayatana-appindicator3-dev`), all you need to do is:
 
-        $ git clone https://github.com/nekr0z/matebook-applet.git
-        $ cd matebook-applet
-        $ go generate
-	$ go build
+    $ git clone https://github.com/nekr0z/matebook-applet.git
+    $ cd matebook-applet
+    $ go build
 
 To build against `libappindicator` instead, append the last command with `-tags=legacy_appindicator`.
 
