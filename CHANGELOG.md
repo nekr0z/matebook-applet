@@ -5,12 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.0.3] - 2022-03-17
 ### Changed
-- use Go 1.16
-- remove vfsgen dependency (use standard-library embed)
-- make build tag consistent with updated `systray` library
+- update Go to 1.16
+- remove `vfsgen` dependency (use standard-library `embed` instead)
 - update dependencies
-- revert to using upstream `systray` library that now has ayatana support
+- revert to using upstream `systray` library that now has `libayatana` support
+- make build tag consistent with updated `systray` library
 
 ## [3.0.2] - 2021-09-03
 ### Translations
@@ -208,7 +210,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - setting battery protection thresholds
 - checks for scripts availability
 
-[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/3.0.2...HEAD
+[Unreleased]: https://github.com/nekr0z/matebook-applet/compare/3.0.3...HEAD
+[3.0.3]: https://github.com/nekr0z/matebook-applet/compare/3.0.2...3.0.3
 [3.0.2]: https://github.com/nekr0z/matebook-applet/compare/3.0.1...3.0.2
 [3.0.1]: https://github.com/nekr0z/matebook-applet/compare/3.0.0...3.0.1
 [3.0.0]: https://github.com/nekr0z/matebook-applet/compare/2.5.0...3.0.0
