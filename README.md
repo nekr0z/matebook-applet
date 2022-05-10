@@ -36,7 +36,7 @@ It can be used as a system tray applet (above) or as a windowed app (below).
 * [Credits](#credits)
 
 #### Help `matebook-applet` get better!
-Join the [development](#development) (or just [buy me a coffee](https://www.buymeacoffee.com/nekr0z), that helps, too).
+Join the [development](#development)! You can also support by sending BTC to `3N983ChqZyFtiep6tNu4tnNcQnDtY2QWps`, or to Pay ID `435921757` on Binance.
 
 ## Installation and setup
 The applet requires no installation as such. However, it has dependencies, its functionality may be limited without proper setup, and you may want to add it to autorun so that it gets started automatically when you load your DE. Read on for the details.
