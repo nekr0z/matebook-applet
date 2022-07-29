@@ -75,7 +75,7 @@ jobs:
           files: "release/*"
 
       - name: trigger repository update
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
