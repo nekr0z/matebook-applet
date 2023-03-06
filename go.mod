@@ -8,7 +8,7 @@ require (
 	github.com/nicksnyder/go-i18n/v2 v2.2.1
 	github.com/onsi/ginkgo v1.16.1 // indirect
 	github.com/onsi/gomega v1.11.0 // indirect
-	golang.org/x/text v0.4.0
+	golang.org/x/text v0.8.0
 )
 
 go 1.16
