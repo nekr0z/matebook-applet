@@ -44,12 +44,13 @@ var (
 	noSaveValues bool
 	localizer    *i18n.Localizer
 	config       struct {
-		fnlock     fnlockEndpoint
-		thresh     threshEndpoint
-		threshPers threshEndpoint
-		wait       bool
-		useScripts bool
-		windowed   bool
+		fnlock          fnlockEndpoint
+		thresh          threshEndpoint
+		threshPers      threshEndpoint
+		kdblightTimeout kdblightTimeoutEndpoint
+		wait            bool
+		useScripts      bool
+		windowed        bool
 	}
 )
 
@@ -64,6 +65,7 @@ func main() {
 
 	findFnlock()
 	findThresh()
+	findKdblightTimeout()
 
 	if saveValues {
 		logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "OptionSDeprecated", Other: "-s option is deprecated, applet is now saving values for persistence by default"}}))
@@ -119,6 +121,26 @@ func findThresh() {
 		config.thresh = thresh
 		if thresh.isWritable() {
 			logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FoundBattery", Other: "Found writable battery thresholds endpoint, will use it"}}))
+			break
+		}
+	}
+}
+
+// findKdblightTimeout finds working kdblight_timeout interface (if any)
+func findKdblightTimeout() {
+	for _, kdblightTimeout := range kdblightTimeoutEndpoints {
+		_, err := kdblightTimeout.get()
+		if err != nil {
+			continue
+		}
+		config.kdblightTimeout = kdblightTimeout
+		if kdblightTimeout.isWritable() {
+			logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{
+				DefaultMessage: &i18n.Message{
+					ID:    "FoundKdblightTimeout",
+					Other: "Found writable kdblight_timeout endpoint, will use it",
+				},
+			}))
 			break
 		}
 	}

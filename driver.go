@@ -29,11 +29,12 @@ import (
 )
 
 const (
-	fnlockDriverEndpoint = "/sys/devices/platform/huawei-wmi/fn_lock_state"
-	threshKernelPath     = "/sys/class/power_supply/BAT"
-	threshKernelMin      = "/charge_control_start_threshold"
-	threshKernelMax      = "/charge_control_end_threshold"
-	saveValuesPath       = "/etc/default/huawei-wmi/"
+	kbdlightTimeoutDriverEndpoint = "/sys/devices/platform/huawei-wmi/kbdlight_timeout"
+	fnlockDriverEndpoint          = "/sys/devices/platform/huawei-wmi/fn_lock_state"
+	threshKernelPath              = "/sys/class/power_supply/BAT"
+	threshKernelMin               = "/charge_control_start_threshold"
+	threshKernelMax               = "/charge_control_end_threshold"
+	saveValuesPath                = "/etc/default/huawei-wmi/"
 )
 
 var (
@@ -43,8 +44,11 @@ var (
 		{threshDriverSingle{path: (saveValuesPath + "charge_control_thresholds")}},
 		{threshDriverSingle{path: (saveValuesPath + "charge_thresholds")}},
 	}
-	threshDriver1 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
-	threshDriver2 = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
+	threshDriver1            = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_thresholds"}}
+	threshDriver2            = threshDriver{threshDriverSingle{path: "/sys/devices/platform/huawei-wmi/charge_control_thresholds"}}
+	kdblightTimeoutEndpoints = []kdblightTimeoutEndpoint{
+		kdblightTimeoutDriver{path: kbdlightTimeoutDriverEndpoint},
+	}
 )
 
 func init() {
@@ -116,6 +120,74 @@ type threshScript struct {
 	getCmd *exec.Cmd
 	setCmd *exec.Cmd
 	offCmd *exec.Cmd
+}
+
+type kdblightTimeoutEndpoint interface {
+	set(int)
+	get() (int, error)
+	isWritable() bool
+}
+
+type kdblightTimeoutDriver struct {
+	path string
+}
+
+func (drv kdblightTimeoutDriver) set(i int) {
+	if i < 0 {
+		return
+	}
+	err := ioutil.WriteFile(drv.path, []byte(strconv.Itoa(i)), 0664)
+	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: &i18n.Message{
+				ID:    "CantSetKdblightTimeout",
+				Other: "Failed to set keyboard light timeout",
+			},
+		}))
+	}
+}
+
+func (drv kdblightTimeoutDriver) get() (int, error) {
+	if _, err := os.Stat(drv.path); err != nil {
+		logTrace.Printf("Couldn't access %q.", drv.path)
+		return 0, err
+	}
+
+	val, err := ioutil.ReadFile(drv.path)
+	if err != nil {
+		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadKdblightTimeout"}))
+		logTrace.Println(err)
+		return 0, err
+	}
+	result, err := strconv.Atoi(strings.TrimSpace(string(val)))
+	if err != nil || result < 0 {
+		logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: &i18n.Message{
+				ID:    "StrangeKdblightTimeout",
+				Other: "Keyboard light timeout reported by driver doesn't make sense",
+			},
+		}))
+	}
+	return result, err
+}
+
+func (drv kdblightTimeoutDriver) isWritable() bool {
+	val, err := drv.get()
+	if err == nil {
+		err = ioutil.WriteFile(drv.path, []byte(strconv.Itoa(val)), 0664)
+		if err == nil {
+			logTrace.Println("successful write to driver interface")
+			return true
+		}
+	}
+	logTrace.Println(err)
+	logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID:    "ReadOnlyDriver",
+			Other: "Driver interface is readable but not writeable.",
+		},
+	}))
+	return false
 }
 
 func (drv fnlockDriver) get() (bool, error) {
@@ -440,6 +512,37 @@ func getFnlockStatus() string {
 		r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FnlockStatusError", Other: "ERROR: Fn-Lock state unknown"}})
 	} else {
 		r = localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "FnlockStatus", Other: "Fn-Lock is {{.Status}}"}, TemplateData: map[string]interface{}{"Status": status}})
+	}
+	return r
+}
+
+func getKbdlightTimeoutStatus() string {
+	var r string
+	timeout, err := config.kdblightTimeout.get()
+	if err != nil {
+		r = localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: &i18n.Message{
+				ID:    "KdblightTimeoutStatusError",
+				Other: "ERROR: Keyboard light timeout unknown",
+			},
+		})
+	} else if timeout == 0 {
+		r = localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: &i18n.Message{
+				ID:    "KdblightTimeoutStatusOff",
+				Other: "Keyboard light timeout is off",
+			},
+		})
+	} else {
+		r = localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: &i18n.Message{
+				ID:    "KdblightTimeoutStatusOn",
+				One:   "Keyboard light timeout is {{.Timeout}}s.",
+				Other: "Keyboard light timeout is {{.Timeout}}s.",
+			},
+			TemplateData: map[string]interface{}{"Timeout": timeout},
+			PluralCount:  timeout,
+		})
 	}
 	return r
 }
