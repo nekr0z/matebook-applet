@@ -37,6 +37,8 @@ var (
 func onReady() {
 	logTrace.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "PreparingTray", Other: "Setting up menu..."}}))
 	systray.SetIcon(getIcon(iconPath, defaultIcon))
+	mKbdlightTimeout := systray.AddMenuItem("", "")
+	systray.AddSeparator()
 	mStatus := systray.AddMenuItem("", "")
 	systray.AddSeparator()
 	mOff := systray.AddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "StatusOff"}), "Switch off battery protection")
@@ -48,6 +50,15 @@ func onReady() {
 	mFnlock := systray.AddMenuItem("", "")
 	systray.AddSeparator()
 	mQuit := systray.AddMenuItem(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "Quit", Other: "Quit"}}), "Quit the applet")
+	if config.kdblightTimeout == nil {
+		mKbdlightTimeout.Hide()
+		logTrace.Println("no access to kbdlight_timeout setting, not showing its GUI")
+	} else {
+		mKbdlightTimeout.SetTitle(getKbdlightTimeoutStatus())
+		if !config.kdblightTimeout.isWritable() {
+			mKbdlightTimeout.Disable()
+		}
+	}
 	if config.thresh == nil {
 		mStatus.Hide()
 		logTrace.Println("no access to BP information, not showing it")
@@ -107,6 +118,7 @@ func onReady() {
 	if err := ui.Main(func() {
 		ui.OnShouldQuit(func() bool {
 			customWindow.Destroy()
+			kbdlightTimeoutWindow.Destroy()
 			logTrace.Println("ready to quit GUI thread")
 			return true
 		})
@@ -119,6 +131,12 @@ func onReady() {
 					ui.QueueMain(func() { customThresholds(ch) })
 					<-ch
 					mStatus.SetTitle(getStatus())
+				case <-mKbdlightTimeout.ClickedCh:
+					logTrace.Println("Got a click on KbdlightTimeout")
+					ch := make(chan struct{})
+					ui.QueueMain(func() { kbdlightTimeout(ch) })
+					<-ch
+					mKbdlightTimeout.SetTitle(getKbdlightTimeoutStatus())
 				case <-appQuit:
 					return
 				}

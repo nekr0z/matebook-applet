@@ -21,8 +21,9 @@ import (
 )
 
 var (
-	customWindow *ui.Window
-	mainWindow   *ui.Window
+	kbdlightTimeoutWindow *ui.Window
+	customWindow          *ui.Window
+	mainWindow            *ui.Window
 )
 
 func launchUI() {
@@ -42,6 +43,42 @@ func launchUI() {
 	vbox := ui.NewVerticalBox()
 	vbox.SetPadded(true)
 	mainWindow.SetChild(vbox)
+
+	kbdlightTimeoutGroup := ui.NewGroup("")
+	kbdlightTimeoutGroup.SetMargined(true)
+	if config.kdblightTimeout == nil {
+		logTrace.Println("no access to kbdlight_timeout setting, not showing its GUI")
+	} else {
+		vbox.Append(kbdlightTimeoutGroup, false)
+		kbdlightTimeoutGroup.SetTitle(getKbdlightTimeoutStatus())
+		kbdlightTimeoutVbox := ui.NewVerticalBox()
+		kbdlightTimeoutVbox.SetPadded(true)
+		kbdlightTimeoutGroup.SetChild(kbdlightTimeoutVbox)
+
+		kbdlightTimeoutButton := ui.NewButton(localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: &i18n.Message{ID: "ChangeValue", Other: "Change"},
+		}))
+
+		var kbdlightTimeoutOnClicked func(*ui.Button)
+		kbdlightTimeoutOnClicked = func(*ui.Button) {
+			logTrace.Println("Custom button clicked")
+			go func() {
+				kbdlightTimeoutButton.OnClicked(func(*ui.Button) {})
+				ch := make(chan struct{})
+				ui.QueueMain(func() { kbdlightTimeout(ch) })
+				<-ch
+				kbdlightTimeoutGroup.SetTitle(getKbdlightTimeoutStatus())
+				kbdlightTimeoutButton.OnClicked(kbdlightTimeoutOnClicked)
+			}()
+		}
+		kbdlightTimeoutButton.OnClicked(kbdlightTimeoutOnClicked)
+
+		kbdlightTimeoutVbox.Append(kbdlightTimeoutButton, false)
+
+		if !config.kdblightTimeout.isWritable() {
+			kbdlightTimeoutButton.Disable()
+		}
+	}
 
 	batteryGroup := ui.NewGroup("")
 	batteryGroup.SetMargined(true)
@@ -182,4 +219,54 @@ func customThresholds(ch chan struct{}) {
 	minSlider.SetValue(min)
 	maxSlider.SetValue(max)
 	customWindow.Show()
+}
+
+func kbdlightTimeout(ch chan struct{}) {
+	logTrace.Println("Launching custom kdblight_timeout window")
+	timeout, _ := config.kdblightTimeout.get()
+
+	kbdlightTimeoutWindow = ui.NewWindow(localizer.MustLocalize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID:    "KbdlightTimeoutWindowTitle",
+			Other: "Keyboard Light Timeout",
+		},
+	}), 640, 100, false)
+	kbdlightTimeoutWindow.OnClosing(func(*ui.Window) bool {
+		close(ch)
+		return true
+	})
+	kbdlightTimeoutWindow.SetMargined(true)
+	vbox := ui.NewVerticalBox()
+	vbox.SetPadded(true)
+	hbox := ui.NewHorizontalBox()
+	hbox.SetPadded(true)
+	kbdlightTimeoutWindow.SetChild(vbox)
+
+	timeoutLabel := ui.NewLabel(localizer.MustLocalize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID:    "KbdlightTimeoutExplain",
+			Other: "Keyboard light will stay on for this number of seconds when enabled. 0 = forever.",
+		},
+	}))
+	vbox.Append(timeoutLabel, false)
+
+	timeoutSpinbox := ui.NewSpinbox(0, 24*60*60)
+	timeoutSpinbox.SetValue(timeout)
+	vbox.Append(timeoutSpinbox, false)
+
+	setButton := ui.NewButton(localizer.MustLocalize(&i18n.LocalizeConfig{
+		DefaultMessage: &i18n.Message{
+			ID:    "DoSet",
+			Other: "Set",
+		},
+	}))
+	setButton.OnClicked(func(*ui.Button) {
+		config.kdblightTimeout.set(timeoutSpinbox.Value())
+		kbdlightTimeoutWindow.Destroy()
+		close(ch)
+	})
+
+	vbox.Append(hbox, false)
+	hbox.Append(setButton, true)
+	kbdlightTimeoutWindow.Show()
 }
