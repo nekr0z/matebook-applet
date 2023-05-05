@@ -1,7 +1,7 @@
 # matebook-applet
 System tray applet/control app for Huawei Matebook
 
-![Build Status](https://github.com/nekr0z/matebook-applet/actions/workflows/build.yml/badge.svg) [![codecov](https://codecov.io/gh/nekr0z/matebook-applet/branch/master/graph/badge.svg)](https://codecov.io/gh/nekr0z/matebook-applet) [![Go Report Card](https://goreportcard.com/badge/evgenykuznetsov.org/go/matebook-applet)](https://goreportcard.com/report/evgenykuznetsov.org/go/matebook-applet)
+![Build Status](https://github.com/nekr0z/matebook-applet/actions/workflows/build.yml/badge.svg) [![codecov](https://codecov.io/gh/nekr0z/matebook-applet/branch/master/graph/badge.svg)](https://codecov.io/gh/nekr0z/matebook-applet)
 
 ---
 
