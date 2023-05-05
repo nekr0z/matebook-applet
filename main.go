@@ -20,7 +20,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -158,11 +157,11 @@ func parseFlags() {
 
 	switch {
 	case *verbose:
-		logInit(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
+		logInit(io.Discard, os.Stdout, os.Stdout, os.Stderr)
 	case *verboseMore:
 		logInit(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
 	default:
-		logInit(ioutil.Discard, ioutil.Discard, os.Stdout, os.Stderr)
+		logInit(io.Discard, io.Discard, os.Stdout, os.Stderr)
 	}
 }
 
@@ -209,7 +208,7 @@ func i18nPrepare() *i18n.Bundle {
 			if ok, err := filepath.Match("active.*.toml", file.Name()); ok && err == nil {
 				f, err := assets.Open(filepath.Join("assets/translations", file.Name()))
 				if err == nil {
-					b, err := ioutil.ReadAll(f)
+					b, err := io.ReadAll(f)
 					if err == nil {
 						_, err := bundle.ParseMessageFileBytes(b, file.Name())
 						if err != nil {

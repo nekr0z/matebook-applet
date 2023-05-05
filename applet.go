@@ -16,7 +16,7 @@
 package main
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/andlabs/ui"
@@ -159,7 +159,7 @@ func onExit() {
 }
 
 func getIcon(pth, dflt string) []byte {
-	b, err := ioutil.ReadFile(pth)
+	b, err := os.ReadFile(pth)
 	if err != nil {
 		logInfo.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "NoCustomIcon", Other: "Couldn't get custom icon, falling back to default"}}))
 		file, err := assets.Open(dflt)
@@ -167,7 +167,7 @@ func getIcon(pth, dflt string) []byte {
 			logError.Println(err)
 		}
 		defer file.Close()
-		b, err = ioutil.ReadAll(file)
+		b, err = io.ReadAll(file)
 		if err != nil {
 			logError.Println(err)
 		}

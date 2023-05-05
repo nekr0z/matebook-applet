@@ -18,14 +18,14 @@ package main
 import (
 	"bytes"
 	"errors"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 const (
@@ -136,7 +136,7 @@ func (drv kdblightTimeoutDriver) set(i int) {
 	if i < 0 {
 		return
 	}
-	err := ioutil.WriteFile(drv.path, []byte(strconv.Itoa(i)), 0664)
+	err := os.WriteFile(drv.path, []byte(strconv.Itoa(i)), 0664)
 	if err != nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: &i18n.Message{
@@ -153,7 +153,7 @@ func (drv kdblightTimeoutDriver) get() (int, error) {
 		return 0, err
 	}
 
-	val, err := ioutil.ReadFile(drv.path)
+	val, err := os.ReadFile(drv.path)
 	if err != nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadKdblightTimeout"}))
 		logTrace.Println(err)
@@ -174,7 +174,7 @@ func (drv kdblightTimeoutDriver) get() (int, error) {
 func (drv kdblightTimeoutDriver) isWritable() bool {
 	val, err := drv.get()
 	if err == nil {
-		err = ioutil.WriteFile(drv.path, []byte(strconv.Itoa(val)), 0664)
+		err = os.WriteFile(drv.path, []byte(strconv.Itoa(val)), 0664)
 		if err == nil {
 			logTrace.Println("successful write to driver interface")
 			return true
@@ -196,7 +196,7 @@ func (drv fnlockDriver) get() (bool, error) {
 		return false, err
 	}
 
-	val, err := ioutil.ReadFile(drv.path)
+	val, err := os.ReadFile(drv.path)
 	if err != nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantReadFnlock"}))
 		logTrace.Println(err)
@@ -228,7 +228,7 @@ func btobb(b bool) []byte {
 func (drv fnlockDriver) checkWritable() bool {
 	val, err := drv.get()
 	if err == nil {
-		err = ioutil.WriteFile(drv.path, btobb(val), 0664)
+		err = os.WriteFile(drv.path, btobb(val), 0664)
 		if err == nil {
 			logTrace.Println("successful write to driver interface")
 			return true
@@ -247,7 +247,7 @@ func (drv fnlockDriver) toggle() {
 		return
 	}
 	value := btobb(!val)
-	err = ioutil.WriteFile(drv.path, value, 0644)
+	err = os.WriteFile(drv.path, value, 0644)
 	if err != nil {
 		logTrace.Println(err)
 		logWarning.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantSetFnlockDriver", Other: "Could not set Fn-Lock status through driver interface"}}))
@@ -303,7 +303,7 @@ func (drv threshDriverSingle) get() (min, max int, err error) {
 	}
 
 	var values [2]string
-	val, err := ioutil.ReadFile(drv.path)
+	val, err := os.ReadFile(drv.path)
 	if err != nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryDriver", Other: "Failed to get thresholds from driver interface"}}))
 		logTrace.Println(err)
@@ -336,11 +336,11 @@ func valuesAtoi(mins, maxs string) (min, max int, err error) {
 }
 
 func (drv threshDriverMinMax) writeDo(min, max int) error {
-	if err := ioutil.WriteFile(drv.pathMin, []byte(strconv.Itoa(min)), 0664); err != nil {
+	if err := os.WriteFile(drv.pathMin, []byte(strconv.Itoa(min)), 0664); err != nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantSetBatteryMin", Other: "Failed to set min threshold"}}))
 		return err
 	}
-	if err := ioutil.WriteFile(drv.pathMax, []byte(strconv.Itoa(max)), 0664); err != nil {
+	if err := os.WriteFile(drv.pathMax, []byte(strconv.Itoa(max)), 0664); err != nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantSetBatteryMax", Other: "Failed to set max threshold"}}))
 		return err
 	}
@@ -366,14 +366,14 @@ func (drv threshDriverMinMax) get() (min, max int, err error) {
 	}
 
 	var values [2]string
-	val, err := ioutil.ReadFile(drv.pathMin)
+	val, err := os.ReadFile(drv.pathMin)
 	if err != nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryMin", Other: "Failed to get min threshold from driver interface"}}))
 		logTrace.Println(err)
 		return
 	}
 	values[0] = string(val)
-	val, err = ioutil.ReadFile(drv.pathMax)
+	val, err = os.ReadFile(drv.pathMax)
 	if err != nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{DefaultMessage: &i18n.Message{ID: "CantReadBatteryMax", Other: "Failed to get max threshold from driver interface"}}))
 		logTrace.Println(err)
@@ -391,7 +391,7 @@ func (drv threshDriverMinMax) get() (min, max int, err error) {
 
 func (drv threshDriverSingle) write(min, max int) error {
 	values := []byte(strconv.Itoa(min) + " " + strconv.Itoa(max) + "\n")
-	err := ioutil.WriteFile(drv.path, values, 0664)
+	err := os.WriteFile(drv.path, values, 0664)
 	if err != nil {
 		logError.Println(localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "CantSetBattery"}))
 	} else {

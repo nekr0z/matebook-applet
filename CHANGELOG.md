@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - keyboard light timeout control (for the driver version that supports it)
 
+### Changed
+- update dependencies
+- update Go to 1.19
+
 ## [3.0.3] - 2022-03-17
 ### Changed
 - update Go to 1.16
