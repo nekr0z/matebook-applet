@@ -3,7 +3,7 @@ on: [push]
 jobs:
   codecov:
     name: codecov
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       GOPROXY: direct
     steps:
