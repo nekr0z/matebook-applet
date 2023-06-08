@@ -1,7 +1,7 @@
 module evgenykuznetsov.org/go/matebook-applet
 
 require (
-	github.com/BurntSushi/toml v1.3.0
+	github.com/BurntSushi/toml v1.3.2
 	github.com/andlabs/ui v0.0.0-20200610043537-70a69d6ae31e
 	github.com/cloudfoundry/jibber_jabber v0.0.0-20151120183258-bcc4c8345a21
 	github.com/getlantern/systray v1.2.2
