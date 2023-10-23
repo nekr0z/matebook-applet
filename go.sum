@@ -42,8 +42,8 @@ github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
 github.com/lxn/walk v0.0.0-20210112085537-c389da54e794/go.mod h1:E23UucZGqpuUANJooIbHWCufXvOcT6E7Stq81gU+CSQ=
 github.com/lxn/win v0.0.0-20210218163916-a377121e959e/go.mod h1:KxxjdtRkfNoYDCUP5ryK7XJJNTnpC8atvtmTheChOtk=
-github.com/nicksnyder/go-i18n/v2 v2.2.1 h1:aOzRCdwsJuoExfZhoiXHy4bjruwCMdt5otbYojM/PaA=
-github.com/nicksnyder/go-i18n/v2 v2.2.1/go.mod h1:fF2++lPHlo+/kPaj3nB0uxtPwzlPm+BlgwGX7MkeGj0=
+github.com/nicksnyder/go-i18n/v2 v2.2.2 h1:Iv/FL6pvYmDqybEZkr4TrOv8jSHezwpE77K68kcaft8=
+github.com/nicksnyder/go-i18n/v2 v2.2.2/go.mod h1:fF2++lPHlo+/kPaj3nB0uxtPwzlPm+BlgwGX7MkeGj0=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=
